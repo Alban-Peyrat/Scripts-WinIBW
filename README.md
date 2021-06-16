@@ -87,9 +87,7 @@ Ajoute une 183 en fonction de la 215 (notamment des chiffres détectés dans le 
 
 ### `SUB chantierTheseAutoriteAuteur()`
 
-Crée une notice d'autorité auteur à partir de la notice dans le presse papier dans le cadre du chantier thèse.
-
-Applique l'ajout des UA400 pour les noms composés.
+Crée une notice d'autorité auteur à partir de la notice contenue dans le presse papier et applique l'ajout des UA400 pour les noms composés.
 
 Pour un bon fonctionnement, la notice doit être copiée dans le presse papier (générée depuis un document Excel particulier)
 
