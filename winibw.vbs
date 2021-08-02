@@ -1,6 +1,6 @@
 Sub addUA400()
-'Ajoute un/des champs 400 à une notice d'autorité auteur
-'Basée sur la 200, elle décompose le  $a
+'Ajoute un/des champs 400 Ã  une notice d'autoritÃ© auteur
+'BasÃ©e sur la 200, elle dÃ©compose le  $a
 'Raccourci : Ctrl Shift "
 'Requis : decompUA200enUA400, toEditMode
 '_A_MOD_
@@ -17,7 +17,7 @@ With Application.activeWindow.Title
 	.endofbuffer
 	.InsertText vblf & z
 	
-	'Ajoute une 400 à modifier si decompUA200enUA400 n'a pas renvoyer de 400
+	'Ajoute une 400 Ã  modifier si decompUA200enUA400 n'a pas renvoyer de 400
 	If Len(z) < 5 Then
 	    z = .FindTag ("200")
 	    z = replace(z, "200", "400")
@@ -65,7 +65,7 @@ With Application.ActiveWindow.Title
 	
 	.InsertText UB700 & vblf
 	
-	'Remplace le $btm des exemplaires du RCR ou signale la présence de plusieurs exemplaires dans l'ILN
+	'Remplace le $btm des exemplaires du RCR ou signale la prÃ©sence de plusieurs exemplaires dans l'ILN
 	nbOcc = countOccurrences(notice, chr(10) & "e", true)
 	if nbOcc = 0 Then
 	ElseIf nbOcc = 1 Then
@@ -76,7 +76,7 @@ With Application.ActiveWindow.Title
 		If LCase(Application.activeWindow.clipboard) = "tm" Then
 			.InsertText "x"
 			exSB = .tag
-			MsgBox exSB & " : tm remplacé par x"
+			MsgBox exSB & " : tm remplacÃ© par x"
 		End If
 	ElseIf nbOcc > 1 Then
 		nbOccRCR = countOccurrences(notice, "$b$_$#$_$RCR$_$#$_$", true)
@@ -84,12 +84,12 @@ With Application.ActiveWindow.Title
 			.Find("$btm" & chr(10) & "930 ")
 			exSB = .tag
 			if Left(exSB, 1) = "e" Then
-				MsgBox exSB & " à supprimer", , "Exemplaire fictif"
+				MsgBox exSB & " Ã  supprimer", , "Exemplaire fictif"
 			Else
-				MsgBox "Plusieurs exemplaires réels sur ce RCR." & chr(10) &"Fonds historique ?" & chr(10) &  chr(10) & "Vérification recommandée."
+				MsgBox "Plusieurs exemplaires rÃ©els sur ce RCR." & chr(10) &"Fonds historique ?" & chr(10) &  chr(10) & "VÃ©rification recommandÃ©e."
 			End If
 		Else
-			MsgBox "Plusieurs exemplaires réels." & chr(10) & chr(10) & "Vérification recommandée."
+			MsgBox "Plusieurs exemplaires rÃ©els." & chr(10) & chr(10) & "VÃ©rification recommandÃ©e."
 		End If
 	End If
 	
@@ -102,7 +102,7 @@ End With
 End Sub
 
 Sub ChantierTheseAddUB183
-'Ajoute une 183 en fonction de la 215 (notamment des chiffres détectés dans le $a) dans le cadre du chantier thèse
+'Ajoute une 183 en fonction de la 215 (notamment des chiffres dÃ©tectÃ©s dans le $a) dans le cadre du chantier thÃ¨se
 'Raccourci : Texte only
 'Requis : goToTag, toEditMode
 '_A_MOD_
@@ -116,7 +116,7 @@ Sub ChantierTheseAddUB183
 
 With Application.activeWindow.title
 	
-		'Détermine le $a à ecrire
+		'DÃ©termine le $a Ã  ecrire
 		UB215 = .FindTag("215")
 		z = split(UB215,"$")
 		for each x in z
@@ -162,41 +162,8 @@ End With
 
 End Sub
 
-Sub chantierTheseAutoriteAuteur()
-'Crée une notice d'autorité auteur à partir de la notice dans le presse papier dans le cadre du chantier thèse
-'Raccourci : Ctrl+Shift+&
-'Requis : decompUA200enUA400
-'_A_MOD_
-
-	dim notice, leftStr, rightStrPos, UA200aPos, UA200fPos, UA400, UA400Output
-    
-With Application.activeWindow
-
-	notice = .clipboard
-	
-	'Corrige défauts d'imports depuis excel
-	leftStr = replace(left(notice, 5), chr(034), "")
-	rightStrPos = InStrRev(notice, "106")
-	notice = leftStr & mid(notice, 6, rightStrPos) & "$a0$b1$c0"
-	
-	'Ajoute UA400
-	UA200aPos = InStr(notice, "200 #1$90y$a")
-	UA400 = Mid(notice, UA200aPos)
-	UA200fPos = InStr(UA400, "$f")-1
-	UA400 = Left(UA400, UA200fPos)   
-	UA400Output = decompUA200enUA400(UA400)
-	notice = notice & vblf & UA400Output
-	
-	.Command "cre e"
-	
-	.Title.InsertText notice
-    
-End With
-
-End Sub
-
 Sub ChantierTheseLoopAddUB183
-'Exécute ChantierTheseAddUB183, sauf si l'utilisateur refuse l'ajout, sur la liste de PPN présente dans le presse-papier
+'ExÃ©cute ChantierTheseAddUB183, sauf si l'utilisateur refuse l'ajout, sur la liste de PPN prÃ©sente dans le presse-papier
 'Raccourci : texte only
 'Requis : ChantierTheseAddUB183, exportVar
 
@@ -204,7 +171,7 @@ Sub ChantierTheseLoopAddUB183
 	
 	ListeStatuts = "ok" & chr(10) & "pb" & chr(10) & "no p" & chr(10) & "d f" & chr(10) & "$$stop"
 	count = 0
-	output = "$_#_$ Chantier thèse ajout UB183 : " & FormatDateTime(Now) & vblf & "PPN;Statut" & vblf
+	output = "$_#_$ Chantier thÃ¨se ajout UB183 : " & FormatDateTime(Now) & vblf & "PPN;Statut" & vblf
 	
 With Application.activeWindow
 
@@ -215,10 +182,10 @@ With Application.activeWindow
 		wrongPPN = false
     		.command "che ppn " & PPN
     		If .Messages.Count > 0 Then
-	    		If .messages.Item(0).Text = "PPN erroné" Then
-	    			MsgBox "PPN erroné"
+	    		If .messages.Item(0).Text = "PPN erronÃ©" Then
+	    			MsgBox "PPN erronÃ©"
 	    			wrongPPN = true
-	    			statut = "PPN erroné"
+	    			statut = "PPN erronÃ©"
 	    		End If
 	    	End if
 	    	
@@ -226,16 +193,16 @@ With Application.activeWindow
 	    	
 			chantierTheseAddUB183
 			
-	    		statut = Inputbox(.title.findtag("215") & chr(10) & ListeStatuts, "Définir le statut (PPN n°"&count&":", "ok")
+	    		statut = Inputbox(.title.findtag("215") & chr(10) & ListeStatuts, "DÃ©finir le statut (PPN nÂ°"&count&":", "ok")
 	    		
 	    		If statut = "ok" Then
 				.SimulateIBWKey "FR"
 			Else
 				Select Case statut
-					Case "pb" statut = "Problème"
+					Case "pb" statut = "ProblÃ¨me"
 					Case "no p" statut = "Pas de pagination"
-					Case "d f" statut = "Déjà fait"
-					Case "$$stop" statut = "Arrêt forcé"
+					Case "d f" statut = "DÃ©jÃ  fait"
+					Case "$$stop" statut = "ArrÃªt forcÃ©"
 					Case Else statut = "Statut invalide"
 				End Select
 				.SimulateIBWKey "FE"
@@ -250,7 +217,7 @@ With Application.activeWindow
     			exportVar output, true
     			output = ""
     		End If
-    		If statut = "Arrêt forcé" Then
+    		If statut = "ArrÃªt forcÃ©" Then
     			Exit For
     		End If
 	Next
@@ -258,24 +225,6 @@ With Application.activeWindow
 End With
 
 	exportVar output, true
-
-End Sub
-
-Sub CollerPPN()
-'Recherche le PPN contenu dans le presse papier
-'Raccourci : Ctrl+Shift+V
-'Original donné par F. L., modifié avec le With
-'Requis : RIEN
-     
-With Application.activeWindow
-
-    If Left(.Clipboard,3) = "PPN" Then
-        .Command "che ppn " & Right(.Clipboard,9)
-    Else
-         .Command "che ppn " & .Clipboard
-    End If
-    
-End With
 
 End Sub
 
@@ -300,8 +249,8 @@ Function CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitiv
 End Function
 
 Sub ctrlUA103eqUA200f()
-'Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
-'Requis : exportVar, getTag (quand implémenter obsvly)
+'Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste prÃ©sente dans le presse-papier.
+'Requis : exportVar, getTag (quand implÃ©menter obsvly)
 '/!\ EVITER UTILISATION
 '/!\ ATTENTION, WinIBW va sembler cesser de fonctionner, laissez-le faire
 
@@ -312,7 +261,7 @@ With Application.activeWindow
 
 	count = 0
 	storedPPN = "X"
-	output = "$_#_$ Contrôle équivalence UA103 et UA200$f : " & FormatDateTime(Now) & vblf & "PPN;Result;UA103a;UA200f;Note" & vblf
+	output = "$_#_$ ContrÃ´le Ã©quivalence UA103 et UA200$f : " & FormatDateTime(Now) & vblf & "PPN;Result;UA103a;UA200f;Note" & vblf
 	PPNList = split(.clipboard, Chr(10))
 	
 	For each PPN in PPNList
@@ -342,7 +291,7 @@ End With
 End Sub
 
 Sub ctrlUB700S3()
-'Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papie
+'Exporte le premier $ de UB700 pour chaque PPN de la liste prÃ©sente dans le presse-papie
 'Requis : exportVar
 '/!\ EVITER UTILISATION
 '/!\ ATTENTION, WinIBW va sembler cesser de fonctionner, laissez-le faire
@@ -354,7 +303,7 @@ With Application.activeWindow
 	PPNList = Split(.clipboard, chr(10))
 	count = 0
 	storedPPN = "X"
-	output = "$_#_$ Contrôle présence de lien UB700 : " & FormatDateTime(Now) & vblf & "PPN;Result;UB700S_Occ1" & vblf
+	output = "$_#_$ ContrÃ´le prÃ©sence de lien UB700 : " & FormatDateTime(Now) & vblf & "PPN;Result;UB700S_Occ1" & vblf
 	
 	For Each PPN in PPNList
 		count = count+1
@@ -380,7 +329,7 @@ End With
 End Sub
 
 Function decompUA200enUA400(impUA200)
-'Renvoi les champs 400 créés à partir de la décomposition du nom composé du champ 200 importé
+'Renvoi les champs 400 crÃ©Ã©s Ã  partir de la dÃ©composition du nom composÃ© du champ 200 importÃ©
 'Requis : RIEN
 '_A_MOD_
 
@@ -451,14 +400,14 @@ Function decompUA200enUA400(impUA200)
 
 	addUA400 = "400 #1$a" & UA400a & UA200b
 	
-	'Ajout à la notice
+	'Ajout Ã  la notice
 	decompUA200enUA400 = decompUA200enUA400 & vblf & addUA400
     Wend
 
 End Function
 
 Sub exportVar(var, boolAppend)
-'Exporte dans export.txt (même emplacement que winibw.vbs)
+'Exporte dans export.txt (mÃªme emplacement que winibw.vbs)
 'Source : eddiejackson.net/wp/?p=8619
 'Notes
 'OpenTextFile parameters:
@@ -468,7 +417,7 @@ Sub exportVar(var, boolAppend)
 '8=Append
 'Create (true,false)
 'Format (-2=System Default,-1=Unicode,0=ASCII)
-'J'ai rajouté la var mode pour sélectionner entre append et write
+'J'ai rajoutÃ© la var mode pour sÃ©lectionner entre append et write
 'Requis : RIEN
 
 	dim mode
@@ -479,7 +428,7 @@ Sub exportVar(var, boolAppend)
 		mode = 2
 	End If
 
-	'À la BU
+	'Ã€ la BU
 	Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile("C:\/oclcpica/WinIBW30/Profiles/apeyrat001/export.txt",mode,true)
 	'En TVW
 	'Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile("C:\/oclcpica/WinIBW30/Profiles/utilisateur/export.txt",mode,true)
@@ -512,7 +461,7 @@ End With
 End Sub
 
 Sub getTitle()
-'Renvoie dans le presse papier le titre du document en remplaçant les @ et $e
+'Renvoie dans le presse papier le titre du document en remplaÃ§ant les @ et $e
 'Raccourci : Ctrl Shift Q
 'Requis : RIEN
 '_A_MOD_
@@ -522,7 +471,7 @@ Sub getTitle()
 With Application.activeWindow
 
 	z = .copyTitle
-	'Trouve le prochain champ pour délimiter la 200
+	'Trouve le prochain champ pour dÃ©limiter la 200
 	posUB200 = InStr(z, "200 ")
 	i = 201
 	posUB2xx = 0
@@ -552,8 +501,8 @@ End With
 End Sub
 
 Sub getUA810b()
-'Si un seul UA810 est présent, écrit le $b "né le" à partir des informations de la 103de la notice
-'Si plusieurs UA810 sont présents, renvoie le $b dans le presse-papier
+'Si un seul UA810 est prÃ©sent, Ã©crit le $b "nÃ© le" Ã  partir des informations de la 103de la notice
+'Si plusieurs UA810 sont prÃ©sents, renvoie le $b dans le presse-papier
 'Raccourci : Ctrl+Shift+G
 'Requis : countOccurrences, goToTag, toEditMode
 
@@ -572,9 +521,9 @@ With Application.activeWindow.title
 	z = Right(z, 8)
 	sexe = .FindTag ("120")
 	if Right(sexe, 1) = "a" Then
-	sexe = "$bnée"
+	sexe = "$bnÃ©e"
 	Else
-	sexe = "$bné"
+	sexe = "$bnÃ©"
 	End If
 	date = sexe & " le " & Right(z, 2) & "-" & Mid(z, 5,2) & "-" & Left(z, 4)
 	
@@ -592,13 +541,13 @@ End With
 End Sub
 
 Sub goToTag(tag, subTag, toEndOfField, toFirst, toLast)
-'Place le curseur à l'empalcement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que toFirst ou toLast soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée
-'La fonction countOccurences est nécesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
+'Place le curseur Ã  l'empalcement indiquÃ© par les paramÃ¨tres. Si plusieurs occurrences sont rencontrÃ©es sans que toFirst ou toLast soit true, une boÃ®te de dialogue s'ouvre pour sÃ©lectionner l'occurrence souhaitÃ©e
+'La fonction countOccurences est nÃ©cesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
 'Tag = [str] champ
 'subtag = [str] [case sensitive] sous-champ. Ne pasz mettre le $. Si vide, mettre "none"
-'toEndOfField = [bool] place le curseur à la fin du champ OU du sous-champ
-'toFirst = [bool] si plusieurs occurences du CHAMP, sélectionne le premier prioritaire sur toLast
-'toLast = [bool] si plusieurs occurences du CHAMP, sélectionne le dernier
+'toEndOfField = [bool] place le curseur Ã  la fin du champ OU du sous-champ
+'toFirst = [bool] si plusieurs occurences du CHAMP, sÃ©lectionne le premier prioritaire sur toLast
+'toLast = [bool] si plusieurs occurences du CHAMP, sÃ©lectionne le dernier
 'Requis : countOccurrences
 '_A_MOD_
 
@@ -629,7 +578,7 @@ End With
 			choseOcc = true
 		End If
 	ElseIf nbOcc = 0 Then
-			MsgBox "Le champ " & tag & " n'a pas été trouvé dans la notice"
+			MsgBox "Le champ " & tag & " n'a pas Ã©tÃ© trouvÃ© dans la notice"
 		Exit Sub
 	End If
 	
@@ -647,7 +596,7 @@ End With
 	Next
 	
 	If choseOcc = true Then
-		count = inputBox(occurrences, "Choisir le numéro de l'occurence")
+		count = inputBox(occurrences, "Choisir le numÃ©ro de l'occurence")
 		If isNumeric(count) = false Then
 			MsgBox "Erreur. Choisir un NOMBRE. Relancer le script."
 			Exit Sub
@@ -681,7 +630,7 @@ With Application.activeWindow.Title
 	      count = 0
 	    	nbOcc = countOccurrences(selectedTag, "$" & subTag, true)
 	    	If nbOcc = 0 Then
-	    		MsgBox "Erreur. Pas de $" & subTag & " dans l'occurrence sélectionnée."
+	    		MsgBox "Erreur. Pas de $" & subTag & " dans l'occurrence sÃ©lectionnÃ©e."
 		      If toEndOfField = true Then
 		      	.EndOfField
 		      Else
@@ -709,9 +658,9 @@ With Application.activeWindow.Title
 		        End If
 		        count = count + 1
 		    Next
-		    count = inputBox(occurrences, "Choisir le numéro de l'occurence")
+		    count = inputBox(occurrences, "Choisir le numÃ©ro de l'occurence")
 		    If isNumeric(count) = false Then
-			MsgBox "Erreur. Choisir un NOMBRE. Première occurrence sélectionnée."
+			MsgBox "Erreur. Choisir un NOMBRE. PremiÃ¨re occurrence sÃ©lectionnÃ©e."
 		  	.Find "$" & subTag, true, true
 		  	.charRight(1)
 		  	.charLeft(1)
@@ -733,7 +682,7 @@ End With
 	    End Sub
 
 Sub goToTagInputBox()
-'Permet d'essayer goToTag en indiquant les paramètres voulus.
+'Permet d'essayer goToTag en indiquant les paramÃ¨tres voulus.
 'Requis : goToTag
 
 	dim z, y, x, w, v
@@ -747,14 +696,6 @@ Sub goToTagInputBox()
 	w = CBool(w)
 	goToTag z, v, y, x, w
 	'goToTag "606", "", true, "", ""
-End Sub
-
-Sub LastCHE()
-'Raccourci : Ctrl+Shift+Ret.Arriere
-'Requis : RIEN
-
-    Application.ActiveWindow.Command "HIS"
-
 End Sub
 
 Sub searchExcelPPNList()
@@ -786,8 +727,8 @@ Sub Sleep(time)
 End Sub
 
 Sub toEditMode(lgPMode, save)
-'Passe en mode édition (ou présentation)
-'lgPMode [bool] : true = passer en mode présentation
+'Passe en mode Ã©dition (ou prÃ©sentation)
+'lgPMode [bool] : true = passer en mode prÃ©sentation
 'save [bool] : si lgPMode =true, alors sauvegarder les changements ou non
 'Requis : RIEN
 
