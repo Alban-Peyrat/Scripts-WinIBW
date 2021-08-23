@@ -4,7 +4,7 @@
 
 Je travaille actuellement à réorganiser ce projet. La documentation sur les nouveaux scripts est absente.
 
-Modificcations des scripts :
+Modifications des scripts :
 * le 02/08/2021
   * suppression de `PurifUB200a` car peu d'intérêts à être partagé ;
   * suppression de `CollerPPN` car peu d'intérêts à être partagé ;
