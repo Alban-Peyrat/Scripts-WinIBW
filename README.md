@@ -1,5 +1,21 @@
 # Scripts pour WinIBW
 
+## Note introductive
+
+Je travaille actuellement à réorganiser ce projet. La documentation sur les nouveaux scripts est absente.
+
+Modificcations des scripts :
+* le 02/08/2021
+ * suppression de PurifUB200a car peu d'intérêts à être partagé ;
+ * suppression de CollerPPN car peu d'intérêts à être partagé ;
+ * suppression de LastCHE car peu d'intérêts à être partagé.
+* le 23/08/2021 :
+ * ajout de AddSujetRAMEAU pour ajouter des 60X ;
+ * ajout de ctrlTraitementInterne ;
+ * ajout de getUB310 pour récupérer dans le presse papier l'information de la première 310 ;
+ * ajout de PurifUB200a pour adapter un titre à son écriture en UNIMARC ;
+ * scission de addUB700S3 : la partie sur l'exemplaire a été isolée dans un nouveau script, changeExAnom.
+
 ## Introduction
 
 Contractuel dans une bibliothèque universitaire, j'ai eu l'occasion de travailler à nouveau avec WinIBW, notamment dans le cadre de chantiers relativement répétitifs. J'ai donc essayé de pousser plus loin ma familiarité avec ce logiciel en essayant d'utiliser des scripts simples pour effectuer des opérations basiques plus rapidement, comme rechercher un PPN. Au fil des semaines, j'ai voulu en savoir plus sur les possibilités qu'offrent cette fonctionnalité, pour finalement me rendre compte que l'internet ne proposent tant de ressources à ce sujet (mais bien plus que je ne pensais à l'origine).
