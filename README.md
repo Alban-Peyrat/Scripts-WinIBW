@@ -6,15 +6,15 @@ Je travaille actuellement à réorganiser ce projet. La documentation sur les no
 
 Modificcations des scripts :
 * le 02/08/2021
- * suppression de PurifUB200a car peu d'intérêts à être partagé ;
- * suppression de CollerPPN car peu d'intérêts à être partagé ;
- * suppression de LastCHE car peu d'intérêts à être partagé.
+  * suppression de PurifUB200a car peu d'intérêts à être partagé ;
+  * suppression de CollerPPN car peu d'intérêts à être partagé ;
+  * suppression de LastCHE car peu d'intérêts à être partagé.
 * le 23/08/2021 :
- * ajout de AddSujetRAMEAU pour ajouter des 60X ;
- * ajout de ctrlTraitementInterne ;
- * ajout de getUB310 pour récupérer dans le presse papier l'information de la première 310 ;
- * ajout de PurifUB200a pour adapter un titre à son écriture en UNIMARC ;
- * scission de addUB700S3 : la partie sur l'exemplaire a été isolée dans un nouveau script, changeExAnom.
+  * ajout de AddSujetRAMEAU pour ajouter des 60X ;
+  * ajout de ctrlTraitementInterne ;
+  * ajout de getUB310 pour récupérer dans le presse papier l'information de la première 310 ;
+  * ajout de PurifUB200a pour adapter un titre à son écriture en UNIMARC ;
+  * scission de addUB700S3 : la partie sur l'exemplaire a été isolée dans un nouveau script, changeExAnom.
 
 ## Introduction
 
