@@ -1,3 +1,72 @@
+Sub AddSujetRAMEAU()
+'Permet d'ajouter des 606
+'Raccourci : Ctrl Shift (
+'Requis : rien
+	dim PPN, UB606, inds, Xvalue, PPNclean
+	
+	toEditMode false, false
+	
+With Application.activeWindow
+
+	For i = 0 To 999
+		inds = "##"
+		PPN = Inputbox("Écrire le PPN à ajouter (en 606 (##) par défaut)"_
+		& chr(10) & chr(10) & "-> $3{PPN} pour ajouter une subdivision au précédent"_
+		& chr(10) & "-> Écrire '_{ind.1}{ind.2}' après le PPN SANS ESPACE pour changer les indicateurs par défaut"_
+		& chr(10) & chr(10) & "NB : les indicateurs par défaut sont ceux entre parenthèses"_
+		& chr(10) & chr(10) & "U0{PPN} pour ajouter 600 (#1)"_
+		& chr(10) & "U1{PPN} pour ajouter 601 (02)"_
+		& chr(10) & "U2{PPN} pour ajouter 602"_
+		& chr(10) & "U4{PPN} pour ajouter 604"_
+		& chr(10) & "U5{PPN} pour ajouter 605"_
+		& chr(10) & "U7{PPN} pour ajouter 607"_
+		& chr(10) & "U8{PPN} pour ajouter 608"_
+		, "Ajouter une 60X:", "ok")
+		PPN = Replace(PPN, "PPN ", "")
+		PPN = Replace(PPN, "(PPN)", "")
+		PPN = Replace(PPN, " ", "")
+		PPN = Replace(PPN, chr(10), "")
+		PPN = Replace(PPN, chr(13), "")
+		
+		.Title.EndOfbuffer
+		If PPN = "ok" Then
+			i = 1000
+			.Title.InsertText UB606
+		Else
+			If Left(Right(PPN, 3), 1) = "_" Then
+				inds = Right(PPN, 2)
+			End If
+			If Left(PPN, 2) = "$3" Then
+				UB606 = Left(UB606, Len(UB606)-9) & PPN & right(UB606, 9)
+			Else
+				.Title.InsertText UB606
+				PPNclean = Mid(PPN, 3, 9)
+				Select Case UCase(Left(PPN, 2))
+					Case "U0" Xvalue = "0"
+						If inds = "##" Then
+							inds = "#1"
+						End If
+					Case "U1" Xvalue = "1"
+						If inds = "##" Then
+							inds = "02"
+						End If
+					Case "U2" Xvalue = "2"
+					Case "U4" Xvalue = "4"
+					Case "U5" Xvalue = "5"
+					Case "U7" Xvalue = "7"
+					Case "U8" Xvalue = "8"
+					Case Else Xvalue = "6"
+						PPNclean = Left(PPN, 9)
+				End Select
+				UB606 = "60" & Xvalue & " " & inds & "$3" & PPNclean & "$2rameau" & chr(10)
+			End If
+		End If
+	Next
+	
+End With
+
+End Sub
+
 Sub addUA400()
 'Ajoute un/des champs 400 à une notice d'autorité auteur
 'Basée sur la 200, elle décompose le  $a
@@ -66,6 +135,19 @@ With Application.ActiveWindow.Title
 	.InsertText UB700 & vblf
 	
 	'Remplace le $btm des exemplaires du RCR ou signale la présence de plusieurs exemplaires dans l'ILN
+	changeExAnom notice
+	
+	goToTag "101", "none", false, true, false
+    
+End With
+
+    Application.activeWindow.Clipboard = saveClipboard
+    
+End Sub
+
+Sub changeExAnom(notice)
+
+With Application.activeWindow.Title
 	nbOcc = countOccurrences(notice, chr(10) & "e", true)
 	if nbOcc = 0 Then
 	ElseIf nbOcc = 1 Then
@@ -79,7 +161,7 @@ With Application.ActiveWindow.Title
 			MsgBox exSB & " : tm remplacé par x"
 		End If
 	ElseIf nbOcc > 1 Then
-		nbOccRCR = countOccurrences(notice, "$b$_$#$_$RCR$_$#$_$", true)
+		nbOccRCR = countOccurrences(notice, "$b330632101", true)
 		If nbOccRCR > 1 Then
 			.Find("$btm" & chr(10) & "930 ")
 			exSB = .tag
@@ -92,13 +174,7 @@ With Application.ActiveWindow.Title
 			MsgBox "Plusieurs exemplaires réels." & chr(10) & chr(10) & "Vérification recommandée."
 		End If
 	End If
-	
-	goToTag "101", "none", false, true, false
-    
 End With
-
-    Application.activeWindow.Clipboard = saveClipboard
-    
 End Sub
 
 Sub ChantierTheseAddUB183
@@ -247,6 +323,46 @@ Function CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitiv
     arrstrTemp = Split(strBase, strToFind)
     CountOccurrences = UBound(arrstrTemp)
 End Function
+
+Sub ctrlTraitementInterne
+	
+Dim PPNList, storedPPN, notice, Cote, count
+Dim z, posRCR, posA98, posA, posJ
+
+With Application.activeWindow
+
+	PPNList = Split(.clipboard, chr(10))
+	count = 0
+	storedPPN = "X"
+	output = "$_#_$ Contrôle traitement interne (getCote) : " & FormatDateTime(Now) & vblf & "PPN;Cote" & vblf
+	
+	For Each PPN in PPNList
+		count = count+1
+		.command "che ppn " & PPN
+		If .variable("P3GPP") <> storedPPN Then
+    z = .copyTitle
+			If InStr(z, "930 ##$b330632101") <> 0 Then
+    posRCR = InStr(z, "930 ##$b330632101")
+    posA98 = InStrRev(z, "A98 330632101")
+    z = Mid(z, posRCR, posA98-posRCR)
+    posA = InStr(z,"$a")+2
+    z = Mid(z, posA, Len(z)-posA)
+'    posJ = InStr(z, chr(10))
+'    z = Left(z, posJ) 
+    output = output & PPN & z & vblf
+    			Else
+    				output = output & PPN & "Pas d'ex Sudoc" & vblf
+			End If
+			 
+		Else
+			output = output & PPN & ";ERROR;#n/a;Recherche non about." & vblf
+		End If
+	Next
+	exportVar output, true
+
+End With
+
+End Sub
 
 Sub ctrlUA103eqUA200f()
 'Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
@@ -540,6 +656,26 @@ End With
 
 End Sub
 
+Sub getUB310()
+'Si une 310 est présente, récupère son information
+'Raccourci : Ctrl+Shift++
+'Requis : countOccurrences
+
+	dim z, posUB310
+	
+	toEditMode true, false
+	
+With Application.activeWindow
+	
+	'Récupère la valeur du UB310
+	z = .copyTitle
+	z = Mid(z, InStr(z, "310 ##$a")+8)
+	z = Left(z, InStr(z, chr(13))-1)
+	.Clipboard = z
+End With
+
+End Sub
+
 Sub goToTag(tag, subTag, toEndOfField, toFirst, toLast)
 'Place le curseur à l'empalcement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que toFirst ou toLast soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée
 'La fonction countOccurences est nécesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
@@ -697,6 +833,49 @@ Sub goToTagInputBox()
 	goToTag z, v, y, x, w
 	'goToTag "606", "", true, "", ""
 End Sub
+
+Function PurifUB200a(UB200, isUB541)
+'Requis : none
+'_A_MOD_ -> mieux handle la provenance
+
+	dim UB200a, UB200aPos, UB200fPos
+	UB200aPos = InStr(UB200, "$a")+2
+	If isUB541 = false Then
+		UB200fPos = InStr(UB200, "$f")
+	Else
+		UB200fPos = InStr(UB200, "$z")
+	End If
+	UB200a = Mid(UB200, UB200aPos, UB200fPos - UB200aPos)
+	UB200 = Replace(UB200, UB200a, "")
+	UB200a = replace(UB200a, " : ", "$e")
+	UB200a = replace(UB200a, ": ", "$e")
+	'Ajoute le @
+	If Left(UB200a, 6)="De la " Then
+		UB200a = Left(UB200a, 6) & "@" & Mid(UB200a, 7, Len(UB200a))
+	ElseIf Left(UB200a, 5)="De l'" Then
+		UB200a = Left(UB200a, 5) & "@" & Mid(UB200a, 6, Len(UB200a))
+	ElseIf Left(UB200a, 4)="Les "_
+	OR Left(UB200a, 4)="Des "_
+	OR Left(UB200a, 4)="Une "_
+	OR Left(UB200a, 4)="The " Then
+		UB200a = Left(UB200a, 4) & "@" & Mid(UB200a, 5, Len(UB200a))
+	ElseIf Left(UB200a, 3)="Le "_
+	OR Left(UB200a, 3)="La "_
+	OR Left(UB200a, 3)="Un "_
+	OR Left(UB200a, 3)="An "_
+	OR Left(UB200a, 3)="De "_
+	OR Left(UB200a, 3)="Du " Then
+		UB200a = Left(UB200a, 3) & "@" & Mid(UB200a, 4, Len(UB200a))
+	ElseIf Left(UB200a, 2)="A "_
+	OR Left(UB200a, 2)="L'"_
+	OR Left(UB200a, 2)="D'"  Then
+		UB200a = Left(UB200a, 2) & "@" & Mid(UB200a, 3, Len(UB200a))
+	Else
+		UB200a = "@" & UB200a
+	End If
+	PurifUB200a = Left(UB200, UB200aPos-1) & UB200a & Mid(UB200, UB200aPos, Len(UB200))
+	
+End Function
 
 Sub searchExcelPPNList()
 'Recherche la liste de PPN contenu dans le presse-papier
