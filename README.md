@@ -210,14 +210,14 @@ Exporte `var` dans `export.txt` (même emplacement que `winibw.vbs`), réécriva
 
 Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR).
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getcoteex).
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getcoteex).
 
 
 ### `SUB getTitle()`
 
 Renvoie dans le presse-papier le titre du document en remplaçant les @ et $e. Si le titre est entièrement en majuscule, le renvoie en minuscule (sauf première lettre).
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-gettitle).
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-gettitle).
 
 
 ### `SUB getUA810b()`
@@ -226,14 +226,14 @@ Si un seul UA810 est présent, écrit le $b "né le" à partir des informations 
 
 Pour un bon fonctionnement, la UA103 doit comprendre AAAAMMJJ.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getua810b).
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getua810b).
 
 
 ### `SUB getUB310()`
 
 Copie dans le presse-papier la valeur du premier UB310.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getub310).
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getub310).
 
 
 ### `SUB goToTag([string]tag, [string, "none" pour empty]subTag, [bool]toEndOfField, [bool]toFirst, [bool]toLast)`
