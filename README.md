@@ -119,7 +119,7 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
   * actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
   * adaptation du projet pour être cohérent avec les autres outils.
 * le 25/08/2021 :
-  * suppression de `ctrlTraitementInterne`, que j'avais dû arrêté en plein milieu du développement ;
+  * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
   * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de ConS*tance*.
 
 ## Présentation des scripts
