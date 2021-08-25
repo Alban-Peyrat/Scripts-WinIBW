@@ -1,4 +1,5 @@
 Sub ctrlTraitementInterne
+	'Apès vérification, je doute que ce script fonctionne
 	
 Dim PPNList, storedPPN, notice, Cote, count
 Dim z, posRCR, posA98, posA, posJ
