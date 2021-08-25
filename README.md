@@ -45,8 +45,7 @@ Les scripts sont divisés entre trois fichiers différents :
   * goToTagInputBox ;
   * Sleep ;
   * toEditMode ;
-* [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs), qui contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent. Ils seront probablement remplacés par des procécédes proches de CoCo-SAlma2 :
-  * ctrlTraitementInterne ;
+* [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs), qui contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent, ou des scripts de mon bac à sable que je pense utiles à partager. Cerains sont en train d'être remplacés par des procécédes proches de CoCo-SAlma2 dans l'outil ConS*tance* :
   * ctrlUA103eqUA200f ;
   * ctrlUB700S3.
 
@@ -119,6 +118,9 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
   * [répartition des scripts entre plusieurs fichiers](https://github.com/Alban-Peyrat/Scripts-WinIBW#organisation-des-scripts) ;
   * actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
   * adaptation du projet pour être cohérent avec les autres outils.
+* le 25/08/2021 :
+  * suppression de `ctrlTraitementInterne`, que j'avais dû arrêté en plein milieu du développement ;
+  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de ConS*tance*.
 
 ## Présentation des scripts
 
@@ -170,12 +172,6 @@ Exécute `ChantierTheseAddUB183`, sauf si l'utilisateur refuse l'ajout, sur la l
 Renvoi le nombre d'occurrences.
 
 [Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#func-countoccurrencesp_strstringtocheck-p_strsubstring-p_boolcasesensitive).
-
-### `SUB ctrlTraitementInterne`
-
-Récupère pour la liste de PPN présente dans le presse-papier la cote associé au RCR et l'exporte avec le PPN.
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-ctrltraitementinterne).
 
 
 ### `SUB ctrlUA103eqUA200f()`
