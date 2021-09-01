@@ -545,7 +545,7 @@ Sub getDataUAChantierThese()
 		& "[$$d] Discipline : " & discipline & chr(10)_
 		& "[$$n] Nom : " & nom  & chr(10)_
 		& "[$$p] Prénom : " & prenom  & chr(10)_
-		& "[$$b] Naissance : " & bday & chr(10)_
+		& "[$$w] Naissance : " & bday & chr(10)_
 		& "[$$t] Titre : " & titre & chr(10)_
 		& "[$$z] Cote : " & cote & chr(10) & chr(10)_
 		& "CapsLock : " & capsLock & chr(10)_
@@ -565,7 +565,7 @@ Sub getDataUAChantierThese()
 				nom = Right(occ, Len(occ)-1)
 			case "p"
 				prenom = Right(occ, Len(occ)-1)
-			case "b"
+			case "w"
 				bday = Right(occ, Len(occ)-1)
 			case "t"
 				titre = Right(occ, Len(occ)-1)
