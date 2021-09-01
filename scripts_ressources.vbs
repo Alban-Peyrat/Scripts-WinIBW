@@ -1,3 +1,13 @@
+Function appendNote(var, text)
+'Importer de ConStance [01/09/2021]
+    If var = "" Then
+        var = text
+    Else
+        var = var & Chr(10) & text
+    End If
+    appendNote = var
+End Function
+
 Function CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)
 'Renvoie le nombre d'occurrences
 'Source : https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
@@ -253,3 +263,32 @@ With Application.activeWindow
 	End If
 End With
 End Sub
+
+Function uCaseNames(noms)
+
+Dim kk, jj, sepCheck
+
+noms = Left(noms, 1) & LCase(Mid(noms, 2, Len(noms)))
+For kk = 0 to 3
+	Select Case kk
+		Case 0
+			sepCheck = " "
+		Case 1
+			sepCheck = "-"
+		Case 2
+			sepCheck = "'"
+	End Select
+	jj = 1
+	While jj <> 0
+		jj = InStr(jj+1, noms, sepCheck)
+		On Error Resume Next
+		noms = Left(noms, jj) & UCase(Mid(noms, jj+1, 1)) & Right(noms, Len(noms)-jj-1)
+	Wend
+Next
+
+noms = Replace(noms, " De ", " de ", 1, -1, 0)
+noms = Replace(noms, " D'", " d'", 1, -1, 0)
+
+uCaseNames = noms
+
+End Function
