@@ -384,24 +384,226 @@ End Function
 
 Sub getCoteEx()
 'Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR)
+'PEUT-ÊTRE je ferai une option pour choisir des cotes spécifiques si j'ai le temps parce que ça m'a l'air compliqué encore
 'Raccourci : Ctrl+Shift+D
-'Requis : RIEN
+'Requis : appendNote
 
-    dim z, posRCR, posA98, posA, posJ
-    
-With Application.activeWindow
+dim notice, cote, skip, UEa, ans, temp, separateur
 
-    z = .copyTitle
-    posRCR = InStr(z, "930 ##$b$_$#$_$RCR$_$#$_$")
-    posA98 = InStrRev(z, "A98 $_$#$_$RCR$_$#$_$")
-    z = Mid(z, posRCR, posA98-posRCR)
-    posA = InStr(z,"$a")+2
-    posJ = InStrRev(z, "$j")
-    z = Mid(z, posA, posJ-posA)
-    .Clipboard = z
-    
-End With
+notice = Application.activeWindow.copyTitle
+notice = split(notice, "$b330632101")
 
+skip = true
+For Each occ in notice
+'Ignore la première occurrence
+	If skip = true Then
+		skip = false
+	Else
+		UEa = InStr(occ, "$a")
+'Détecte s'il y a une cote
+		If (UEa > 0) AND (UEa < InStr(occ, "A98 ")) Then
+'Isole la cote
+			occ = Mid(occ, InStr(occ, "$a")+2, len(occ))
+			If InStr(occ, "$") < InStr(occ, chr(13)) Then
+				cote = appendNote(cote, Mid(occ, 1, InStr(occ, "$")-1))
+			Else
+				cote = appendNote(cote, Mid(occ, 1, InStr(occ, chr(13))-1))
+			End If
+		Else
+			cote = appendNote(cote, "[Exemplaire sans cote]")
+		End If
+	End If
+Next
+
+If InStr(cote, chr(10)) > 0 Then
+'Ne peut pas excéder 10 cotes différentes atm
+	ans = InputBox("Plusieurs cotes pour ce RCR :" & chr(10)_
+	& cote & chr(10) & chr(10)_
+	& "Choisissez le numéro de l'occurrence (commence à 0, 'all' pour toutes)" & chr(10)_
+	& "Saut de ligne comme séparateur par défaut, pour en choisir un autre :" & chr(10)_
+	& "[$$t] pour une tabulation horizontale" & chr(10)_
+	& "[$$;] pour un point-virgule" & chr(10)_
+	& "[$$#{votre-choix}] pour un séparateur personnalisé (sans les {})" & chr(10)_
+	, "Choisir la cote :", "0")
+	
+'Une seule cote
+	If InStr(ans, "all") = 0 Then
+		temp = Split(cote, chr(10))
+		On Error Resume Next
+		cote = temp(Left(ans, 1))
+		If Err then
+			cote = temp(0)
+		End If
+'Toutes les cotes
+	Else
+		separateur = InStr(ans, "$$")
+		If separateur > 0 Then
+			separateur = Mid(ans, InStr(ans, "$$")+2, len(ans))
+			Select Case Left(separateur, 1)
+				case "t"
+					cote = Replace(cote, chr(10), chr(09))
+				case ";"
+					cote = Replace(cote, chr(10), ";")
+				case "#"
+					cote = Replace(cote, chr(10), Right(separateur, len(separateur)-1))
+			End Select
+		End If
+	End If	
+End If
+
+Application.activeWindow.Clipboard = cote
+
+End Sub
+
+Sub getDataUAChantierThese()
+'Génère le squelette de la notice d'autorité à partir de la notice bibliographique (DANS LE CADRE DU CHANTIER)
+'Raccourci : Ctrl Shift J
+'Requis : appendNote, uCaseNames
+
+	dim PPN_B, notice
+	dim year, discipline, nom, prenom, bday, titre, sexe, cote, note
+	dim temp, tableau(999), ii, capsLock, output, ansSplit, jj, sepCheck, kk
+	
+	capsLock = false
+	notice = Application.activeWindow.copyTitle
+	
+'Déjà une UB700S3
+	temp = Mid(notice, InStr(notice, chr(13) & "700")+1, len(notice))
+	If Mid(temp, InStr(temp, "$")+1, 1) = "3" Then
+		MsgBox "Déjà fait"
+		Application.activeWindow.Clipboard = "Déjà fait"
+		Exit Sub
+	End If
+	
+'Gestion PPN + 328
+	PPN_B = Application.activeWindow.variable("P3GPP")
+	temp = Mid(notice, InStr(notice, "328 #"), Len(notice))
+	year = Mid(temp, InStr(temp, "$d")+2, 4)
+	discipline = Mid(temp, InStr(temp, "$c")+2, InStr(temp, "$e")-InStr(temp, "$c")-2)
+'Adaptation de la discipline à mon fichier
+'Peut-être jsute limiter la transformation à méd, méd gé, pharma
+	Select Case discipline
+		Case "Sciences de la vie"
+			discipline = "1 - sciences de la vie"
+		Case "Médecine générale"
+			discipline = "2 - médecine générale"
+		Case "Pharmacie"
+			discipline = "3 - pharmacie"
+		Case "Médecine"
+			discipline = "5 - médecine"
+		Case "Sciences biologiques et médicales. Biologie-Santé"
+			discipline = "6 - biologie - santé"
+		Case "Sciences biologiques et médicales. Neurosciences et neuropharmacologie"
+			discipline = "7 - neurosciences et neuropharmacologie"
+		Case "Sciences biologiques et médicales"
+			discipline = "8 - sciences biologiques et médicales"
+		Case "Sciences odontologiques"
+			discipline = "9 - sciences odontologiques"
+		Case "Sciences biologiques et médicales. Epidémiologie et intervention en santé publique"
+			discipline = "4 - épidémiologie et intervention en santé publique"
+		Case "Sciences biologiques et médicales. Sciences pharmaceutiques"
+			discipline = "A - sciences pharmaceutiques"
+		Case Else
+			note = appendNote(note, "Sélectionner manuellement la discipline")
+	End Select
+	
+	'Gestion du nom
+	temp = Mid(notice, InStr(notice, "700 #"), Len(notice))
+	nom = Mid(temp, InStr(temp, "$a")+2, InStr(temp, "$b")-InStr(temp, "$a")-2)
+	If UCase(nom) = nom Then
+		nom = uCaseNames(nom)
+		capsLock = true
+	End If
+	
+	'Gestion de la bday
+	prenom = Mid(temp, InStr(temp, "$b")+2, InStr(temp, "$4")-InStr(temp, "$b")-2)
+	bday = ""
+	For ii = 0 to Len(prenom)
+		tableau(ii) = Mid(prenom, ii+1, 1)
+		If isNumeric(tableau(ii)) = true Then
+			bday = bday & tableau(ii)
+		End If
+	Next
+	
+	'Gestion du prénom
+	If InStr(prenom, "$f") > 0 Then
+		prenom = Left(prenom, InStr(prenom, "$f")-1)
+	End If
+	If UCase(prenom) = prenom Then
+		prenom = uCaseNames(prenom)
+		capsLock = true
+	End If
+	
+	'Gestion titre + cote
+	getTitle
+	titre = Application.activeWindow.clipboard
+	getCoteEx
+	cote = Application.activeWindow.clipboard
+	
+	'Détermine le sexe + si la cote à un pb)
+	sexe = InputBox("[$$y] An : " & year & chr(10)_
+		& "[$$d] Discipline : " & discipline & chr(10)_
+		& "[$$n] Nom : " & nom  & chr(10)_
+		& "[$$p] Prénom : " & prenom  & chr(10)_
+		& "[$$b] Naissance : " & bday & chr(10)_
+		& "[$$t] Titre : " & titre & chr(10)_
+		& "[$$z] Cote : " & cote & chr(10) & chr(10)_
+		& "CapsLock : " & capsLock & chr(10)_
+		& "Si pb sur un de ces champs, ajouter $X$ collé au reste dans le champ et corriger l'information"& chr(10),_
+		"Choisir le sexe :", "u")
+	sexe = sexe & "$$"
+'Gestion des changements manuels
+	ansSplit = Split(sexe, "$$")
+	sexe = ansSplit(0)
+	For Each occ in ansSplit
+		Select Case Left(occ, 1)
+			case "y"
+				year = Right(occ, Len(occ)-1)
+			case "d"
+				discipline = Right(occ, Len(occ)-1)
+			case "n"
+				nom = Right(occ, Len(occ)-1)
+			case "p"
+				prenom = Right(occ, Len(occ)-1)
+			case "b"
+				bday = Right(occ, Len(occ)-1)
+			case "t"
+				titre = Right(occ, Len(occ)-1)
+			case "z"
+				cote = Right(occ, Len(occ)-1)
+		End Select
+	Next
+'Gestion de la note
+'UB101 <> fre
+	temp = Mid(notice, InStr(notice, chr(13) & "101")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
+	If temp <> "$afre" Then
+		note = appendNote(note, temp)
+	End If
+'UB102 <> FR
+	temp = Mid(notice, InStr(notice, chr(13) & "102")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
+	If temp <> "$aFR" Then
+		note = appendNote(note, temp)
+	End If
+'Présence POSSIBLE de nom d'épouse / jeune fille
+	temp = Mid(notice, InStr(notice, chr(13) & "200")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$f")+2, InStr(temp, chr(13)) - InStr(temp, "$f")-1)
+	If InStr(temp, "$") <> 0 Then
+		temp = Left(temp, InStr(temp, "$")-1)
+	End If
+	If (InStr(temp, "ép.") > 0) OR (InStr(temp, "épouse") > 0) OR (InStr(temp, " fille") > 0) Then
+		note = appendNote(note, "Possiblement un nom d'épouse")
+	End If
+'Présence POSSIBLE de deux auteurs
+	If InStr(temp, " et ") Then
+		note = appendNote(note, "Possiblement deux auteurs")
+	End If
+	
+	note = Replace(note, chr(10), " ; ")
+	
+	output = PPN_B & chr(09) & year & chr(09) & discipline & chr(09) & nom & chr(09) & prenom & chr(09) & bday & chr(09) & sexe & chr(09) & titre & chr(09) & chr(09) & chr(09) & chr(09) & note & chr(09) & cote
+	Application.activeWindow.clipboard = output
 End Sub
 
 Sub getTitle()
