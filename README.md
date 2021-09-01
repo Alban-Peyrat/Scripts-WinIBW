@@ -33,18 +33,21 @@ Les scripts sont divisés entre trois fichiers différents :
   * ChantierTheseLoopAddUB183 ;
   * decompUA200enUA400 ;
   * getCoteEx ;
+  * getDataUAChantierThese ;
   * getTitle ;
   * getUA810b ;
   * getUB310 ;
   * PurifUB200a ;
   * searchExcelPPNList ;
 * [scripts ressources](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), qui contient les scripts qui facilitent l'exécution des autres :
+  * appendNote ;
   * CountOccurrences ;
   * exportVar ;
   * goToTag ;
   * goToTagInputBox ;
   * Sleep ;
   * toEditMode ;
+  * uCaseNames ;
 * [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs), qui contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent, ou des scripts de mon bac à sable que je pense utiles à partager. Cerains sont en train d'être remplacés par des procécédes proches de CoCo-SAlma2 dans l'outil ConS*tance* :
   * ctrlUA103eqUA200f ;
   * ctrlUB700S3.
@@ -120,7 +123,13 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
   * adaptation du projet pour être cohérent avec les autres outils.
 * le 25/08/2021 :
   * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
-  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de ConS*tance*.
+  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de ConS*tance* ;
+* le 01/09/2021 :
+  * ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
+  * ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
+  * ajout de `uCaseNames` pour mettre des majuscules aux noms renseignés ;
+  * modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
+  * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames`.
 
 ## Présentation des scripts
 
@@ -145,6 +154,14 @@ Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant 
 Contient aussi un appel du [script supprimant des anomalies dans les exemplaires](https://github.com/Alban-Peyrat/Scripts-WinIBW#sub-changeexanomnotice).
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-addub700s3).
+
+
+### `FUNCTION appendNote(var, text)`
+
+Renvoie `var` comme équivalent à `text` si `var` était vide, sinon, renvoie `var` suivi d'un saut de ligne puis de `text`.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#function-appendnotevar-text).
+
 
 ### `SUB changeExAnom(notice)`
 
@@ -204,9 +221,18 @@ Exporte `var` dans `export.txt` (même emplacement que `winibw.vbs`), réécriva
 
 ### `SUB getCoteEx()`
 
-Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR).
+Renvoie dans le presse-papier la cote du document. Si plusieurs cotes sont présentes, donne le choix entre en sélectionner une, ou toutes les sélectionner, permettant également de choisir le séparateur.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getcoteex).
+
+
+### `SUB getDataUAChantierThese()`
+
+Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales.
+
+Créé dans le cadre d'un chantier sur les thèses, l'exploitation de ces données se fait dans un tableur Excel particulier.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-getdatauachantierthese).
 
 
 ### `SUB getTitle()`
@@ -274,3 +300,10 @@ Permet de mettre en pause un script pendant t = `time` (en secondes).
 Passe en mode édition (ou présentation).
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#sub-toeditmodeboollgpmode-boolsave).
+
+
+### `FUNCTION uCaseNames(noms)`
+
+Renvoie `noms` après avoir mis une majuscule au début de chaque nom renseigné.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs), [consulter la documentation complète](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/documentation.md#function-ucasenamesnoms).
