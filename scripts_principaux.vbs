@@ -549,7 +549,7 @@ Sub getDataUAChantierThese()
 		& "[$$t] Titre : " & titre & chr(10)_
 		& "[$$z] Cote : " & cote & chr(10) & chr(10)_
 		& "CapsLock : " & capsLock & chr(10)_
-		& "Si pb sur un de ces champs, ajouter $X$ collé au reste dans le champ et corriger l'information"& chr(10),_
+		& "Si pb sur un de ces champs, ajouter $$X collé au reste dans le champ et corriger l'information"& chr(10),_
 		"Choisir le sexe :", "u")
 	sexe = sexe & "$$"
 'Gestion des changements manuels
