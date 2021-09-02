@@ -131,7 +131,8 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
   * modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
   * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames` ;
 * le 02/09/2021 :
-  * modification de `getDataUAChantierThese` pour réorganiser l'inputBox et rajouter de la précision à la note sur les noms d'épouse.
+  * modification de `getDataUAChantierThese` pour réorganiser l'inputBox, rajouter de la précision à la note sur les noms d'épouse et empêcher des valeurs illégales pour le genre ;
+  * modification de `getCoteEx` pour afficher le numéro de l'occurrence et de l'exemplaire en cas de cotes multiples, ainsi que de gérer la sélection individuelle de plusieurs cotes.
 
 ## Présentation des scripts
 
