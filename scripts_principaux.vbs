@@ -388,71 +388,93 @@ Sub getCoteEx()
 'Raccourci : Ctrl+Shift+D
 'Requis : appendNote
 
-dim notice, cote, skip, UEa, ans, temp, separateur
+dim notice, cote(98, 2), UEa, ans, temp, separateur, occNb, coteDisplay, ii, ansSplit
 
 notice = Application.activeWindow.copyTitle
-notice = split(notice, "$b330632101")
+notice = split(notice, "$b335222104")
 
-skip = true
+occNb = -1
 For Each occ in notice
+	occNb = occNb+1
 'Ignore la première occurrence
-	If skip = true Then
-		skip = false
-	Else
+	If occNb > 0 Then
+		cote(occNb, 1) = Mid(notice(occNb-1), Instr(notice(occNb-1), chr(13) & "e")+1, 3)
 		UEa = InStr(occ, "$a")
 'Détecte s'il y a une cote
 		If (UEa > 0) AND (UEa < InStr(occ, "A98 ")) Then
 'Isole la cote
 			occ = Mid(occ, InStr(occ, "$a")+2, len(occ))
 			If InStr(occ, "$") < InStr(occ, chr(13)) Then
-				cote = appendNote(cote, Mid(occ, 1, InStr(occ, "$")-1))
+				cote(occNb, 2) = Mid(occ, 1, InStr(occ, "$")-1)
 			Else
-				cote = appendNote(cote, Mid(occ, 1, InStr(occ, chr(13))-1))
+				cote(occNb, 2) = Mid(occ, 1, InStr(occ, chr(13))-1)
 			End If
 		Else
-			cote = appendNote(cote, "[Exemplaire sans cote]")
+			cote(occNb, 2) = "[Exemplaire sans cote]"
 		End If
+	coteDisplay = appendNote(coteDisplay, "[Occ. " & occNb & "] " & cote(occNb, 1) & " : " & cote(occNb, 2))
 	End If
 Next
 
-If InStr(cote, chr(10)) > 0 Then
+'Détecte s'il y a plusieurs exemplaires en mémoire
+If occNb > 1 Then
 'Ne peut pas excéder 10 cotes différentes atm
 	ans = InputBox("Plusieurs cotes pour ce RCR :" & chr(10)_
-	& cote & chr(10) & chr(10)_
-	& "Choisissez le numéro de l'occurrence (commence à 0, 'all' pour toutes)" & chr(10)_
+	& coteDisplay & chr(10) & chr(10)_
+	& "Choisissez les numéro d'occurrences voulues (séparer les numéros par _ si nécessaire, 'all' pour toutes)" & chr(10) & chr(10)_
 	& "Saut de ligne comme séparateur par défaut, pour en choisir un autre :" & chr(10)_
 	& "[$$t] pour une tabulation horizontale" & chr(10)_
 	& "[$$;] pour un point-virgule" & chr(10)_
 	& "[$$#{votre-choix}] pour un séparateur personnalisé (sans les {})" & chr(10)_
-	, "Choisir la cote :", "0")
-	
-'Une seule cote
+	, "Choisir la cote :", "1")
+	coteDisplay = ""
+'Cotes individuelles
 	If InStr(ans, "all") = 0 Then
-		temp = Split(cote, chr(10))
-		On Error Resume Next
-		cote = temp(Left(ans, 1))
-		If Err then
-			cote = temp(0)
-		End If
+		ans = "_" & ans
+		ansSplit = Split(ans, "_")
+		For each chosenOcc in ansSplit
+			If chosenOcc <> "" Then
+				If InStr(chosenOcc, "$$") = 0 Then
+					temp = chosenOcc
+				Else
+					temp = Left(chosenOcc, InStr(chosenOcc, "$$")-1)
+				End If
+'Vérifie si c'est une occurrence valide
+				If isNumeric(temp) = true Then
+					If (CInt(temp) < occNb+1) AND (CInt(temp) > 0) Then
+						coteDisplay = appendNote(coteDisplay, cote(temp, 2))
+					Else
+						coteDisplay = appendNote(coteDisplay, "[Occ. choisie (" & temp &") invalide]")
+					End if
+				Else
+					coteDisplay = appendNote(coteDisplay, "[" & temp & " n'est pas une occ.]")
+				End If
+			End If
+		Next
 'Toutes les cotes
 	Else
-		separateur = InStr(ans, "$$")
-		If separateur > 0 Then
-			separateur = Mid(ans, InStr(ans, "$$")+2, len(ans))
-			Select Case Left(separateur, 1)
-				case "t"
-					cote = Replace(cote, chr(10), chr(09))
-				case ";"
-					cote = Replace(cote, chr(10), ";")
-				case "#"
-					cote = Replace(cote, chr(10), Right(separateur, len(separateur)-1))
-			End Select
-		End If
-	End If	
+		For ii = 1 to occNb
+			coteDisplay = appendNote(coteDisplay, cote(ii, 2))
+		Next
+	End If
+	separateur = InStr(ans, "$$")
+	If separateur > 0 Then
+		separateur = Mid(ans, InStr(ans, "$$")+2, len(ans))
+		Select Case Left(separateur, 1)
+			case "t"
+				coteDisplay = replace(coteDisplay, chr(10), chr(09))
+			case ";"
+				coteDisplay = replace(coteDisplay, chr(10), ";")
+			case "#"
+				coteDisplay = replace(coteDisplay, chr(10), Right(separateur, len(separateur)-1))
+		End Select
+	End If
+'S'il n'y a qu'une seule cote en mémoire
+Else
+	coteDisplay = cote(1, 2)
 End If
 
-Application.activeWindow.Clipboard = cote
-
+Application.activeWindow.Clipboard = coteDisplay
 End Sub
 
 Sub getDataUAChantierThese()
@@ -583,6 +605,9 @@ Sub getDataUAChantierThese()
 'Gestion des changements manuels
 	ansSplit = Split(sexe, "$$")
 	sexe = ansSplit(0)
+	If (sexe <> "a") AND (sexe <> "b") AND (sexe <> "u") Then
+		sexe = "u"
+	End If
 	For Each occ in ansSplit
 		Select Case Left(occ, 1)
 			case "y"
