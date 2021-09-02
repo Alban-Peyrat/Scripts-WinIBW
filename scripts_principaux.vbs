@@ -531,7 +531,7 @@ Sub getDataUAChantierThese()
 	End If
 	If UCase(prenom) = prenom Then
 		prenom = uCaseNames(prenom)
-		capsLock = true
+		capsLock = "-----> CAPS LOCK <-----"
 	End If
 	
 	'Gestion titre + cote
@@ -540,16 +540,44 @@ Sub getDataUAChantierThese()
 	getCoteEx
 	cote = Application.activeWindow.clipboard
 	
+'Gestion de la note
+'UB101 <> fre
+	temp = Mid(notice, InStr(notice, chr(13) & "101")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
+	If temp <> "$afre" Then
+		note = appendNote(note, "/!\ 101 " & temp)
+	End If
+'UB102 <> FR
+	temp = Mid(notice, InStr(notice, chr(13) & "102")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
+	If temp <> "$aFR" Then
+		note = appendNote(note,  "/!\ 102 " & temp)
+	End If
+'Présence POSSIBLE de nom d'épouse / jeune fille
+	temp = Mid(notice, InStr(notice, chr(13) & "200")+1, len(notice))
+	temp = Mid(temp, InStr(temp, "$f")+2, InStr(temp, chr(13)) - InStr(temp, "$f")-1)
+	If InStr(temp, "$") <> 0 Then
+		temp = Left(temp, InStr(temp, "$")-1)
+	End If
+	If (InStr(temp, "ép.") > 0) OR (InStr(temp, "épouse") > 0) OR (InStr(temp, " fille") > 0) OR (InStr(temp, " naissance") > 0) OR (InStr(temp, " née") > 0) Then
+		note = appendNote(note, "Possiblement un nom d'épouse")
+	End If
+'Présence POSSIBLE de deux auteurs
+	If InStr(temp, " et ") Then
+		note = appendNote(note, "Possiblement deux auteurs")
+	End If
+	
 	'Détermine le sexe + si la cote à un pb)
-	sexe = InputBox("[$$y] An : " & year & chr(10)_
-		& "[$$d] Discipline : " & discipline & chr(10)_
+	sexe = InputBox ("[$$d] Discipline : " & discipline & chr(10)_
+		& "[$$y] An : " & year & chr(10) & chr(10)_
 		& "[$$n] Nom : " & nom  & chr(10)_
 		& "[$$p] Prénom : " & prenom  & chr(10)_
-		& "[$$w] Naissance : " & bday & chr(10)_
-		& "[$$t] Titre : " & titre & chr(10)_
+		& "[$$w] Naissance : " & bday & chr(10) & chr(10)_
+		& "[$$t] Titre : " & titre & chr(10) & chr(10)_
 		& "[$$z] Cote : " & cote & chr(10) & chr(10)_
-		& "CapsLock : " & capsLock & chr(10)_
-		& "Si pb sur un de ces champs, ajouter $$X collé au reste dans le champ et corriger l'information"& chr(10),_
+		& "Majuscule verrouillée : " & capsLock & chr(10) & chr(10)_
+		& "Notes : " & note & chr(10) & chr(10)_
+		& "Pour réécrire manuellement un champ, ajouter $${lettre du champ}{nouvelle information} collé au reste de l'input."& chr(10),_
 		"Choisir le sexe :", "u")
 	sexe = sexe & "$$"
 'Gestion des changements manuels
@@ -573,32 +601,6 @@ Sub getDataUAChantierThese()
 				cote = Right(occ, Len(occ)-1)
 		End Select
 	Next
-'Gestion de la note
-'UB101 <> fre
-	temp = Mid(notice, InStr(notice, chr(13) & "101")+1, len(notice))
-	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
-	If temp <> "$afre" Then
-		note = appendNote(note, temp)
-	End If
-'UB102 <> FR
-	temp = Mid(notice, InStr(notice, chr(13) & "102")+1, len(notice))
-	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
-	If temp <> "$aFR" Then
-		note = appendNote(note, temp)
-	End If
-'Présence POSSIBLE de nom d'épouse / jeune fille
-	temp = Mid(notice, InStr(notice, chr(13) & "200")+1, len(notice))
-	temp = Mid(temp, InStr(temp, "$f")+2, InStr(temp, chr(13)) - InStr(temp, "$f")-1)
-	If InStr(temp, "$") <> 0 Then
-		temp = Left(temp, InStr(temp, "$")-1)
-	End If
-	If (InStr(temp, "ép.") > 0) OR (InStr(temp, "épouse") > 0) OR (InStr(temp, " fille") > 0) Then
-		note = appendNote(note, "Possiblement un nom d'épouse")
-	End If
-'Présence POSSIBLE de deux auteurs
-	If InStr(temp, " et ") Then
-		note = appendNote(note, "Possiblement deux auteurs")
-	End If
 	
 	note = Replace(note, chr(10), " ; ")
 	
