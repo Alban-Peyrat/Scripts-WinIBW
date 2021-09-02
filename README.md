@@ -129,7 +129,9 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
   * ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
   * ajout de `uCaseNames` pour mettre des majuscules aux noms renseignés ;
   * modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
-  * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames`.
+  * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames` ;
+* le 02/09/2021 :
+  * modification de `getDataUAChantierThese` pour réorganiser l'inputBox et rajouter de la précision à la note sur les noms d'épouse.
 
 ## Présentation des scripts
 
