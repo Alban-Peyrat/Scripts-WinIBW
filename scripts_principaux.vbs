@@ -1,3 +1,44 @@
+Sub add18XmonoImp()
+'Ajout une 181 txt, 182 n 183 nga pour P01
+	toEditMode false, false
+	
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"181 ##$P01$ctxt" & chr(10) & "182 ##$P01$cn" & chr(10) & "183 ##$P01$anga" & chr(10)
+	
+End Sub
+
+Sub add214Elsevier()
+'Ajoute une 214 type pour Elsevier
+	
+	toEditMode false, false
+	
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2021" & chr(10)
+	
+End Sub
+
+Sub addBibgFinChap()
+	toEditMode false, false
+	Application.activeWindow.title.insertText	"Chaque fin de chapitre comprend une bibliographie"
+End Sub
+
+Sub addCouvPorte()
+	
+	toEditMode false, false
+	
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"312 ##$aLa couverture porte en plus : """
+End Sub
+
+Sub addISBNElsevier()
+'Ajoute une 010 avec le début de l'ISBN d'Elsevier
+	
+	toEditMode false, false
+	
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"010 ##$A978-2-294-"
+End Sub
+
 Sub AddSujetRAMEAU()
 'Permet d'ajouter des 606
 'Raccourci : Ctrl Shift (
@@ -72,35 +113,63 @@ Sub addUA400()
 'Basée sur la 200, elle décompose le  $a
 'Raccourci : Ctrl Shift "
 'Requis : decompUA200enUA400, toEditMode
-'_A_MOD_
+'PAS UNIVERSEL. Fonctionne uniquement s'il y a un $a et un $b au moins
 
-    dim z, sPos
+    dim UA200, UA200a, UA200b, UA200fPos, UA400, temp
     
     toEditMode false, false
     
 With Application.activeWindow.Title
 	
-	z = .FindTag ("200")
-	z = decompUA200enUA400(z)
+	' UA200 = .FindTag ("200")
+	' UA200fPos = 0
+	' ii = 0
+	' While UA200fPos = 0
+	' 	Select Case ii
+	' 		case 0
+	' 			UA200fPos = inStr(UA200, "$f")
+	' 		case 1
+	' 			UA200fPos = inStr(UA200, "$c")
+
+	' 		case 2
+	' 			UA200fPos = inStr(UA200, "$x")
+	' 		case 3
+	'			UA200fPos = inStr(UA200, "$y")
+	'		case 4
+	'			UA200fPos = inStr(UA200, "$z")
+	'		case Else
+	'			UA200fPos = Len(UA200)
+	'	End Select
+	'	ii = ii +1
+	'Wend
+
+	'UA200a = Mid(UA200, InStr(UA200, "$a")+2, InStr(UA200, "$b") - InStr(UA200, "$a")-2)
+	'UA200b = Mid(UA200, InStr(UA200, "$b")+2, UA200fPos - InStr(UA200, "$b")-2)
+	temp = findUA200aUA200b
+	temp = Split(temp, ";_;")
+	UA200 = temp(0)
+	UA200a = temp(1)
+	UA200b = temp (2)
+	UA200fPos = temp(3)
+
+	UA400 = decompUA200enUA400(UA200a, UA200b)
 	
 	.endofbuffer
-	.InsertText vblf & z
+	.InsertText vblf & UA400
 	
-	'Ajoute une 400 à modifier si decompUA200enUA400 n'a pas renvoyer de 400
-	If Len(z) < 5 Then
-	    z = .FindTag ("200")
-	    z = replace(z, "200", "400")
-	    z = replace(z, "$90y", "")
-	    sPos = inStr(z, "$f")
-	    If sPos = 0 Then
-	        sPos = inStr(z, "$c")
-	    End If
-	    z = Left(z, sPos-1)
-	    
-	    .endofbuffer
-	    .InsertText vblf & z
-	    .startoffield
-	    .CharRight 8
+'Ajoute une 400 à modifier si decompUA200enUA400 n'a pas renvoyé de 400
+	If Len(UA400) < 5 Then
+		UA400 = Left(UA200, UA200fPos)
+		If Right(UA400, 1) = "$" Then
+			UA400 = Left(UA400, Len(UA400)-1)
+		End If
+		UA400 = replace(UA400, "200", "400")
+		UA400 = replace(UA400, "$90y", "")
+		
+		.endofbuffer
+		.InsertText vblf & UA400
+		.startoffield
+		.CharRight 8
 	End If
     
 End With
@@ -304,85 +373,146 @@ End With
 
 End Sub
 
-Function decompUA200enUA400(impUA200)
+Function decompUA200enUA400(UA200a, UA200b)
 'Renvoi les champs 400 créés à partir de la décomposition du nom composé du champ 200 importé
 'Requis : RIEN
-'_A_MOD_
 
-    dim output, UA200aPos, UA200bPos, UA200b, UA200fPos, UA200cPos, UA400, UA400a, addUA400, dupName, IsDash
-    
-    decompUA200enUA400 = ""
-    
-    UA200aPos = InStr(impUA200, "$a")+2
-    UA400 = Mid(impUA200, UA200aPos)
-    UA200fPos = InStr(UA400, "$f")-1
-    If UA200fPos > 0 Then
-        UA400 = Left(UA400, UA200fPos)
-    End If
-    UA200cPos = InStr(UA400, "$c")-1
-    If UA200cPos > 0 Then
-        UA400 = Left(UA400, UA200cPos)
-    End If
-    UA200bPos = InStr(UA400, "$b")-1
-    UA200b = Mid(UA400, UA200bPos+1)
-    UA400a = Left(UA400, UA200bPos)
-    
-    While InStr(UA400a, " ") <> 0 OR InStr(UA400a, "-") <> 0
-    
-   	'Tiret ?
-    	IsDash = FALSE
-	If InStr(UA400a, "-") <> 0 Then
-		IsDash = TRUE
-		If InStr(UA400a, " ") <> 0 AND InStr(UA400a, "-") > InStr(UA400a, " ") Then
-			IsDash = FALSE
-		End If
-	End If
-	'msgBox isDash
+	dim separateur
 	
-	'Construction
-	If isDash = TRUE Then
-		dupName = Left(UA400a, InStr(UA400a, "-"))
-		UA400a = Replace(UA400a, Left(UA400a, InStr(UA400a, "-")), "")
-	Else
-		dupName = Left(UA400a, InStr(UA400a, " ")-1)
-		UA400a = Replace(UA400a, Left(UA400a, InStr(UA400a, " ")), "")
-	End If
-	'Modification du UA200b
-	If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
-		UA200b = UA200b & dupName
-	Else
-		UA200b = UA200b & " " & dupName
-	End If
-	'Rejet du "de"
-	If Left(UA400a, 3) = "de " Then
-		UA400a = Mid(UA400a, 4, Len(UA400a))
-		'UA200b = UA200b & " de"
-		If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
-			UA200b = UA200b & "de"
-		Else
-			UA200b = UA200b & " de"
+	While (InStr(UA200a, " ") <> 0) OR (InStr(UA200a, "-") <> 0)
+'Détermine le séparateur
+		If (InStr(UA200a, " ") > 0) AND (InStr(UA200a, "-") = 0 OR (InStr(UA200a, " ") < InStr(UA200a, "-"))) Then
+			separateur = InStr(UA200a, " ")
+		ElseIf (InStr(UA200a, "-") > 0) AND (InStr(UA200a, "0") = 0 OR (InStr(UA200a, " ") > InStr(UA200a, "-"))) Then
+			separateur = InStr(UA200a, "-")
 		End If
-	End If
-	'Rejet du "d'"
-	If Left(UA400a, 2) = "d'" Then
-		UA400a = Mid(UA400a, 3, Len(UA400a))
-		'UA200b = UA200b & " d'"
-		If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
-			UA200b = UA200b & "d'"
-		Else
-			UA200b = UA200b & " d'"
-		End If
-	End If
-
-	addUA400 = "400 #1$a" & UA400a & UA200b
 	
-	'Ajout à la notice
-	decompUA200enUA400 = decompUA200enUA400 & vblf & addUA400
-    Wend
+'Construit la nouvelle forme
+		If (Right(UA200b, 1) = "-") OR (Right(UA200b, 1) = "'") Then
+			UA200b = RTrim(UA200b & Left(UA200a, separateur))
+		Else
+			UA200b = RTrim(UA200b & " " & Left(UA200a, separateur))
+		End If
+		UA200a = Right(UA200a, Abs(separateur-Len(UA200a)))
+				
+'Rejet du "de"
+		If Left(UA200a, 3) = "de " Then
+			UA200a = Mid(UA200a, 4, Len(UA200a))
+			If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
+				UA200b = UA200b & "de"
+			Else
+				UA200b = UA200b & " de"
+			End If
+		End If
+'Rejet du "d'"
+		If Left(UA200a, 2) = "d'" Then
+			UA200a = Mid(UA200a, 3, Len(UA200a))
+			If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
+				UA200b = UA200b & "d'"
+			Else
+				UA200b = UA200b & " d'"
+			End If
+		End If
+		
+'Ajout à la notice
+		decompUA200enUA400 = appendNote(decompUA200enUA400, "400 #1$a" & UA200a & "$b" & UA200b)
+	Wend
 
 End Function
 
-Sub getCoteEx()
+Function findUA200aUA200b()
+'Identifie la position du $a et du $b dans la 200UA. Doit être appelé depuis écran de modification
+	Dim UA200, UA200fPos, UA200a, UA200b, ii
+
+	UA200 = Application.activeWindow.Title.FindTag ("200")
+	UA200fPos = 0
+	ii = 0
+	While UA200fPos = 0
+		Select Case ii
+			case 0
+				UA200fPos = inStr(UA200, "$f")
+			case 1
+				UA200fPos = inStr(UA200, "$c")
+
+			case 2
+				UA200fPos = inStr(UA200, "$x")
+			case 3
+				UA200fPos = inStr(UA200, "$y")
+			case 4
+				UA200fPos = inStr(UA200, "$z")
+			case Else
+				UA200fPos = Len(UA200)
+		End Select
+		ii = ii +1
+	Wend
+
+	UA200a = Mid(UA200, InStr(UA200, "$a")+2, InStr(UA200, "$b") - InStr(UA200, "$a")-2)
+	UA200b = Mid(UA200, InStr(UA200, "$b")+2, UA200fPos - InStr(UA200, "$b")-2)
+
+	findUA200aUA200b = UA200 & ";_;" & UA200a & ";_;" & UA200b & ";_;" & UA200fPos
+End Function
+
+Sub generalLauncher()
+'Ouvre un input box pour lancer les scripts (add et get), parce que j'ai pas non plus une infinité de touches raccorucis
+Dim num
+
+num = Inputbox("Écrire le numéro du script à exécuter"_
+	& chr(10) & chr(10) & chr(09) & "Notices bibg :"_
+	& chr(10) & "[14] Ajouter 18X mongraphie imprimée"_
+	& chr(10) & "[1] Ajouter couverture porte"_
+	& chr(10) & "[2] Ajouter bibg en fin de chapitre"_
+	& chr(10) & "[3] Ajouter e-ISBN"_
+	& chr(10) & "[4] Ajouter sujet RAMEAU"_
+	& chr(10) & "[5] Ajouter 700 $3"_
+	& chr(10)& chr(10) & chr(09) & "Elsevier"_
+	& chr(10) & "[6] Ajouter ISBN Elsevier"_
+	& chr(10) & "[7] Ajouter 214 Elsevier"_
+	& chr(10)& chr(10) & chr(09) & "Récupérer informations"_
+	& chr(10) & "[8] Récupérer le titre"_
+	& chr(10) & "[9] Récupérer la cote"_
+	& chr(10)& chr(10) & chr(09) & "Thèses"_
+	& chr(10) & "[10] Récupérer les données chantier autorités"_
+	& chr(10) & "[11] Récupérer la note disponibilité (310)"_
+	& chr(10) & chr(10) & chr(09) & "Notices autorité :"_
+	& chr(10) & "[12] Ajouter 400"_
+	& chr(10) & "[13] Récupérer 810 $b date de naissance"_
+	, "Exécuter un script :", 99)
+Select Case num
+	case 14
+		add18XmonoImp
+	case 1
+		addCouvPorte
+	case 2
+		addBibgFinChap
+	case 3
+		addEISBN
+	case 4
+		AddSujetRAMEAU
+	case 5
+		addUB700S3
+	case 6
+		addISBNElsevier
+	case 7
+		add214Elsevier
+	case 8
+		application.activeWindow.clipboard	= getTitle
+	case 9
+		application.activeWindow.clipboard	= getCoteEx
+	case 10
+		getDataUAChantierThese
+	case 11
+		application.activeWindow.clipboard	= getUB310
+	case 12
+		addUA400
+	case 13
+		application.activeWindow.clipboard	= getUA810b
+	case else
+		MsgBox "Aucun script correspondant."
+End Select
+
+End Sub
+
+Function getCoteEx()
 'Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR)
 'PEUT-ÊTRE je ferai une option pour choisir des cotes spécifiques si j'ai le temps parce que ça m'a l'air compliqué encore
 'Raccourci : Ctrl+Shift+D
@@ -391,7 +521,7 @@ Sub getCoteEx()
 dim notice, cote(98, 2), UEa, ans, temp, separateur, occNb, coteDisplay, ii, ansSplit
 
 notice = Application.activeWindow.copyTitle
-notice = split(notice, "$b335222104")
+notice = split(notice, "$b330632101")
 
 occNb = -1
 For Each occ in notice
@@ -474,8 +604,8 @@ Else
 	coteDisplay = cote(1, 2)
 End If
 
-Application.activeWindow.Clipboard = coteDisplay
-End Sub
+getCoteEx = coteDisplay
+End Function
 
 Sub getDataUAChantierThese()
 'Génère le squelette de la notice d'autorité à partir de la notice bibliographique (DANS LE CADRE DU CHANTIER)
@@ -484,6 +614,7 @@ Sub getDataUAChantierThese()
 
 	dim PPN_B, notice
 	dim year, discipline, nom, prenom, bday, titre, sexe, cote, note
+	dim theseData(10, 2)
 	dim temp, tableau(999), ii, capsLock, output, ansSplit, jj, sepCheck, kk
 	
 	capsLock = false
@@ -557,11 +688,9 @@ Sub getDataUAChantierThese()
 	End If
 	
 	'Gestion titre + cote
-	getTitle
-	titre = Application.activeWindow.clipboard
-	getCoteEx
-	cote = Application.activeWindow.clipboard
-	
+	titre = getTitle
+	cote = getCoteEx
+		
 'Gestion de la note
 'UB101 <> fre
 	temp = Mid(notice, InStr(notice, chr(13) & "101")+1, len(notice))
@@ -590,21 +719,22 @@ Sub getDataUAChantierThese()
 	End If
 	
 	'Détermine le sexe + si la cote à un pb)
-	sexe = InputBox ("[$$d] Discipline : " & discipline & chr(10)_
-		& "[$$y] An : " & year & chr(10) & chr(10)_
-		& "[$$n] Nom : " & nom  & chr(10)_
-		& "[$$p] Prénom : " & prenom  & chr(10)_
-		& "[$$w] Naissance : " & bday & chr(10) & chr(10)_
-		& "[$$t] Titre : " & titre & chr(10) & chr(10)_
-		& "[$$z] Cote : " & cote & chr(10) & chr(10)_
+	sexe = InputBox ("[$$d]     Discipline : " & discipline & chr(10)_
+		& "[$$y]     An : " & year & chr(10) & chr(10)_
+		& "[$$n$_] Nom : " & nom  & chr(10)_
+		& "[$$p$_] Prénom : " & prenom  & chr(10)_
+		& "[$$w]     Naissance : " & bday & chr(10) & chr(10)_
+		& "[$$t$_] Titre : " & titre & chr(10) & chr(10)_
+		& "[$$z]     Cote : " & cote & chr(10) & chr(10)_
 		& "Majuscule verrouillée : " & capsLock & chr(10) & chr(10)_
 		& "Notes : " & note & chr(10) & chr(10)_
-		& "Pour réécrire manuellement un champ, ajouter $${lettre du champ}{nouvelle information} collé au reste de l'input."& chr(10),_
+		& "Pour réécrire manuellement un champ, ajouter $${lettre du champ}{nouvelle information} collé au reste de l'input."& chr(10) & chr(10)_
+		& "Pour modifier un champ, ajouter $${lettre du champ}$_ collé au reste de l'input, ce qui affichera une nouvelle boîte de dialogue."& chr(10),_
 		"Choisir le sexe :", "u")
-	sexe = sexe & "$$"
+	sexe = "_" & sexe & "$$"
 'Gestion des changements manuels
 	ansSplit = Split(sexe, "$$")
-	sexe = ansSplit(0)
+	sexe = Mid(ansSplit(0), 2, 1)
 	If (sexe <> "a") AND (sexe <> "b") AND (sexe <> "u") Then
 		sexe = "u"
 	End If
@@ -615,17 +745,30 @@ Sub getDataUAChantierThese()
 			case "d"
 				discipline = Right(occ, Len(occ)-1)
 			case "n"
-				nom = Right(occ, Len(occ)-1)
+				If Left(occ, 3) = "n$_" Then
+					nom = Inputbox("Entrer le nouveau nom : " & nom, "Modifier le nom :", nom)
+				Else
+					nom = Right(occ, Len(occ)-1)
+				End If
 			case "p"
-				prenom = Right(occ, Len(occ)-1)
+				If Left(occ, 3) = "p$_" Then
+					prenom = Inputbox("Entrer le nouveau prénom : " & prenom, "Modifier le prénom :", prenom)
+				Else
+					prenom = Right(occ, Len(occ)-1)
+				End If
 			case "w"
 				bday = Right(occ, Len(occ)-1)
 			case "t"
+				If Left(occ, 3) = "t$_" Then
+					titre = Inputbox("Entrer le nouveau titre : " & titre, "Modifier le titre :", titre)
+				Else
 				titre = Right(occ, Len(occ)-1)
+				End If
 			case "z"
 				cote = Right(occ, Len(occ)-1)
 		End Select
 	Next
+	
 	
 	note = Replace(note, chr(10), " ; ")
 	
@@ -633,7 +776,7 @@ Sub getDataUAChantierThese()
 	Application.activeWindow.clipboard = output
 End Sub
 
-Sub getTitle()
+Function getTitle()
 'Renvoie dans le presse papier le titre du document en remplaçant les @ et $e
 'Raccourci : Ctrl Shift Q
 'Requis : RIEN
@@ -645,11 +788,11 @@ With Application.activeWindow
 
 	z = .copyTitle
 	'Trouve le prochain champ pour délimiter la 200
-	posUB200 = InStr(z, "200 ")
+	posUB200 = InStr(z, chr(13) & "200 ")
 	i = 201
 	posUB2xx = 0
 	While posUB2XX = 0
-	    x = i & " "
+	    x = chr(13) & i & " "
 	    posUB2XX = InStr(z, x)
 	    i = i + 1
 	Wend
@@ -657,6 +800,7 @@ With Application.activeWindow
 	z = Mid(z, posUB200, posUB2xx-posUB200)
 	posA = InStr(z,"$a")+2
 	posF = InStrRev(z, "$f")
+	.clipboard = z
 	z = Mid(z, posA, posF-posA)
 	z = replace(z, "@", "")
 	z = replace(z, "$e", " : ")
@@ -667,13 +811,13 @@ With Application.activeWindow
 	Else
 	    output = z
 	End If
-	.Clipboard = output
+	getTitle = output
 
 End With
 
-End Sub
+End Function
 
-Sub getUA810b()
+Function getUA810b()
 'Si un seul UA810 est présent, écrit le $b "né le" à partir des informations de la 103de la notice
 'Si plusieurs UA810 sont présents, renvoie le $b dans le presse-papier
 'Raccourci : Ctrl+Shift+G
@@ -706,14 +850,14 @@ With Application.activeWindow.title
 	 .insertText date
 	Else
 		  .selectNone
-	    Application.ActiveWindow.Clipboard = date
+	    getUA810b = date
 	End If
     
 End With
 
-End Sub
+End Function
 
-Sub getUB310()
+Function getUB310()
 'Si une 310 est présente, récupère son information
 'Raccourci : Ctrl+Shift++
 'Requis : countOccurrences
@@ -728,10 +872,10 @@ With Application.activeWindow
 	z = .copyTitle
 	z = Mid(z, InStr(z, "310 ##$a")+8)
 	z = Left(z, InStr(z, chr(13))-1)
-	.Clipboard = z
+	getUB310 = z
 End With
 
-End Sub
+End Function
 
 Function PurifUB200a(UB200, isUB541)
 'Requis : none
