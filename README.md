@@ -8,15 +8,6 @@ _Version du 14/10/2021. Une refonte est en cours de réflexion. Les changements 
 
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
-## Contexte du développement
-
-J'ai développé ces scripts lors de mon contrat à la Bibliothèque universitaire des Sciences du Vivant et de la Santé - Josy Reiffers (Bordeaux). Certaines de mes missions impliquaient des tâches répétitives ou plusieurs saisies d'une même donnée.
-
-Ce sont donc posées les questions suivantes :
-* si dans 9 cas sur 10 je dois écrire la même information, n'est-il pas possible de l'écrire automatiquement et modifier manuellement le cas restant ?
-* si je dois écrire plusieurs fois la même donnée, n'est-il pas possible de l'écrire une fois, la dupliquer et ainsi éviter des erreurs de saisies (et gagner du temps) ?
-* si je génère des données plus rapidement, ne m'est-il pas possible de contrôler les erreurs de saisie de certaines de celles-ci sans effectuer un traitement sur Excel ?
-
 ## De l'usage de ces scripts
 
 Certains scripts sont pensés pour répondre à mes besoins dans mon environnement, ce qui veut dire qu'ils ne fonctionnent pas dans toutes les situations imaginables.
@@ -50,14 +41,6 @@ Certaines informations propres à ma bibliothèque sont à remplacer :
 * le RCR de ma bibliothèque (330632101) ;
 * le chemin d'accès au profil WinIBW (C:\/oclcpica/WinIBW30/Profiles).
 
-## Des reliquats de notes personnelles
-
-Certaines parties de mes scripts ne servent qu'à moi et peuvent se trouver dans le code si j'oublie de les retirer. En l'occurrence :
-* les notes sur les raccourcis en début de code ;
-* la notion `_A_MOD_` en début de code.
-
-De plus, chaque script exportant du contenu contient la notation `$_#_$` au début de l'export, qui sert uniquement à traverser plus vite le document exporté.
-
 ## La validation automatique
 
 Il est à noter que normalement, aucun des scripts qui effectueraient des modifications sur une notice ne se termine par une validation automatique de celles-ci [24/08/2021] : je préfère toujours pouvoir vérifier que tout est bon avant validation.
@@ -84,93 +67,145 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
 
 Ce fichier réunit majoritairement les scripts à exécuter ou de traitement.
 
-#### `SUB AddSujetRAMEAU()`
+#### `AddSujetRAMEAU`
 
 Ouvre une boîte de dialogue permettant d'insérer des UB60X à partir du PPN.
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB addUA400()`
+#### `addUA400`
 
 Rajoute des UA400 pour les noms composés à une autorité auteur en se basant sur la UA200.
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB addUB700S3()`
+#### `addUB700S3`
 
 Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant le PPN du presse-papier et le $4 de l'ancienne UB700.
 
-Contient aussi un appel du [script supprimant des anomalies dans les exemplaires](https://github.com/Alban-Peyrat/Scripts-WinIBW#sub-changeexanomnotice).
+_Type de procédure : SUB_
+
+Contient aussi un appel du [script supprimant des anomalies dans les exemplaires](https://github.com/Alban-Peyrat/Scripts-WinIBW#schangeexanom).
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB changeExAnom(notice)`
+#### `changeExAnom`
 
 Remplace le $btm de la zone eXX associée au RCR par $bx ou signale la présence de plusieurs eXX associées à ce RCR.
 
+_Type de procédure : SUB_
+
+_Paramètres_ :
+* notice : notice bibliographique obtenue via copie de la notice depuis le mode édition (`SelectAll` puis `Copy`)
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB ChantierTheseAddUB183()`
+#### `ChantierTheseAddUB183`
 
 Ajoute une UB183 en fonction de la UB215 (notamment des chiffres détectés dans le $a).
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB chantierTheseLoopAddUB183()`
+#### `chantierTheseLoopAddUB183`
 
 Exécute `ChantierTheseAddUB183`, sauf si l'utilisateur refuse l'ajout, sur la liste de PPN présente dans le presse-papier et exporte un rapport des modifications ou non effectuées.
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `FUNC decompUA200enUA400([string]impUA200)`
+#### `decompUA200enUA400`
 
 Renvoie les UA400 créés à partir de la décomposition du nom composé du UA200 importé (`impUA200`).
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
+_Paramètres_ :
+* impUA200 : [string] PAS A JOUR
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB getCoteEx()`
+#### `getCoteEx`
 
 Renvoie dans le presse-papier la cote du document. Si plusieurs cotes sont présentes, donne le choix entre en sélectionner une, ou toutes les sélectionner, permettant également de choisir le séparateur.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB getDataUAChantierThese()`
+#### `getDataUAChantierThese`
 
 Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales. Une option permet de réécrire ou d'éditer les champs directement depuis WinIBW.
+
+_Type de procédure : SUB_
+
+_Renvoi :_
 
 Créé dans le cadre d'un chantier sur les thèses, l'exploitation de ces données se fait dans un tableur Excel particulier.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB getTitle()`
+#### `getTitle`
 
 Renvoie dans le presse-papier le titre du document en remplaçant les @ et $e. Si le titre est entièrement en majuscule, le renvoie en minuscule (sauf première lettre).
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB getUA810b()`
+#### `getUA810b`
 
 Si un seul UA810 est présent, écrit le $b "né le" à partir des informations de la UA103 de la notice, sinon, renvoie le $b dans le presse-papier.
 
 Pour un bon fonctionnement, la UA103 doit comprendre AAAAMMJJ.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB getUB310()`
+#### `getUB310`
 
 Copie dans le presse-papier la valeur du premier UB310.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `FUNCTION PurifUB200a(UB200, isUB541)`
+#### `PurifUB200a`
 
 Renvoie l'adaptation d'un titre en son écriture en UNIMARC.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
+_Paramètres :_
+* UB200 : PAS A JOUR
+* isUB541 : PAS A JOUR
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
-#### `SUB searchExcelPPNList()`
+#### `searchExcelPPNList`
 
 Recherche la liste de PPN contenue dans le presse-papier.
+
+_Type de procédure : SUB_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -178,53 +213,105 @@ Recherche la liste de PPN contenue dans le presse-papier.
 
 Ce fichier contient les scripts facilitant l'exécution des autres, qui sont amenés à être appelés dans de nombreux autres scripts.
 
-#### `FUNCTION appendNote(var, text)`
+#### `appendNote`
 
 Renvoie `var` comme équivalent à `text` si `var` était vide, sinon, renvoie `var` suivi d'un saut de ligne puis de `text`.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
+_Paramètres :_
+* var : variable à laquelle on veut ajouter du texte ;
+* text : texte à ajouter à la variable.
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `FUNC CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)`
+#### `CountOccurrences`
 
 Renvoi le nombre d'occurrences.
 
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
+_Paramètres :_
+* p_strStringToCheck : A FAIRE
+* p_strSubString : A FAIRE
+* p_boolCaseSensitive : A FAIRE
+
 [Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `SUB exportVar(var, boolAppend)`
+#### `exportVar`
 
 Exporte `var` dans `export.txt` (même emplacement que `winibw.vbs`), réécrivant le fichier si `boolAppend` est false. Est utilisé par toutes les procédures qui exporte des données.
 
+_Type de procédure : SUB_
+
+_Paramètres :_
+* var : A FAIRE
+* boolAppend : A FAIRE
+
 [Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `SUB goToTag([string]tag, [string, "none" pour empty]subTag, [bool]toEndOfField, [bool]toFirst, [bool]toLast)`
+#### `goToTag`
 
 Attention, `subTag` ne doit pas contenir le $ ET est sensible à la casse.
 
 Place le curseur à l'emplacement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que `toFirst` ou `toLast` soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée.
 
+_Type de procédure : SUB_
+
+_Paramètres :_
+* tag : [string] A FAIRE
+* subTag : [string, "none" pour empty] A FAIRE
+* toEndOfField : [bool] A FAIRE
+* toFirst : [bool] A FAIRE
+* toLast : [bool] A FAIRE
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `SUB goToTagInputBox()`
+#### `goToTagInputBox`
 
 Permet d'essayer `goToTag` en indiquant les paramètres voulus.
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `SUB Sleep([int]time)`
+#### `Sleep`
 
 Permet de mettre en pause un script pendant t = `time` (en secondes).
 
+_Type de procédure : SUB_
+
+_Paramètres :_
+* time : [int] A FAIRE
+
 [Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `SUB toEditMode([bool]lgpMode, [bool]save)`
+#### `toEditMode`
 
 Passe en mode édition (ou présentation).
 
+_Type de procédure : SUB_
+
+_Paramètres :_
+* lgpMode : [bool] A FAIRE
+* save : [bool] A FAIRE
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-#### `FUNCTION uCaseNames(noms)`
+#### `uCaseNames`
 
 Renvoie `noms` après avoir mis une majuscule au début de chaque nom renseigné.
+
+_Type de procédure : FUNCTION_
+
+_Renvoi :_
+
+_Paramètres :_
+* noms : A FAIRE
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -232,19 +319,23 @@ Renvoie `noms` après avoir mis une majuscule au début de chaque nom renseigné
 
 Ce fichier contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent, ou des scripts de mon bac à sable que je pense utiles à partager. Certains d'entre eux ont des équivalents dans mes outils, auquel cas, un lien vers ceux-ci sera présent.
 
-#### `SUB ctrlUA103eqUA200f()`
+#### `ctrlUA103eqUA200f`
 
-___Voir [ConStance CS5](https://github.com/Alban-Peyrat/ConStance#cs1--%C3%A9quivalence-champs-103--200f-idref) pour un outil équivalent.___
+___Voir [ConStance CS1](https://github.com/Alban-Peyrat/ConStance#cs1--%C3%A9quivalence-champs-103--200f-idref) pour un outil équivalent.___
 
 Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
 
+_Type de procédure : SUB_
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs)
 
-#### `SUB ctrlUB700S3()`
+#### `ctrlUB700S3`
 
 ___Voir [ConStance CS2](https://github.com/Alban-Peyrat/ConStance#cs2--pr%C3%A9sence-dun-lien-en-700) pour un outil équivalent et [ConStance CS3](https://github.com/Alban-Peyrat/ConStance#cs3--pr%C3%A9sence-dun-lien-en-7xx) pour un outil équivalent utilisable sur toutes les 700.___
 
 Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papier.
+
+_Type de procédure : SUB_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs)
 
