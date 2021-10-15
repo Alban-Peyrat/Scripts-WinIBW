@@ -49,7 +49,7 @@ Sub AddSujetRAMEAU()
 	
 With Application.activeWindow
 
-	For i = 0 To 999
+	For ii = 0 To 999
 		inds = "##"
 		PPN = Inputbox("Écrire le PPN à ajouter (en 606 (##) par défaut)"_
 		& chr(10) & chr(10) & "-> $3{PPN} pour ajouter une subdivision au précédent"_
@@ -71,8 +71,8 @@ With Application.activeWindow
 		
 		.Title.EndOfbuffer
 		If PPN = "ok" Then
-			i = 1000
 			.Title.InsertText UB606
+			Exit For
 		Else
 			If Left(Right(PPN, 3), 1) = "_" Then
 				inds = Right(PPN, 2)
