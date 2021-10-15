@@ -1,6 +1,6 @@
-Sub ctrlUA103eqUA200f()
+Sub Concept_ctrlUA103eqUA200f()
 'Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
-'Requis : exportVar, getTag (quand implémenter obsvly)
+'Requis : Ress_exportVar, getTag (quand implémenter obsvly)
 '/!\ EVITER UTILISATION
 '/!\ ATTENTION, WinIBW va sembler cesser de fonctionner, laissez-le faire
 
@@ -34,15 +34,15 @@ With Application.activeWindow
 		End If
 
 	Next
-	exportVar output, true
+	Ress_exportVar output, true
 
 End With
 
 End Sub
 
-Sub ctrlUB700S3()
+Sub Concept_ctrlUB700S3()
 'Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papie
-'Requis : exportVar
+'Requis : Ress_exportVar
 '/!\ EVITER UTILISATION
 '/!\ ATTENTION, WinIBW va sembler cesser de fonctionner, laissez-le faire
 
@@ -72,7 +72,7 @@ With Application.activeWindow
 			output = output & PPN & ";ERROR;#n/a;Recherche non about." & vblf
 		End If
 	Next
-	exportVar output, true
+	Ress_exportVar output, true
 
 End With
 
