@@ -1,14 +1,14 @@
-Function appendNote(var, text)
+Function Ress_appendNote(var, text)
 'Importer de ConStance [01/09/2021]
     If var = "" Then
         var = text
     Else
         var = var & Chr(10) & text
     End If
-    appendNote = var
+    Ress_appendNote = var
 End Function
 
-Function CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)
+Function Ress_CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)
 'Renvoie le nombre d'occurrences
 'Source : https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
 'Requis : RIEN
@@ -25,10 +25,10 @@ Function CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitiv
     End If
 
     arrstrTemp = Split(strBase, strToFind)
-    CountOccurrences = UBound(arrstrTemp)
+    Ress_CountOccurrences = UBound(arrstrTemp)
 End Function
 
-Sub exportVar(var, boolAppend)
+Sub Ress_exportVar(var, boolAppend)
 'Exporte dans export.txt (même emplacement que winibw.vbs)
 'Source : eddiejackson.net/wp/?p=8619
 'Notes
@@ -60,7 +60,7 @@ Sub exportVar(var, boolAppend)
 
 End Sub
 
-Sub goToTag(tag, subTag, toEndOfField, toFirst, toLast)
+Sub Ress_goToTag(tag, subTag, toEndOfField, toFirst, toLast)
 'Place le curseur à l'empalcement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que toFirst ou toLast soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée
 'La fonction countOccurences est nécesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
 'Tag = [str] champ
@@ -68,7 +68,7 @@ Sub goToTag(tag, subTag, toEndOfField, toFirst, toLast)
 'toEndOfField = [bool] place le curseur à la fin du champ OU du sous-champ
 'toFirst = [bool] si plusieurs occurences du CHAMP, sélectionne le premier prioritaire sur toLast
 'toLast = [bool] si plusieurs occurences du CHAMP, sélectionne le dernier
-'Requis : countOccurrences
+'Requis : Ress_CountOccurrences
 '_A_MOD_
 
 	Dim notice, nbVblf, nbOcc, occurrences, choseOcc, count
@@ -88,7 +88,7 @@ End With
 	choseOcc = false
 	count = 1
 	tag = CStr(tag)
-	nbOcc = countOccurrences(notice, chr(10) & tag, false)
+	nbOcc = Ress_CountOccurrences(notice, chr(10) & tag, false)
 	If nbOcc > 1 Then
 	  If toFirst = true Then
 	  	count = 1
@@ -148,7 +148,7 @@ With Application.activeWindow.Title
 	    	selectedTag = .currentField
 	    	occurrences = ""
 	      count = 0
-	    	nbOcc = countOccurrences(selectedTag, "$" & subTag, true)
+	    	nbOcc = Ress_CountOccurrences(selectedTag, "$" & subTag, true)
 	    	If nbOcc = 0 Then
 	    		MsgBox "Erreur. Pas de $" & subTag & " dans l'occurrence sélectionnée."
 		      If toEndOfField = true Then
@@ -199,11 +199,11 @@ End With
 	    
     Application.activeWindow.clipboard = clipboardSave
     
-End Sub
+	    End Sub
 
-Sub goToTagInputBox()
-'Permet d'essayer goToTag en indiquant les paramètres voulus.
-'Requis : goToTag
+Sub Ress_goToTagInputBox()
+'Permet d'essayer Ress_goToTag en indiquant les paramètres voulus.
+'Requis : Ress_goToTag
 
 	dim z, y, x, w, v
 	z = inputbox("tag")
@@ -214,11 +214,11 @@ Sub goToTagInputBox()
 	y = CBool(y)
 	x = CBool(x)
 	w = CBool(w)
-	goToTag z, v, y, x, w
-	'goToTag "606", "", true, "", ""
+	Ress_goToTag z, v, y, x, w
+	'Ress_goToTag "606", "", true, "", ""
 End Sub
 
-Sub Sleep(time)
+Sub Ress_Sleep(time)
 'Source : Original Paulie D comment : https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript
 'EVITER L'UTILISATION
 	Dim dteWait
@@ -228,7 +228,7 @@ Sub Sleep(time)
 	Loop
 End Sub
 
-Sub toEditMode(lgPMode, save)
+Sub Ress_toEditMode(lgPMode, save)
 'Passe en mode édition (ou présentation)
 'lgPMode [bool] : true = passer en mode présentation
 'save [bool] : si lgPMode =true, alors sauvegarder les changements ou non
@@ -264,11 +264,12 @@ With Application.activeWindow
 End With
 End Sub
 
-Function uCaseNames(noms)
+Function Ress_uCaseNames(noms)
 
 Dim kk, jj, sepCheck
 
 noms = Left(noms, 1) & LCase(Mid(noms, 2, Len(noms)))
+
 For kk = 0 to 3
 	Select Case kk
 		Case 0
@@ -289,6 +290,6 @@ Next
 noms = Replace(noms, " De ", " de ", 1, -1, 0)
 noms = Replace(noms, " D'", " d'", 1, -1, 0)
 
-uCaseNames = noms
+Ress_uCaseNames = noms
 
 End Function
