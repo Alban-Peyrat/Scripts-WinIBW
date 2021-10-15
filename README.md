@@ -390,6 +390,8 @@ _Type de procédure : SUB_
   * ajout de `add214Elsevier` : ajoute une 214 type pour Elsevier-Masson SAS à Issy-les-Moulineaux avec un DL 2021 ;
   * ajout de `addBibgFinChap` : ajoute à l'emplacement du curseur la mention de bibliographie en fin de chapitre ;
   * ajout de `addCouvPorte` : ajoute une 312 pour indiquer ce que la couverture porte en plus.
+* le 15/10/2021 :
+  * renommage des scripts ressources et concepts (parce que j'ai découvert que WinIBW peut séparer les scripts en plusieurs catégories) ;
 
 ### Modifications prévues
 
