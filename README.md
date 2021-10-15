@@ -134,6 +134,30 @@ Ouvre une boîte de dialogue permettant d'insérer des UB60X à partir du PPN.
 
 _Type de procédure : SUB_
 
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance une boucle qui s'exécutera jusqu'à 1000 fois. À chaque exécution, ouvre une boite de dialogue permettant de coller directement le PPN et montrant la liste des commandes supplémentaires disponibles :
+* ajouter `UX` devant le PPN (sans espace) permet de choisir la 60X à insérer :
+  * par défaut, le script ajoute une `606 ##` ;
+  * `U0` pour insérer une `600 #1` ;
+  * `U1` pour insérer une `601 02` ;
+  * `U2` pour insérer une `602 ##` ;
+  * `U4` pour insérer une `604 ##` ;
+  * `U5` pour insérer une `605 ##` ;
+  * `U7` pour insérer une `607 ##` ;
+  * `U8` pour insérer une `608 ##` ;
+* ajouter `_*IndicateurNo1**IndicateurNo2*` après le PPN (sans espace) permet de changer les indicateurs. __Il est obligatoire d'indiquer les 2.__ Cette commande est cumulable avec l'option `UX` ;
+* ajouter `$3` devant le PPN permet de rajouter ce PPN en tant que subdivision __au dernier PPN entré durant cette activation du script__ ;
+* écrire `ok` (valeur par défaut de la boite de dialogue) permet de sortir de la boucle et de terminer le script.
+
+Une fois la donnée saisie, le script supprime `PPN` suivi d'un espace, `(PPN)`, les espaces, les retours à la ligne et les retours chariot (`chr(10)` et `chr(13)`, ce qui permet notamment d'éviter des problèmes si le PPN est copié depuis une cellule Excel) et place le curseur à la fin de la notice. Dans la suite de l'explication, la donnée saisie par l'utilisateur correspondra au résultat de cette opération de suppression.
+
+Concrètement, si le troisième caractère en partant de la fin est un `_`, les indicateurs prennent la valeur des deux derniers caractères renseignés.
+Ensuite, si les deux premiers caractères sont `$3`, le script va réécrire le champ UNIMARC stocké en mémoire (cf ci-après) en insérant avant le neuvième dernier caractère (= avant `$2rameau` et un retour à la ligne (`chr(10)`)) la donnée saisie par l'utilisateur. En clair, il rajoute supposément `$3123456789` avant le `$2`.
+En revanche, si les deux premiers caractères ne sont pas `$3`, le script insère à l'emplacement du curseur (= fin de la notice) le champ qu'il a en mémoire (donc rien pour la première occurrence) puis va isoler comme `PPN` les 9 premiers caractères en commençant à partir du troisième caractère (supposément le PPN dans la forme `UX123456789`).
+Il regarde ensuite si les deux premiers caractères de la donnée saisie équivalent à un des `UX` précédemment cités. Si oui, il détermine la valeur du `X` de la `60X`associée. Si non, il attribue `6` au `X` et isole alors comme `PPN` les neufs premiers caractère de la donnée saisie. Ainsi, saisir `U9123456789` écrire une `606` avec comme PPN `U91234567`.
+Une fois le traitement des commandes terminé, il conserve alors en mémoire un champ :
+* `60` + la valeur du `X` + un espace + la valeur des indicateurs + `$3` + le PPN qu'il a isolé + `$2rameau` + un retour à la ligne (`chr(10)`)
+Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
 #### `addUA400`
