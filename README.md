@@ -431,28 +431,34 @@ Le 02/08/2021 :
 * suppression de `PurifUB200a` car peu d'intérêts à être partagé ;
 * suppression de `CollerPPN` car peu d'intérêts à être partagé ;
 * suppression de `LastCHE` car peu d'intérêts à être partagé.
+
 Le 23/08/2021 :
 * ajout de `AddSujetRAMEAU` pour ajouter des 60X ;
 * ajout de `ctrlTraitementInterne` ;
 * ajout de `getUB310` pour récupérer dans le presse-papier l'information de la première 310 ;
 * ajout de `PurifUB200a` pour adapter un titre à son écriture en UNIMARC ;
 * scission de `addUB700S3` : la partie sur l'exemplaire a été isolée dans un nouveau script, `changeExAnom`.
+
 Le 24/08/2021 :
 * répartition des scripts entre plusieurs fichiers ;
 * actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
 * adaptation du projet pour être cohérent avec les autres outils.
+
 Le 25/08/2021 :
 * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
 * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
+
 Le 01/09/2021 :
 * ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
 * ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
 * ajout de `uCaseNames` pour mettre des majuscules aux noms renseignés ;
 * modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
 * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames` ;
+
 Le 02/09/2021 :
 * modification de `getDataUAChantierThese` pour réorganiser l'inputBox, rajouter de la précision à la note sur les noms d'épouse et empêcher des valeurs illégales pour le genre ;
 * modification de `getCoteEx` pour afficher le numéro de l'occurrence et de l'exemplaire en cas de cotes multiples, ainsi que de gérer la sélection individuelle de plusieurs cotes.
+
 Le 13/10/2021 :
 * sur le document et le dépôt : la liste des modifications est renvoyée au fonds avec un lien hypertexte vers celle-ci en début de page. Par ailleurs, la documentation complète viendra finalement s'ajouter dans ce document ;
 * modification de `getTitle` : changement de la détection du champ 200 et de son successeur avec un chr(13) pour éviter le problème des nombres dans le titre (ex: "201 patients") ;
@@ -476,6 +482,7 @@ Le 13/10/2021 :
 * ajout de `add214Elsevier` : ajoute une 214 type pour Elsevier-Masson SAS à Issy-les-Moulineaux avec un DL 2021 ;
 * ajout de `addBibgFinChap` : ajoute à l'emplacement du curseur la mention de bibliographie en fin de chapitre ;
 * ajout de `addCouvPorte` : ajoute une 312 pour indiquer ce que la couverture porte en plus.
+
 Le 15/10/2021 :
 * renommage des scripts ressources et concepts (parce que j'ai découvert que WinIBW peut séparer les scripts en plusieurs catégories) ;
 * modification mineuresur le fonctionnement de la boucle de `AddSujetRAMEAU` ;
