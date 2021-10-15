@@ -1,6 +1,6 @@
 Sub add18XmonoImp()
 'Ajout une 181 txt, 182 n 183 nga pour P01
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 	Application.activeWindow.title.endOfBuffer
 	Application.activeWindow.title.insertText	"181 ##$P01$ctxt" & chr(10) & "182 ##$P01$cn" & chr(10) & "183 ##$P01$anga" & chr(10)
@@ -10,7 +10,7 @@ End Sub
 Sub add214Elsevier()
 'Ajoute une 214 type pour Elsevier
 	
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 	Application.activeWindow.title.endOfBuffer
 	Application.activeWindow.title.insertText	"214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2021" & chr(10)
@@ -18,13 +18,13 @@ Sub add214Elsevier()
 End Sub
 
 Sub addBibgFinChap()
-	toEditMode false, false
+	Ress_toEditMode false, false
 	Application.activeWindow.title.insertText	"Chaque fin de chapitre comprend une bibliographie"
 End Sub
 
 Sub addCouvPorte()
 	
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 	Application.activeWindow.title.endOfBuffer
 	Application.activeWindow.title.insertText	"312 ##$aLa couverture porte en plus : """
@@ -33,7 +33,7 @@ End Sub
 Sub addISBNElsevier()
 'Ajoute une 010 avec le début de l'ISBN d'Elsevier
 	
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 	Application.activeWindow.title.endOfBuffer
 	Application.activeWindow.title.insertText	"010 ##$A978-2-294-"
@@ -45,7 +45,7 @@ Sub AddSujetRAMEAU()
 'Requis : rien
 	dim PPN, UB606, inds, Xvalue, PPNclean
 	
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 With Application.activeWindow
 
@@ -112,12 +112,12 @@ Sub addUA400()
 'Ajoute un/des champs 400 à une notice d'autorité auteur
 'Basée sur la 200, elle décompose le  $a
 'Raccourci : Ctrl Shift "
-'Requis : decompUA200enUA400, toEditMode
+'Requis : decompUA200enUA400, Ress_toEditMode
 'PAS UNIVERSEL. Fonctionne uniquement s'il y a un $a et un $b au moins
 
     dim UA200, UA200a, UA200b, UA200fPos, UA400, temp
     
-    toEditMode false, false
+    Ress_toEditMode false, false
     
 With Application.activeWindow.Title
 	
@@ -179,13 +179,13 @@ End Sub
 Sub addUB700S3()
 'Remplace la 700 actuelle de la notice bibliographique par une 700 contenant le PPN du presse-papier et le $4 de l'ancienne 700
 'Raccourci : ctrl shift N
-'Requis : countOccurrences, goToTag, toEditMode
+'Requis : Ress_CountOccurrences, Ress_goToTag, Ress_toEditMode
 	
 	dim UB700, saveClipboard, notice
 	dim nbOcc, exSB, nbOccRCR
 	
 	saveClipboard = Application.activeWindow.Clipboard
-	toEditMode false, false
+	Ress_toEditMode false, false
 
 With Application.ActiveWindow.Title
 
@@ -206,7 +206,7 @@ With Application.ActiveWindow.Title
 	'Remplace le $btm des exemplaires du RCR ou signale la présence de plusieurs exemplaires dans l'ILN
 	changeExAnom notice
 	
-	goToTag "101", "none", false, true, false
+	Ress_goToTag "101", "none", false, true, false
     
 End With
 
@@ -217,10 +217,10 @@ End Sub
 Sub changeExAnom(notice)
 
 With Application.activeWindow.Title
-	nbOcc = countOccurrences(notice, chr(10) & "e", true)
+	nbOcc = Ress_CountOccurrences(notice, chr(10) & "e", true)
 	if nbOcc = 0 Then
 	ElseIf nbOcc = 1 Then
-		goToTag "930", "none", false, false, false
+		Ress_goToTag "930", "none", false, false, false
 		.charLeft(1)
 		.charLeft 2, true
 		.copy
@@ -230,7 +230,7 @@ With Application.activeWindow.Title
 			MsgBox exSB & " : tm remplacé par x"
 		End If
 	ElseIf nbOcc > 1 Then
-		nbOccRCR = countOccurrences(notice, "$b330632101", true)
+		nbOccRCR = Ress_CountOccurrences(notice, "$b330632101", true)
 		If nbOccRCR > 1 Then
 			.Find("$btm" & chr(10) & "930 ")
 			exSB = .tag
@@ -249,7 +249,7 @@ End Sub
 Sub ChantierTheseAddUB183
 'Ajoute une 183 en fonction de la 215 (notamment des chiffres détectés dans le $a) dans le cadre du chantier thèse
 'Raccourci : Texte only
-'Requis : goToTag, toEditMode
+'Requis : Ress_goToTag, Ress_toEditMode
 '_A_MOD_
 
 	dim UB215, z, pages, numPages
@@ -257,7 +257,7 @@ Sub ChantierTheseAddUB183
 	dim notice, nbSP, output, nbVblf, count
 	
 	notice = application.activeWindow.copyTitle
-	toEditMode false, false
+	Ress_toEditMode false, false
 
 With Application.activeWindow.title
 	
@@ -280,10 +280,10 @@ With Application.activeWindow.title
 		Next
 		
 	'determine le nb de $P
-		'if countOccurrences(notice, "181 ##", true) >= countOccurrences(notice, "181 ##", true) Then
-		'	nbSP = countOccurrences(notice, "181 ##", true)
+		'if Ress_CountOccurrences(notice, "181 ##", true) >= Ress_CountOccurrences(notice, "181 ##", true) Then
+		'	nbSP = Ress_CountOccurrences(notice, "181 ##", true)
 		'Else
-		'	nbSP = countOccurrences(notice, "182 ##", true)
+		'	nbSP = Ress_CountOccurrences(notice, "182 ##", true)
 		'End If
 		'If nbSP = 1 Then
 		'	output = "181 ##$P01"
@@ -299,9 +299,9 @@ With Application.activeWindow.title
 			output = output & "$anga"
 		End If
 		
-		goToTag "200", "none", false, true, false
+		Ress_goToTag "200", "none", false, true, false
 		.InsertText output & vblf
-		goToTag "215", "none", true, true, false
+		Ress_goToTag "215", "none", true, true, false
 		
 End With
 
@@ -310,7 +310,7 @@ End Sub
 Sub ChantierTheseLoopAddUB183
 'Exécute ChantierTheseAddUB183, sauf si l'utilisateur refuse l'ajout, sur la liste de PPN présente dans le presse-papier
 'Raccourci : texte only
-'Requis : ChantierTheseAddUB183, exportVar
+'Requis : ChantierTheseAddUB183, Ress_exportVar
 
 	dim output, PPNList, statut, ListeStatuts, wrongPPN, count
 	
@@ -359,7 +359,7 @@ With Application.activeWindow
     		output = output & PPN & ";" & statut & chr(10)
     		If Fix(count/10) = count/10 Then
     			output = Left(output, Len(output)-1)
-    			exportVar output, true
+    			Ress_exportVar output, true
     			output = ""
     		End If
     		If statut = "Arrêt forcé" Then
@@ -369,7 +369,7 @@ With Application.activeWindow
     
 End With
 
-	exportVar output, true
+	Ress_exportVar output, true
 
 End Sub
 
@@ -415,7 +415,7 @@ Function decompUA200enUA400(UA200a, UA200b)
 		End If
 		
 'Ajout à la notice
-		decompUA200enUA400 = appendNote(decompUA200enUA400, "400 #1$a" & UA200a & "$b" & UA200b)
+		decompUA200enUA400 = Ress_appendNote(decompUA200enUA400, "400 #1$a" & UA200a & "$b" & UA200b)
 	Wend
 
 End Function
@@ -476,6 +476,7 @@ num = Inputbox("Écrire le numéro du script à exécuter"_
 	& chr(10) & chr(10) & chr(09) & "Notices autorité :"_
 	& chr(10) & "[12] Ajouter 400"_
 	& chr(10) & "[13] Récupérer 810 $b date de naissance"_
+	& chr(10) & chr(10) & chr(09) & "[77] Lanceur de CorWin"_
 	, "Exécuter un script :", 99)
 Select Case num
 	case 14
@@ -506,17 +507,23 @@ Select Case num
 		addUA400
 	case 13
 		application.activeWindow.clipboard	= getUA810b
+	case 77
+		CorWin_Launcher
 	case else
 		MsgBox "Aucun script correspondant."
 End Select
 
 End Sub
 
+Function get200Title(carClass)
+	'j'ai la fleeeeeeeeeeeeeeeeeeeeeeeeeeeeemme
+End Function
+
 Function getCoteEx()
 'Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR)
 'PEUT-ÊTRE je ferai une option pour choisir des cotes spécifiques si j'ai le temps parce que ça m'a l'air compliqué encore
 'Raccourci : Ctrl+Shift+D
-'Requis : appendNote
+'Requis : Ress_appendNote
 
 dim notice, cote(98, 2), UEa, ans, temp, separateur, occNb, coteDisplay, ii, ansSplit
 
@@ -542,7 +549,7 @@ For Each occ in notice
 		Else
 			cote(occNb, 2) = "[Exemplaire sans cote]"
 		End If
-	coteDisplay = appendNote(coteDisplay, "[Occ. " & occNb & "] " & cote(occNb, 1) & " : " & cote(occNb, 2))
+	coteDisplay = Ress_appendNote(coteDisplay, "[Occ. " & occNb & "] " & cote(occNb, 1) & " : " & cote(occNb, 2))
 	End If
 Next
 
@@ -572,19 +579,19 @@ If occNb > 1 Then
 'Vérifie si c'est une occurrence valide
 				If isNumeric(temp) = true Then
 					If (CInt(temp) < occNb+1) AND (CInt(temp) > 0) Then
-						coteDisplay = appendNote(coteDisplay, cote(temp, 2))
+						coteDisplay = Ress_appendNote(coteDisplay, cote(temp, 2))
 					Else
-						coteDisplay = appendNote(coteDisplay, "[Occ. choisie (" & temp &") invalide]")
+						coteDisplay = Ress_appendNote(coteDisplay, "[Occ. choisie (" & temp &") invalide]")
 					End if
 				Else
-					coteDisplay = appendNote(coteDisplay, "[" & temp & " n'est pas une occ.]")
+					coteDisplay = Ress_appendNote(coteDisplay, "[" & temp & " n'est pas une occ.]")
 				End If
 			End If
 		Next
 'Toutes les cotes
 	Else
 		For ii = 1 to occNb
-			coteDisplay = appendNote(coteDisplay, cote(ii, 2))
+			coteDisplay = Ress_appendNote(coteDisplay, cote(ii, 2))
 		Next
 	End If
 	separateur = InStr(ans, "$$")
@@ -610,7 +617,7 @@ End Function
 Sub getDataUAChantierThese()
 'Génère le squelette de la notice d'autorité à partir de la notice bibliographique (DANS LE CADRE DU CHANTIER)
 'Raccourci : Ctrl Shift J
-'Requis : appendNote, uCaseNames
+'Requis : Ress_appendNote, Ress_uCaseNames
 
 	dim PPN_B, notice
 	dim year, discipline, nom, prenom, bday, titre, sexe, cote, note
@@ -657,14 +664,14 @@ Sub getDataUAChantierThese()
 		Case "Sciences biologiques et médicales. Sciences pharmaceutiques"
 			discipline = "A - sciences pharmaceutiques"
 		Case Else
-			note = appendNote(note, "Sélectionner manuellement la discipline")
+			note = Ress_appendNote(note, "Sélectionner manuellement la discipline")
 	End Select
 	
 	'Gestion du nom
 	temp = Mid(notice, InStr(notice, "700 #"), Len(notice))
 	nom = Mid(temp, InStr(temp, "$a")+2, InStr(temp, "$b")-InStr(temp, "$a")-2)
 	If UCase(nom) = nom Then
-		nom = uCaseNames(nom)
+		nom = Ress_uCaseNames(nom)
 		capsLock = true
 	End If
 	
@@ -683,7 +690,7 @@ Sub getDataUAChantierThese()
 		prenom = Left(prenom, InStr(prenom, "$f")-1)
 	End If
 	If UCase(prenom) = prenom Then
-		prenom = uCaseNames(prenom)
+		prenom = Ress_uCaseNames(prenom)
 		capsLock = "-----> CAPS LOCK <-----"
 	End If
 	
@@ -696,13 +703,13 @@ Sub getDataUAChantierThese()
 	temp = Mid(notice, InStr(notice, chr(13) & "101")+1, len(notice))
 	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
 	If temp <> "$afre" Then
-		note = appendNote(note, "/!\ 101 " & temp)
+		note = Ress_appendNote(note, "/!\ 101 " & temp)
 	End If
 'UB102 <> FR
 	temp = Mid(notice, InStr(notice, chr(13) & "102")+1, len(notice))
 	temp = Mid(temp, InStr(temp, "$a"), InStr(temp, chr(13)) - InStr(temp, "$a"))
 	If temp <> "$aFR" Then
-		note = appendNote(note,  "/!\ 102 " & temp)
+		note = Ress_appendNote(note,  "/!\ 102 " & temp)
 	End If
 'Présence POSSIBLE de nom d'épouse / jeune fille
 	temp = Mid(notice, InStr(notice, chr(13) & "200")+1, len(notice))
@@ -711,11 +718,11 @@ Sub getDataUAChantierThese()
 		temp = Left(temp, InStr(temp, "$")-1)
 	End If
 	If (InStr(temp, "ép.") > 0) OR (InStr(temp, "épouse") > 0) OR (InStr(temp, " fille") > 0) OR (InStr(temp, " naissance") > 0) OR (InStr(temp, " née") > 0) Then
-		note = appendNote(note, "Possiblement un nom d'épouse")
+		note = Ress_appendNote(note, "Possiblement un nom d'épouse")
 	End If
 'Présence POSSIBLE de deux auteurs
 	If InStr(temp, " et ") Then
-		note = appendNote(note, "Possiblement deux auteurs")
+		note = Ress_appendNote(note, "Possiblement deux auteurs")
 	End If
 	
 	'Détermine le sexe + si la cote à un pb)
@@ -821,11 +828,11 @@ Function getUA810b()
 'Si un seul UA810 est présent, écrit le $b "né le" à partir des informations de la 103de la notice
 'Si plusieurs UA810 sont présents, renvoie le $b dans le presse-papier
 'Raccourci : Ctrl+Shift+G
-'Requis : countOccurrences, goToTag, toEditMode
+'Requis : Ress_CountOccurrences, Ress_goToTag, Ress_toEditMode
 
 	dim z, date, sexe, notice
 	
-	toEditMode false, false
+	Ress_toEditMode false, false
 	
 With Application.activeWindow.title
 	
@@ -845,8 +852,8 @@ With Application.activeWindow.title
 	date = sexe & " le " & Right(z, 2) & "-" & Mid(z, 5,2) & "-" & Left(z, 4)
 	
 	'Compte le nombre de UA810 pour coller OU mettre dans presse papier
-	If CountOccurrences(notice, "810 ##", false) = 1 Then
-	 goToTag "810", "none", true, true, false
+	If Ress_CountOccurrences(notice, "810 ##", false) = 1 Then
+	 Ress_goToTag "810", "none", true, true, false
 	 .insertText date
 	Else
 		  .selectNone
@@ -860,11 +867,11 @@ End Function
 Function getUB310()
 'Si une 310 est présente, récupère son information
 'Raccourci : Ctrl+Shift++
-'Requis : countOccurrences
+'Requis : Ress_CountOccurrences
 
 	dim z, posUB310
 	
-	toEditMode true, false
+	Ress_toEditMode true, false
 	
 With Application.activeWindow
 	
@@ -929,7 +936,7 @@ Sub searchExcelPPNList()
     
 With Application.activeWindow
     
-    query = "che ppn " & replace(.Clipboard, Chr(10), " OR ")
+    query = "che ppn " & replace(replace(.Clipboard, "(PPN)", ""), Chr(10), " OR ")
     query = Left(query, Len(query)-4)
     .Clipboard = query
     .Command query
