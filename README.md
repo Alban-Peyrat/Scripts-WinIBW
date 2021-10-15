@@ -144,7 +144,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà, puis lance une bou
   * `U5` pour insérer une `605 ##` ;
   * `U7` pour insérer une `607 ##` ;
   * `U8` pour insérer une `608 ##` ;
-* ajouter `_*IndicateurNo1**IndicateurNo2*` après le PPN (sans espace) permet de changer les indicateurs. __Il est obligatoire d'indiquer les 2.__ Cette commande est cumulable avec l'option `UX` ;
+* ajouter `_[IndicateurNo1][IndicateurNo2]` après le PPN (sans espace) permet de changer les indicateurs. __Il est obligatoire d'indiquer les 2 indicateurs.__ Cette commande est cumulable avec l'option `UX` ;
 * ajouter `$3` devant le PPN permet de rajouter ce PPN en tant que subdivision __au dernier PPN entré durant cette activation du script__ ;
 * écrire `ok` (valeur par défaut de la boite de dialogue) permet de sortir de la boucle et de terminer le script.
 
@@ -156,6 +156,7 @@ En revanche, si les deux premiers caractères ne sont pas `$3`, le script insèr
 Il regarde ensuite si les deux premiers caractères de la donnée saisie équivalent à un des `UX` précédemment cités. Si oui, il détermine la valeur du `X` de la `60X`associée. Si non, il attribue `6` au `X` et isole alors comme `PPN` les neufs premiers caractère de la donnée saisie. Ainsi, saisir `U9123456789` écrire une `606` avec comme PPN `U91234567`.
 Une fois le traitement des commandes terminé, il conserve alors en mémoire un champ :
 * `60` + la valeur du `X` + un espace + la valeur des indicateurs + `$3` + le PPN qu'il a isolé + `$2rameau` + un retour à la ligne (`chr(10)`)
+
 Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
@@ -426,61 +427,70 @@ _Type de procédure : SUB_
 
 ## Liste des modifications
 
-* le 02/08/2021
-  * suppression de `PurifUB200a` car peu d'intérêts à être partagé ;
-  * suppression de `CollerPPN` car peu d'intérêts à être partagé ;
-  * suppression de `LastCHE` car peu d'intérêts à être partagé.
-* le 23/08/2021 :
-  * ajout de `AddSujetRAMEAU` pour ajouter des 60X ;
-  * ajout de `ctrlTraitementInterne` ;
-  * ajout de `getUB310` pour récupérer dans le presse-papier l'information de la première 310 ;
-  * ajout de `PurifUB200a` pour adapter un titre à son écriture en UNIMARC ;
-  * scission de `addUB700S3` : la partie sur l'exemplaire a été isolée dans un nouveau script, `changeExAnom`.
-* le 24/08/2021 :
-  * répartition des scripts entre plusieurs fichiers ;
-  * actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
-  * adaptation du projet pour être cohérent avec les autres outils.
-* le 25/08/2021 :
-  * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
-  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
-* le 01/09/2021 :
-  * ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
-  * ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
-  * ajout de `uCaseNames` pour mettre des majuscules aux noms renseignés ;
-  * modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
-  * probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames` ;
-* le 02/09/2021 :
-  * modification de `getDataUAChantierThese` pour réorganiser l'inputBox, rajouter de la précision à la note sur les noms d'épouse et empêcher des valeurs illégales pour le genre ;
-  * modification de `getCoteEx` pour afficher le numéro de l'occurrence et de l'exemplaire en cas de cotes multiples, ainsi que de gérer la sélection individuelle de plusieurs cotes.
-* le 13/10/2021 :
-  * sur le document et le dépôt : la liste des modifications est renvoyée au fonds avec un lien hypertexte vers celle-ci en début de page. Par ailleurs, la documentation complète viendra finalement s'ajouter dans ce document ;
-  * modification de `getTitle` : changement de la détection du champ 200 et de son successeur avec un chr(13) pour éviter le problème des nombres dans le titre (ex: "201 patients") ;
-  * modification de `getDataUAChantierThese` : mise en place d'une vraie solution pour la détection de genre (ajout d'un `_` devant les données entrées, ce qui empêche la détection du split ; ne prend désormais que le second caractère de l'occurrence au lieu de l'itégralité du texte de celle-ci). Ajout de la  possibilité de modifier les champs Nom, Prénom, et Titre dans une nouvelle boite de dialogue préremplie avec les données détectées. Quelques précisions sur le choix de restreindre cette option uniquement à ces trois champs :
-    * discpline requiert une correspondance exacte dans Excel, autant y utiliser la liste de données validées ;
-    * années de soutenance et de naissance : se modifient en 4 touches, il est peu nécessaire d'afficher l'information entrée quand réécrire l'année est directement dans Excel est généralement plus rapide ;
-    * nom, prénom, titre : certains cas requièrent une modification d'un carcatère dans des textes parfois longs, pouvoir modifier le nom sans devoir le retaper peut être plus agréable ;
-    * cote : copier-coller la cote via `getCoteEx` est plus précis que de la retaper ;
-    * majsucule : ce n'est pas une information dans l'_output_ final ;
-    * notes : force la présence de toutes les notes ajoutées à l'output final ;
-    * Sexe : a déjà sa boîte de dialogue ;
-  * refonte de `addUA400` et `decompUA200enUA400` et ajout de `findUA200aUA200b` :
-    * `decompUA200enUA400` prend désormais comme paramètre la $a et le $b originaux au lieu de prendre l'intégralité de la 200, la détection de ces deux sous-champs se fait donc désormais dans `findUA200aUA200b`. (L'externalisation de cette partie du code est liée à des scripts non partagés que j'utilise) ;
-    * `addUA400` ne cessera plus de fonctionner s'il n'y a ni $f, ni $c dans le cas de nom non-composé ;
-    * `addUA400` prend désormais en compte la présence d'un $x, $y ou $z avant de considérer le champ comme achevé ;
-    * `decompUA200enUA400` est maintenant bien plus lisible ;
-    * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](https://github.com/Alban-Peyrat/Scripts-WinIBW#modifications-prevues).
-  * refonte des scripts de type `get` et ajout du lanceur général (`generalLauncher`) : création d'une interface pour pouvoir lancer les scripts de type `add` et `get`. L'implentation de ce lanceur a été l'occasion de modifier tous les scripts de type `get` pour qu'ils puissent être utilisables dans d'autres scripts sans devoir stocker le résultat dans le presse-papier. De fait, il n'est plus possible de leur attribuer un raccourci sans créer spécialement un nouveau script qui se contente d'appeler la fonction et de placer le résultat dans le presse-papier. La création de ce lanceur est lié à la multiplication de courts scripts que j'utilise et une multiplication trop importantes des raccourcis associés.
-  * ajout de `add18XmonoImp` : ajoute une 181 P01 txt, 182 c et 183 nga ;
-  * ajout de `addISBNElsevier` : ajoute une 010 avec le début d'un IBSN type d'Elsevier ;
-  * ajout de `add214Elsevier` : ajoute une 214 type pour Elsevier-Masson SAS à Issy-les-Moulineaux avec un DL 2021 ;
-  * ajout de `addBibgFinChap` : ajoute à l'emplacement du curseur la mention de bibliographie en fin de chapitre ;
-  * ajout de `addCouvPorte` : ajoute une 312 pour indiquer ce que la couverture porte en plus.
-* le 15/10/2021 :
-  * renommage des scripts ressources et concepts (parce que j'ai découvert que WinIBW peut séparer les scripts en plusieurs catégories) ;
+Le 02/08/2021 :
+* suppression de `PurifUB200a` car peu d'intérêts à être partagé ;
+* suppression de `CollerPPN` car peu d'intérêts à être partagé ;
+* suppression de `LastCHE` car peu d'intérêts à être partagé.
+Le 23/08/2021 :
+* ajout de `AddSujetRAMEAU` pour ajouter des 60X ;
+* ajout de `ctrlTraitementInterne` ;
+* ajout de `getUB310` pour récupérer dans le presse-papier l'information de la première 310 ;
+* ajout de `PurifUB200a` pour adapter un titre à son écriture en UNIMARC ;
+* scission de `addUB700S3` : la partie sur l'exemplaire a été isolée dans un nouveau script, `changeExAnom`.
+Le 24/08/2021 :
+* répartition des scripts entre plusieurs fichiers ;
+* actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
+* adaptation du projet pour être cohérent avec les autres outils.
+Le 25/08/2021 :
+* suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
+* modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
+Le 01/09/2021 :
+* ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
+* ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
+* ajout de `uCaseNames` pour mettre des majuscules aux noms renseignés ;
+* modification de `getCoteEx` dû à une réécriture du script. Détecte désormais l'intégralité des cotes associées au RCR et permet de sélectionner celles voulues, ou toutes ;
+* probable mise à jour prochaine de `decompUA200enUA400` pour être plus efficace et utiliser `uCaseNames` ;
+Le 02/09/2021 :
+* modification de `getDataUAChantierThese` pour réorganiser l'inputBox, rajouter de la précision à la note sur les noms d'épouse et empêcher des valeurs illégales pour le genre ;
+* modification de `getCoteEx` pour afficher le numéro de l'occurrence et de l'exemplaire en cas de cotes multiples, ainsi que de gérer la sélection individuelle de plusieurs cotes.
+Le 13/10/2021 :
+* sur le document et le dépôt : la liste des modifications est renvoyée au fonds avec un lien hypertexte vers celle-ci en début de page. Par ailleurs, la documentation complète viendra finalement s'ajouter dans ce document ;
+* modification de `getTitle` : changement de la détection du champ 200 et de son successeur avec un chr(13) pour éviter le problème des nombres dans le titre (ex: "201 patients") ;
+* modification de `getDataUAChantierThese` : mise en place d'une vraie solution pour la détection de genre (ajout d'un `_` devant les données entrées, ce qui empêche la détection du split ; ne prend désormais que le second caractère de l'occurrence au lieu de l'itégralité du texte de celle-ci). Ajout de la  possibilité de modifier les champs Nom, Prénom, et Titre dans une nouvelle boite de dialogue préremplie avec les données détectées. Quelques précisions sur le choix de restreindre cette option uniquement à ces trois champs :
+  * discpline requiert une correspondance exacte dans Excel, autant y utiliser la liste de données validées ;
+  * années de soutenance et de naissance : se modifient en 4 touches, il est peu nécessaire d'afficher l'information entrée quand réécrire l'année est directement dans Excel est généralement plus rapide ;
+  * nom, prénom, titre : certains cas requièrent une modification d'un carcatère dans des textes parfois longs, pouvoir modifier le nom sans devoir le retaper peut être plus agréable ;
+  * cote : copier-coller la cote via `getCoteEx` est plus précis que de la retaper ;
+  * majsucule : ce n'est pas une information dans l'_output_ final ;
+  * notes : force la présence de toutes les notes ajoutées à l'output final ;
+  * Sexe : a déjà sa boîte de dialogue ;
+* refonte de `addUA400` et `decompUA200enUA400` et ajout de `findUA200aUA200b` :
+  * `decompUA200enUA400` prend désormais comme paramètre la $a et le $b originaux au lieu de prendre l'intégralité de la 200, la détection de ces deux sous-champs se fait donc désormais dans `findUA200aUA200b`. (L'externalisation de cette partie du code est liée à des scripts non partagés que j'utilise) ;
+  * `addUA400` ne cessera plus de fonctionner s'il n'y a ni $f, ni $c dans le cas de nom non-composé ;
+  * `addUA400` prend désormais en compte la présence d'un $x, $y ou $z avant de considérer le champ comme achevé ;
+  * `decompUA200enUA400` est maintenant bien plus lisible ;
+  * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](https://github.com/Alban-Peyrat/Scripts-WinIBW#modifications-prevues).
+* refonte des scripts de type `get` et ajout du lanceur général (`generalLauncher`) : création d'une interface pour pouvoir lancer les scripts de type `add` et `get`. L'implentation de ce lanceur a été l'occasion de modifier tous les scripts de type `get` pour qu'ils puissent être utilisables dans d'autres scripts sans devoir stocker le résultat dans le presse-papier. De fait, il n'est plus possible de leur attribuer un raccourci sans créer spécialement un nouveau script qui se contente d'appeler la fonction et de placer le résultat dans le presse-papier. La création de ce lanceur est lié à la multiplication de courts scripts que j'utilise et une multiplication trop importantes des raccourcis associés.
+* ajout de `add18XmonoImp` : ajoute une 181 P01 txt, 182 c et 183 nga ;
+* ajout de `addISBNElsevier` : ajoute une 010 avec le début d'un IBSN type d'Elsevier ;
+* ajout de `add214Elsevier` : ajoute une 214 type pour Elsevier-Masson SAS à Issy-les-Moulineaux avec un DL 2021 ;
+* ajout de `addBibgFinChap` : ajoute à l'emplacement du curseur la mention de bibliographie en fin de chapitre ;
+* ajout de `addCouvPorte` : ajoute une 312 pour indiquer ce que la couverture porte en plus.
+Le 15/10/2021 :
+* renommage des scripts ressources et concepts (parce que j'ai découvert que WinIBW peut séparer les scripts en plusieurs catégories) ;
+* modification mineuresur le fonctionnement de la boucle de `AddSujetRAMEAU` ;
+* ajout de la documentation complète de :
+  * `add18XmonoImp` ;
+  * `add214Elsevier` ;
+  * `addBibgFinChap` ;
+  * `addCouvPorte` ;
+  * `addISBNElsevier` ;
+  * `AddSujetRAMEAU`.
 
 ### Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
 * scripts de type `get` : vérification de l'utilisation du presse-papier et restituer le presse-papier présent avant le lancement du script s'il est réécrit ;
-* `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b`.
-* ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu.
+* `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b` ;
+* ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
+* correction du malfonctionnement probable de `addBibgFinChap`.
