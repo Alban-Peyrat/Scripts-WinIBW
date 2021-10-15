@@ -67,6 +67,67 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
 
 Ce fichier réunit majoritairement les scripts à exécuter ou de traitement.
 
+#### `add18XmonoImp`
+
+Ajoute les 181-2-3 pour une monographie imprimée sans illustration.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `181 ##$P01$ctxt`
+* `182 ##$P01$cn`
+* `183 ##$P01$anga`
+* un retour à la ligne.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
+#### `add214Elsevier`
+
+Ajoute une 214 type pour Elsevier (2021).
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2021`
+* un retour à la ligne
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
+#### `addBibgFinChap`
+
+Ajoute une mention de bibliographie à la fin de chaque chapitre.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à l'emplacement du curseur :
+* `Chaque fin de chapitre comprend une bibliographie`
+
+__Malfonctionnement possible : si la notice n'était pas en mode édition, le texte ne s'écrira probablement pas si la grille des données codées n'est pas affichée.__
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
+#### `addCouvPorte`
+
+Ajoute le début d'une 312 `La couverture porte en plus`.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `312 ##$aLa couverture porte en plus : "`
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
+#### `addISBNElsevier`
+
+Ajoute une 010 avec le début de l'ISBN d'Elsevier.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `010 ##$A978-2-294-`
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
 #### `AddSujetRAMEAU`
 
 Ouvre une boîte de dialogue permettant d'insérer des UB60X à partir du PPN.
