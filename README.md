@@ -4,7 +4,7 @@ __Rappel : pour installer les scripts dans WinIBW, référez-vous au [guide pour
 
 _[Cliquez ici pour atteindre la liste des modifications.](https://github.com/Alban-Peyrat/Scripts-WinIBW#liste-des-modifications)_
 
-_Version du 14/10/2021. Une refonte est en cours de réflexion. Les changements apportés le 13/10/2021 ne sont pas encore écrits dans la documentation. Les scripts en revanche sont bien actualisés._
+_Version du 15/10/2021. Une refonte est en cours de réflexion. Les changements apportés le 13/10/2021 ne sont pas encore écrits dans la documentation. Les scripts en revanche sont bien actualisés._
 
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
@@ -24,12 +24,12 @@ U + _type de notice_ + _champ_ + _sous-champ_
 
 Avec :
 * type de notice :
-  * "A" pour les notices d'autorité auteur ;
-  * "B" pour les notices bibliographiques ;
+  * `A` pour les notices d'autorité auteur ;
+  * `B` pour les notices bibliographiques ;
 * champ : le champ sous forme de nombre ;
 * sous-champ :
   * lettre minuscule ;
-  * "S" + le chiffre.
+  * `S` + le chiffre.
 
 Exemples :
 * `UB200a` : dans une notice bibliographique, le sous-champ `a` de la zone 200 ;
@@ -43,7 +43,7 @@ Certaines informations propres à ma bibliothèque sont à remplacer :
 
 ## La validation automatique
 
-Il est à noter que normalement, aucun des scripts qui effectueraient des modifications sur une notice ne se termine par une validation automatique de celles-ci [24/08/2021] : je préfère toujours pouvoir vérifier que tout est bon avant validation.
+Il est à noter que normalement, aucun des scripts qui effectueraient des modifications sur une notice ne se termine par une validation automatique de celles-ci : je préfère toujours pouvoir vérifier que tout est bon avant validation.
 
 Toutefois, cette validation se met en place très facilement avec l'ajout de `Application.ActiveWindow.SimulateIBWKey "FR"` à la fin du script.
 
@@ -63,7 +63,7 @@ Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en 
 
 ## Présentation des scripts
 
-### [Scripts principaux](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+### Scripts principaux
 
 Ce fichier réunit majoritairement les scripts à exécuter ou de traitement.
 
@@ -209,7 +209,7 @@ _Type de procédure : SUB_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-### [Scripts ressources](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+### Scripts ressources
 
 Ce fichier contient les scripts facilitant l'exécution des autres, qui sont amenés à être appelés dans de nombreux autres scripts.
 
@@ -315,7 +315,7 @@ _Paramètres :_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
-### [Concepts de scripts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs)
+### Concepts de scripts
 
 Ce fichier contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent, ou des scripts de mon bac à sable que je pense utiles à partager. Certains d'entre eux ont des équivalents dans mes outils, auquel cas, un lien vers ceux-ci sera présent.
 
@@ -352,12 +352,12 @@ _Type de procédure : SUB_
   * ajout de `PurifUB200a` pour adapter un titre à son écriture en UNIMARC ;
   * scission de `addUB700S3` : la partie sur l'exemplaire a été isolée dans un nouveau script, `changeExAnom`.
 * le 24/08/2021 :
-  * [répartition des scripts entre plusieurs fichiers](https://github.com/Alban-Peyrat/Scripts-WinIBW#organisation-des-scripts) ;
+  * répartition des scripts entre plusieurs fichiers ;
   * actualisation des présentations des scripts, notamment en intégrant les dernières modifications ;
   * adaptation du projet pour être cohérent avec les autres outils.
 * le 25/08/2021 :
   * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
-  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de ConS*tance* ;
+  * modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
 * le 01/09/2021 :
   * ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
   * ajout de `getDataUAChantierThese` pour exporter les données d'une thèse dans le cadre d'un chantier sur les thèses ;
