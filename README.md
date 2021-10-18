@@ -408,12 +408,13 @@ Renvoi le nombre d'occurrences.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* p_strStringToCheck : A FAIRE
-* p_strSubString : A FAIRE
-* p_boolCaseSensitive : A FAIRE
+* `p_strStringToCheck` : variable qui sera fouillée ;
+* `p_strSubString` : texte à chercher ;
+* `p_boolCaseSensitive` : __bool__ définit si la recherche sera sensible à la casse.
+
+Renvoie le nombre de fois où `p_strSubString` apparait dans `p_strStringToCheck` en comptant le nombre de parties lorsque l'on divise `p_strStringToCheck` en utilisant `p_strSubString` comme séparateur.
+Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temps les deux autres variables en minuscule.
 
 [Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
