@@ -473,8 +473,17 @@ Passe en mode édition (ou présentation).
 _Type de procédure : SUB_
 
 _Paramètres :_
-* lgpMode : [bool] A FAIRE
-* save : [bool] A FAIRE
+* `lgpMode` : __bool__ définit si l'on souhaite passer en mode présentation (`true`) ;
+* `save` : __bool__ définit si l'on souhaite sauvegarder les modifications si l'on passe en mode présentation.
+
+Script barbare qui pour le moment essaye de savoir s'il est possible de coller une information dans la notice :
+* si l'opération entraîne une erreur (non visible par l'utilisateur), détermine que la notice n'est pas en mode édition ;
+* sinon, détermine que la notice est en mode édition.
+
+Il agit ensuite selon trois scénarios :
+* il doit passer en mode édition et la notice n'est pas en mode édition, il lance la commande `mod` ;
+* il doit passer en mode présentation et sauvegarder la notice, il simule la validation de la notice ;
+* il doit passer en mode présentation et ne pas sauvegarder la notice, il simule alors une annulation puis une validation (= pour le message qui apparait en cas de tentative d'annulation alors que des modifications ont été effectuées).
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
