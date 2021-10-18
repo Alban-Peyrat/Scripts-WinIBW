@@ -457,12 +457,12 @@ _Type de procédure : SUB_
 
 #### `Sleep`
 
-Permet de mettre en pause un script pendant t = `time` (en secondes).
+Permet de mettre en pause un script. __Évitez l'utilisation.__
 
 _Type de procédure : SUB_
 
 _Paramètres :_
-* time : [int] A FAIRE
+* `time` : __int__ temps à attendre (en secondes).
 
 [Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
