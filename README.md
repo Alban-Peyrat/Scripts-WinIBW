@@ -372,6 +372,14 @@ Recherche la liste de PPN contenue dans le presse-papier.
 
 _Type de procédure : SUB_
 
+Transforme la liste de PPN du presse-papier en :
+* supprimant `(PPN)` ;
+* remplançant `chr(10)` par `OR` (avec espace avant et après) ;
+* ajoutant au début `che PPN` suivi d'un espace ;
+* supprimant les quatre derniers caractères (supposément `OR` avec un espace avant et après).
+
+Place ensuite la requête dans le presse-papier et lance la requête.
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
 ### Scripts ressources
