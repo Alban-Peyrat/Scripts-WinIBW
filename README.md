@@ -420,13 +420,13 @@ Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temp
 
 #### `exportVar`
 
-Exporte `var` dans `export.txt` (même emplacement que `winibw.vbs`), réécrivant le fichier si `boolAppend` est false. Est utilisé par toutes les procédures qui exporte des données.
+Exporte le texte injecté dans `export.txt` (même emplacement que `winibw.vbs`). __Pour l'utiliser, pensez à changer la destination du document, et le nom si vous le souhaitez.__
 
 _Type de procédure : SUB_
 
 _Paramètres :_
-* var : A FAIRE
-* boolAppend : A FAIRE
+* `var` : le texte à exporter ;
+* `boolAppend` : __bool__ définit si le script doit ajouter à la fin du fichier (`true`) ou réécrire le fichier.
 
 [Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
