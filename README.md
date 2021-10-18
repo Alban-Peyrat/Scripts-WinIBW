@@ -264,6 +264,40 @@ Il isole ensuite la valeur du `$a` puis du `$b` et renvoie la 200, la `$a` isol�
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
+#### `generalLauncher`
+
+Ouvre une boîte de dialogue servant à lancer les scripts (majoritairement de type `add` et `get`). 
+
+_Type de procédure : SUB_
+
+
+Ouvre une boîte de dialogue contenant la liste des scripts suivants accompagnés de leur identifiant, la liste étant décomposée en plusieurs parties :
+* notices bibliographiques :
+  * 14 : exécuter [`add18XmonoImp`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add18xmonoimp) ;
+  * 1 : exécuter [`addCouvPorte`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addcouvporte) ;
+  * 2 : exécuter [`addBibgFinChap`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addbibgfinchap) ;
+  * 3 : exécuter [`addEISBN`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addeisbn) ;
+  * 4 : exécuter [`AddSujetRAMEAU`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addsujetrameau) ;
+  * 15 : placer dans le presse-papier le renvoi de [`addUB700S3`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addub700s3) ;
+* Elsevier :
+  * 6 : exécuter [`addISBNElsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addisbnelsevier) ;
+  * 7 : exécuter [`add214Elsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add214elsevier) ;
+* récupérer des informations :
+  * 8 : placer dans le presse-papier le renvoi de [`getTitle`](https://github.com/Alban-Peyrat/Scripts-WinIBW#gettitle) ;
+  * 9 : placer dans le presse-papier le renvoi de [`getCoteEx`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getcoteex) ;
+* thèses
+  * 10 : exécuter [`getDataUAChantierThese`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getdatauachantierthese) ;
+  * 5 : exécuter `perso_CTaddUB700S3` ;
+  * 11 : placer dans le presse-papier le renvoi de [`getUB310`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getub310) ;
+* notices d'autorités
+  * 12 : exécuter [`addUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addua400) ;
+  * 13 : placer dans le presse-papier le renvoi de [`getUA810b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getua810b) ;
+* CorWin :
+  * 77 : lance le lanceur de [CorWin](https://github.com/Alban-Peyrat/CorWin).
+
+
+_Contexte de développement : j'utilise des raccourcis pour la majorité de mes scripts. Or à force de créer de petits scripts, les combinaisons de raccourcis se limitent et m'obligent à retenir beaucoup de raccourcis différents. Le lenceur général permet donc de réduire ce nombre. Aussi, les nombres sont attribués dans l'ordre d'ajout et non pas dans l'ordre où ils sont listés._
+
 #### `getCoteEx`
 
 Renvoie dans le presse-papier la cote du document. Si plusieurs cotes sont présentes, donne le choix entre en sélectionner une, ou toutes les sélectionner, permettant également de choisir le séparateur.
