@@ -228,14 +228,20 @@ _Type de procédure : SUB_
 
 #### `decompUA200enUA400`
 
-Renvoie les UA400 créés à partir de la décomposition du nom composé du UA200 importé (`impUA200`).
+Renvoie des UA400 créés à partir de la décomposition du nom composé de l'UA200, à l'aide des `$a` et `$b` injectés.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
+_Paramètres :_
+* `UA200a` : contenu de la 200 `$a` ;
+* `UA200b` : contenu de la 200 `$b`.
 
-_Paramètres_ :
-* impUA200 : [string] PAS A JOUR
+Le script est une grande boucle `While` qui boucle tant que `UA200a` contient un espace ou un tiret.
+À chaque isntance, il détecte quel est le séparateur (en comparant quelle est la plus petite position, 0 exclu, entre l'espace et le tiret).
+Il construit ensuite la nouvelle forme, en ajoutant à la fin de `UA200b` (avec un espace si le dernier caractère n'est pas `'` ou `-`) le début de `UA200a` jusqu'au séparateur, supprimant ensuite cette partie (séparateur compris) dans `UA200a`.
+Le script analyse ensuite si les caractères au début du nouveau `UA200a` sont les particules rejetées françaises (`de` suivi d'un espace ou `d'`), si c'est le cas, il les retire de `UA200a` et les rajoute à la fin de `UA200b` (sans espace si nécessaire).
+Il rajoute ensuite le champ ci-dessous à la valeur qui sera renvoyée (via [`appendNote`](https://github.com/Alban-Peyrat/Scripts-WinIBW#appendnote)) avant de passer à la prochaine instance :
+* `400 #1$a` + la valeur actuelle de `UA200a` + `$b` + la valeur actuelle de `UA200b`
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
