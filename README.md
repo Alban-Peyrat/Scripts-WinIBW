@@ -388,15 +388,17 @@ Ce fichier contient les scripts facilitant l'exécution des autres, qui sont ame
 
 #### `appendNote`
 
-Renvoie `var` comme équivalent à `text` si `var` était vide, sinon, renvoie `var` suivi d'un saut de ligne puis de `text`.
+Renvoie la variable injectée avec le texte injecté, ajoutant un saut de ligne si la variable n'était pas vide.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* var : variable à laquelle on veut ajouter du texte ;
-* text : texte à ajouter à la variable.
+* `var` : variable à laquelle on veut ajouter du texte ;
+* `text` : texte à ajouter à la variable.
+
+Regarde si `var` est vide :
+* si oui, renvoie le `text` ;
+* si non, renvoie `var` + `chr(10)` + `text`.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
