@@ -163,9 +163,16 @@ Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire av
 
 #### `addUA400`
 
-Rajoute des UA400 pour les noms composés à une autorité auteur en se basant sur la UA200.
+Rajoute des UA400 pour les noms composés en se basant sur la UA200, sinon rajoute une UA400 copiant la UA200. _Ce script n'est pas universel et ne fonctionne qu'en présence d'un `$a` et d'un `$b`._
 
 _Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
+Il lance ensuite le script [`decompUA200enUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
+Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` est inférieure à 5 (= si aucune 400 n'a été générée) :
+* si c'est le cas, il va copier la 200 précédemment obtenue en supprimant tout ce qui se trouve après la position du premier dollar après le `$b`, puis remplace dans ce qu'il reste `200` par `400` et supprime `$90y`.
+Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
+* si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
@@ -175,7 +182,11 @@ Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant 
 
 _Type de procédure : SUB_
 
-Contient aussi un appel du [script supprimant des anomalies dans les exemplaires](https://github.com/Alban-Peyrat/Scripts-WinIBW#schangeexanom).
+Passe la notice en mode édition si elle ne l'est pas déjà, puis recherche à l'intérieur de celle-ci un retour à la ligne (`chr(10)`) suivi de `700` (supposément, la première 700).
+Le script sélectionne ensuite les trois derniers caractères de ce champ (supposément le code fonction) puis génère :
+* `700 #1$3` + le contenu du presse-papier + `$4` + la sélection en cours.
+
+Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
@@ -498,6 +509,8 @@ Le 15/10/2021 :
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
 * scripts de type `get` : vérification de l'utilisation du presse-papier et restituer le presse-papier présent avant le lancement du script s'il est réécrit ;
+* `addUA400` (et associés) : gérer les autres informations ;
 * `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b` ;
 * ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
-* correction du malfonctionnement probable de `addBibgFinChap`.
+* correction du malfonctionnement probable de `addBibgFinChap` ;
+* nettoyage et correction de code et des commentaires de début de script.
