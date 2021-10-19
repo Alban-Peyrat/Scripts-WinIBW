@@ -489,14 +489,20 @@ Il agit ensuite selon trois scénarios :
 
 #### `uCaseNames`
 
-Renvoie `noms` après avoir mis une majuscule au début de chaque nom renseigné.
+Renvoie les noms injectés avec une majuscule au début de chacun d'entre eux.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* noms : A FAIRE
+* `noms` : les noms à formatter.
+
+Passe en majuscule le premier caractère de `noms` et en minuscule le reste, avant de lancer une boucle à trois instances.
+Pour chaque instance, le script détermine un séparateur qu'il va rechercher dans `noms` (espace puis `-` puis `'`).
+Il initie alors une variable `jj` avec la valeur `0` puis lance alors une boucle `While` tant que la recherche du séparateur à l'intérieur de `noms` en commençant à la position `jj + 1` est concluante.
+Si la recherche est concluante, `jj` prend la valeur de la position du séparateur identifié, puis le script conserve tel quel tout ce qui se trouve jusqu'à `jj`, puis passe en majuscule le caractère se trouvant en `jj + 1` et conserve tout ce qui le suit tel quel.
+Une fois la boucle `While` interrompue, il passe ensuite à la prochaine instance de la première boucle.
+Une fois les trois instances de celle-ci terminée, il remplace `De` (espace avant et après) et `D'` (espace avant) par leur équivalent en minuscule, avant de renvoyer le résultat final.
+
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
