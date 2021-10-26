@@ -163,9 +163,16 @@ Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire av
 
 #### `addUA400`
 
-Rajoute des UA400 pour les noms composés à une autorité auteur en se basant sur la UA200.
+Rajoute des UA400 pour les noms composés en se basant sur la UA200, sinon rajoute une UA400 copiant la UA200. _Ce script n'est pas universel et ne fonctionne qu'en présence d'un `$a` et d'un `$b`._
 
 _Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
+Il lance ensuite le script [`decompUA200enUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
+Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` est inférieure à 5 (= si aucune 400 n'a été générée) :
+* si c'est le cas, il va copier la 200 précédemment obtenue en supprimant tout ce qui se trouve après la position du premier dollar après le `$b`, puis remplace dans ce qu'il reste `200` par `400` et supprime `$90y`.
+Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
+* si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
@@ -175,18 +182,31 @@ Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant 
 
 _Type de procédure : SUB_
 
-Contient aussi un appel du [script supprimant des anomalies dans les exemplaires](https://github.com/Alban-Peyrat/Scripts-WinIBW#schangeexanom).
+Passe la notice en mode édition si elle ne l'est pas déjà, puis recherche à l'intérieur de celle-ci un retour à la ligne (`chr(10)`) suivi de `700` (supposément, la première 700).
+Le script sélectionne ensuite les trois derniers caractères de ce champ (supposément le code fonction) puis génère :
+* `700 #1$3` + le contenu du presse-papier + `$4` + la sélection en cours.
+
+Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
 #### `changeExAnom`
 
-Remplace le $btm de la zone eXX associée au RCR par $bx ou signale la présence de plusieurs eXX associées à ce RCR.
+Remplace le `$btm` de la zone eXX associée au RCR par `$bx` ou signale la présence de plusieurs eXX associées à ce RCR ou non. __Le mode d'affichage de la notice doit (probablement) être `UNM` pour fonctionner correctement.__ _Ce script vise un objectif assez précis, voir le contexte de développement à la fin de sa documentation._
 
 _Type de procédure : SUB_
 
-_Paramètres_ :
-* notice : notice bibliographique obtenue via copie de la notice depuis le mode édition (`SelectAll` puis `Copy`)
+Passe la notice en mode édition si elle ne l'est pas déjà, puis copie l'intégralité de la notice.
+Le script exécute ensuite [`CountOccurrences`](https://github.com/Alban-Peyrat/Scripts-WinIBW#countoccurences) pour compter le nombre de `chr(10)` suivi de `e` en tenant compte de la casse (= compte le nombre de notices d'exemplaires dans l'ILN) :
+* si une occurrence est détectée, exécute [`goToTag`](https://github.com/Alban-Peyrat/Scripts-WinIBW#gototag) pour se rendre sur le champ 930, puis recule de 1 caractère (bascule sur le champ précédent) et sélectionne les deux prochains caractères sur la gauche (= les deux derniers caractères du champ).
+Il compare ensuite si ces deux caractères en minuscule sont égaux à `tm`, auquel cas, ils les remplacent par `x`, récupère le numéro de champ et affiche une infobulle (numéro de champ + `: tm remplacé par x`) ;
+* si plus d'une occurrence est détectée, il réexécute `countOccurrences` en comptant cette fois-ci le nombre  `$b` suivi du RCR __(pour utiliser le script sur votre RCR, changez `330632101` en votre RCR)__ :
+  * si plus d'une occurrence est trouvée, recherche `$btm` suivi d'un `chr(10)` suivi de `930 ` et récupère le numéro du champ. Si ce numéro commence par `e`, affiche une infobulle (numéro du champ + `à supprimer`, avec comme titre de fenêtre `Exemplaire fictif`), sinon affiche une autre infobulle (`Plusieurs exemplaires réels sur ce RCR. Vérification recommandée.`) ;
+  * sinon, affiche une infobulle (`Plusieurs exemplaires réels. Vérification recommandée.`).
+
+_Contexte de développement : dans le cadre d'un chantier sur les thèses, des exemplaires pouvaient avoir en `$b` des `eXX` la mention `TM` (ou `M` supposément, dans la pratique je n'en ai pas vus / je les ai ratés) liée à l'ancien signalement dans téléthèses.
+Ainsi, certains exemplaires téléthèses ont été réutilisés sans changer la valeur du `$b`, d'autres sont seulement des exemplaires fictifs en complément de l'exemplaire réel.
+Par ailleurs, nous sommes généralement la seule biblitohèque de l'ILN possédant les thèses de ce chantier, ce qui explique les demandes de vérification du script si plusieurs exemplaires sont détectés dans l'ILN._
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
@@ -208,16 +228,75 @@ _Type de procédure : SUB_
 
 #### `decompUA200enUA400`
 
-Renvoie les UA400 créés à partir de la décomposition du nom composé du UA200 importé (`impUA200`).
+Renvoie des UA400 créés à partir de la décomposition du nom composé de l'UA200, à l'aide des `$a` et `$b` injectés.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
+_Paramètres :_
+* `UA200a` : contenu de la 200 `$a` ;
+* `UA200b` : contenu de la 200 `$b`.
 
-_Paramètres_ :
-* impUA200 : [string] PAS A JOUR
+Le script est une grande boucle `While` qui boucle tant que `UA200a` contient un espace ou un tiret.
+À chaque isntance, il détecte quel est le séparateur (en comparant quelle est la plus petite position, 0 exclu, entre l'espace et le tiret).
+Il construit ensuite la nouvelle forme, en ajoutant à la fin de `UA200b` (avec un espace si le dernier caractère n'est pas `'` ou `-`) le début de `UA200a` jusqu'au séparateur, supprimant ensuite cette partie (séparateur compris) dans `UA200a`.
+Le script analyse ensuite si les caractères au début du nouveau `UA200a` sont les particules rejetées françaises (`de` suivi d'un espace ou `d'`), si c'est le cas, il les retire de `UA200a` et les rajoute à la fin de `UA200b` (sans espace si nécessaire).
+Il rajoute ensuite le champ ci-dessous à la valeur qui sera renvoyée (via [`appendNote`](https://github.com/Alban-Peyrat/Scripts-WinIBW#appendnote)) avant de passer à la prochaine instance :
+* `400 #1$a` + la valeur actuelle de `UA200a` + `$b` + la valeur actuelle de `UA200b`
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
+#### `findUA200aUA200b`
+
+Renvoie la position la UA200, son `$a`, son `$b` et la position du premier dollar suivant le `$b` ou à défaut celle de la fin du champ. __Doit être appelé depuis l'écran de modification pour fonctionner.__
+
+_Type de procédure : SUB_
+
+Récupère le premier champ 200 de la notice puis initie une boucle `While` tant que `UA200fPos` est égal à zéro (sa valeur par défaut), tout en générant un compteur supplémentaire.
+À chaque instance de la boucle, en fonction de la valeur du compteur (augmente de 1 à la fin de chaque instance), la script va attribuer à `UA200fPos` la position d'un dollar (0 par défaut, ce qui veut dire que si le dollar n'est pas présent, la boucle continue) :
+* compteur = 0 : `$f` ;
+* compteur = 1 : `$c` ;
+* compteur = 2 : `$x` ;
+* compteur = 3 : `$y` ;
+* compteur = 4 : `$z` ;
+* si le compteur a une autre valeur, assigne à `UA200fPos` la longueur de la 200 __+ 1__ (sinon [`addUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addua400) supprimerait parfois la dernière lettre du prénom).
+
+Il isole ensuite la valeur du `$a` puis du `$b` et renvoie la 200, la `$a` isolé, le `$b` isolé et `UA200fPos` __sous forme d'une seule chaîne de caractères en séparant les différentes valeurs par `;_;`__.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+
+#### `generalLauncher`
+
+Ouvre une boîte de dialogue servant à lancer les scripts (majoritairement de type `add` et `get`). 
+
+_Type de procédure : SUB_
+
+
+Ouvre une boîte de dialogue contenant la liste des scripts suivants accompagnés de leur identifiant, la liste étant décomposée en plusieurs parties :
+* notices bibliographiques :
+  * 14 : exécuter [`add18XmonoImp`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add18xmonoimp) ;
+  * 1 : exécuter [`addCouvPorte`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addcouvporte) ;
+  * 2 : exécuter [`addBibgFinChap`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addbibgfinchap) ;
+  * 3 : exécuter [`addEISBN`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addeisbn) ;
+  * 4 : exécuter [`AddSujetRAMEAU`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addsujetrameau) ;
+  * 15 : placer dans le presse-papier le renvoi de [`addUB700S3`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addub700s3) ;
+* Elsevier :
+  * 6 : exécuter [`addISBNElsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addisbnelsevier) ;
+  * 7 : exécuter [`add214Elsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add214elsevier) ;
+* récupérer des informations :
+  * 8 : placer dans le presse-papier le renvoi de [`getTitle`](https://github.com/Alban-Peyrat/Scripts-WinIBW#gettitle) ;
+  * 9 : placer dans le presse-papier le renvoi de [`getCoteEx`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getcoteex) ;
+* thèses
+  * 10 : exécuter [`getDataUAChantierThese`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getdatauachantierthese) ;
+  * 5 : exécuter `perso_CTaddUB700S3` ;
+  * 11 : placer dans le presse-papier le renvoi de [`getUB310`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getub310) ;
+* notices d'autorités
+  * 12 : exécuter [`addUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addua400) ;
+  * 13 : placer dans le presse-papier le renvoi de [`getUA810b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getua810b) ;
+* CorWin :
+  * 77 : lance le lanceur de [CorWin](https://github.com/Alban-Peyrat/CorWin).
+
+
+_Contexte de développement : j'utilise des raccourcis pour la majorité de mes scripts. Or à force de créer de petits scripts, les combinaisons de raccourcis se limitent et m'obligent à retenir beaucoup de raccourcis différents. Le lenceur général permet donc de réduire ce nombre. Aussi, les nombres sont attribués dans l'ordre d'ajout et non pas dans l'ordre où ils sont listés._
 
 #### `getCoteEx`
 
@@ -293,6 +372,14 @@ Recherche la liste de PPN contenue dans le presse-papier.
 
 _Type de procédure : SUB_
 
+Transforme la liste de PPN du presse-papier en :
+* supprimant `(PPN)` ;
+* remplançant `chr(10)` par `OR` (avec espace avant et après) ;
+* ajoutant au début `che PPN` suivi d'un espace ;
+* supprimant les quatre derniers caractères (supposément `OR` avec un espace avant et après).
+
+Place ensuite la requête dans le presse-papier et lance la requête.
+
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
 ### Scripts ressources
@@ -301,15 +388,17 @@ Ce fichier contient les scripts facilitant l'exécution des autres, qui sont ame
 
 #### `appendNote`
 
-Renvoie `var` comme équivalent à `text` si `var` était vide, sinon, renvoie `var` suivi d'un saut de ligne puis de `text`.
+Renvoie la variable injectée avec le texte injecté, ajoutant un saut de ligne si la variable n'était pas vide.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* var : variable à laquelle on veut ajouter du texte ;
-* text : texte à ajouter à la variable.
+* `var` : variable à laquelle on veut ajouter du texte ;
+* `text` : texte à ajouter à la variable.
+
+Regarde si `var` est vide :
+* si oui, renvoie le `text` ;
+* si non, renvoie `var` + `chr(10)` + `text`.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -319,24 +408,25 @@ Renvoi le nombre d'occurrences.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* p_strStringToCheck : A FAIRE
-* p_strSubString : A FAIRE
-* p_boolCaseSensitive : A FAIRE
+* `p_strStringToCheck` : variable qui sera fouillée ;
+* `p_strSubString` : texte à chercher ;
+* `p_boolCaseSensitive` : __bool__ définit si la recherche sera sensible à la casse.
+
+Renvoie le nombre de fois où `p_strSubString` apparait dans `p_strStringToCheck` en comptant le nombre de parties lorsque l'on divise `p_strStringToCheck` en utilisant `p_strSubString` comme séparateur.
+Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temps les deux autres variables en minuscule.
 
 [Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
 #### `exportVar`
 
-Exporte `var` dans `export.txt` (même emplacement que `winibw.vbs`), réécrivant le fichier si `boolAppend` est false. Est utilisé par toutes les procédures qui exporte des données.
+Exporte le texte injecté dans `export.txt` (même emplacement que `winibw.vbs`). __Pour l'utiliser, pensez à changer la destination du document, et le nom si vous le souhaitez.__
 
 _Type de procédure : SUB_
 
 _Paramètres :_
-* var : A FAIRE
-* boolAppend : A FAIRE
+* `var` : le texte à exporter ;
+* `boolAppend` : __bool__ définit si le script doit ajouter à la fin du fichier (`true`) ou réécrire le fichier.
 
 [Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -367,12 +457,12 @@ _Type de procédure : SUB_
 
 #### `Sleep`
 
-Permet de mettre en pause un script pendant t = `time` (en secondes).
+Permet de mettre en pause un script. __Évitez l'utilisation.__
 
 _Type de procédure : SUB_
 
 _Paramètres :_
-* time : [int] A FAIRE
+* `time` : __int__ temps à attendre (en secondes).
 
 [Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -383,21 +473,36 @@ Passe en mode édition (ou présentation).
 _Type de procédure : SUB_
 
 _Paramètres :_
-* lgpMode : [bool] A FAIRE
-* save : [bool] A FAIRE
+* `lgpMode` : __bool__ définit si l'on souhaite passer en mode présentation (`true`) ;
+* `save` : __bool__ définit si l'on souhaite sauvegarder les modifications si l'on passe en mode présentation.
+
+Script barbare qui pour le moment essaye de savoir s'il est possible de coller une information dans la notice :
+* si l'opération entraîne une erreur (non visible par l'utilisateur), détermine que la notice n'est pas en mode édition ;
+* sinon, détermine que la notice est en mode édition.
+
+Il agit ensuite selon trois scénarios :
+* il doit passer en mode édition et la notice n'est pas en mode édition, il lance la commande `mod` ;
+* il doit passer en mode présentation et sauvegarder la notice, il simule la validation de la notice ;
+* il doit passer en mode présentation et ne pas sauvegarder la notice, il simule alors une annulation puis une validation (= pour le message qui apparait en cas de tentative d'annulation alors que des modifications ont été effectuées).
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
 #### `uCaseNames`
 
-Renvoie `noms` après avoir mis une majuscule au début de chaque nom renseigné.
+Renvoie les noms injectés avec une majuscule au début de chacun d'entre eux.
 
 _Type de procédure : FUNCTION_
 
-_Renvoi :_
-
 _Paramètres :_
-* noms : A FAIRE
+* `noms` : les noms à formatter.
+
+Passe en majuscule le premier caractère de `noms` et en minuscule le reste, avant de lancer une boucle à trois instances.
+Pour chaque instance, le script détermine un séparateur qu'il va rechercher dans `noms` (espace puis `-` puis `'`).
+Il initie alors une variable `jj` avec la valeur `0` puis lance alors une boucle `While` tant que la recherche du séparateur à l'intérieur de `noms` en commençant à la position `jj + 1` est concluante.
+Si la recherche est concluante, `jj` prend la valeur de la position du séparateur identifié, puis le script conserve tel quel tout ce qui se trouve jusqu'à `jj`, puis passe en majuscule le caractère se trouvant en `jj + 1` et conserve tout ce qui le suit tel quel.
+Une fois la boucle `While` interrompue, il passe ensuite à la prochaine instance de la première boucle.
+Une fois les trois instances de celle-ci terminée, il remplace `De` (espace avant et après) et `D'` (espace avant) par leur équivalent en minuscule, avant de renvoyer le résultat final.
+
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
 
@@ -494,10 +599,25 @@ Le 15/10/2021 :
   * `addISBNElsevier` ;
   * `AddSujetRAMEAU`.
 
+Le 26/10/2021 :
+* ajout de la documentation pour les scripts (`get`, chantiers thèse, concepts et `goToTag` exclus, qui pour une majorité nécessitent des modifications importantes) ;
+* modifications mineures de `addUA400` et nettoyage du code ;
+* `findUA200aUA200b` : correction d'un bug qui supprimait la dernière lettre de la partie rejetée si la 200 ne comprenait pas de `$` après le `$b` ;
+* `addUB700S3` :
+  * n'utilise plus le presse papier ;
+  * suppression de la partie du code spécifique au chantier thèse. Un script personnel regroupant celui-ci et la partie supprimée a été créé ;
+  * nettoyage du code ;
+* `generalLauncher` : modification de l'ID de `addUB700S3` (pour moi, cela correspond à conserver le même ID pour le même script, la nouvelle version de `addUB700S3` étant techniquement un nouveau script) ;
+* `changeExAnom` : récupère la notice par lui-même, n'utilise plus le presse-papier et nettoyage du code ainsi que suppression de parties inutiles ;
+* `exportVar` : nettoyage du code ;
+* `uCaseNames` : force désormais la majuscule sur la première lettre (le script était conçu pour des noms entièrement en maajuscule).
+
 ### Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
 * scripts de type `get` : vérification de l'utilisation du presse-papier et restituer le presse-papier présent avant le lancement du script s'il est réécrit ;
+* `addUA400` (et associés) : gérer les autres informations ;
 * `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b` ;
 * ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
-* correction du malfonctionnement probable de `addBibgFinChap`.
+* correction du malfonctionnement probable de `addBibgFinChap` ;
+* nettoyage et correction de code et des commentaires de début de script.

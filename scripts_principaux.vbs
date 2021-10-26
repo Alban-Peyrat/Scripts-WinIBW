@@ -110,8 +110,6 @@ End Sub
 
 Sub addUA400()
 'Ajoute un/des champs 400 à une notice d'autorité auteur
-'Basée sur la 200, elle décompose le  $a
-'Raccourci : Ctrl Shift "
 'Requis : decompUA200enUA400, Ress_toEditMode
 'PAS UNIVERSEL. Fonctionne uniquement s'il y a un $a et un $b au moins
 
@@ -121,30 +119,6 @@ Sub addUA400()
     
 With Application.activeWindow.Title
 	
-	' UA200 = .FindTag ("200")
-	' UA200fPos = 0
-	' ii = 0
-	' While UA200fPos = 0
-	' 	Select Case ii
-	' 		case 0
-	' 			UA200fPos = inStr(UA200, "$f")
-	' 		case 1
-	' 			UA200fPos = inStr(UA200, "$c")
-
-	' 		case 2
-	' 			UA200fPos = inStr(UA200, "$x")
-	' 		case 3
-	'			UA200fPos = inStr(UA200, "$y")
-	'		case 4
-	'			UA200fPos = inStr(UA200, "$z")
-	'		case Else
-	'			UA200fPos = Len(UA200)
-	'	End Select
-	'	ii = ii +1
-	'Wend
-
-	'UA200a = Mid(UA200, InStr(UA200, "$a")+2, InStr(UA200, "$b") - InStr(UA200, "$a")-2)
-	'UA200b = Mid(UA200, InStr(UA200, "$b")+2, UA200fPos - InStr(UA200, "$b")-2)
 	temp = findUA200aUA200b
 	temp = Split(temp, ";_;")
 	UA200 = temp(0)
@@ -155,7 +129,6 @@ With Application.activeWindow.Title
 	UA400 = decompUA200enUA400(UA200a, UA200b)
 	
 	.endofbuffer
-	.InsertText vblf & UA400
 	
 'Ajoute une 400 à modifier si decompUA200enUA400 n'a pas renvoyé de 400
 	If Len(UA400) < 5 Then
@@ -166,10 +139,11 @@ With Application.activeWindow.Title
 		UA400 = replace(UA400, "200", "400")
 		UA400 = replace(UA400, "$90y", "")
 		
-		.endofbuffer
 		.InsertText vblf & UA400
 		.startoffield
 		.CharRight 8
+	Else
+		.InsertText vblf & UA400
 	End If
     
 End With
@@ -178,53 +152,41 @@ End Sub
 
 Sub addUB700S3()
 'Remplace la 700 actuelle de la notice bibliographique par une 700 contenant le PPN du presse-papier et le $4 de l'ancienne 700
-'Raccourci : ctrl shift N
-'Requis : Ress_CountOccurrences, Ress_goToTag, Ress_toEditMode
+'Requis : Ress_toEditMode
 	
-	dim UB700, saveClipboard, notice
-	dim nbOcc, exSB, nbOccRCR
+	dim UB700
 	
-	saveClipboard = Application.activeWindow.Clipboard
 	Ress_toEditMode false, false
 
 With Application.ActiveWindow.Title
-
-	.SelectAll
-	.copy
-	notice = Application.activeWindow.Clipboard
 	
 	.Find(chr(10) & "700 ")
 	.EndOfField
 	.CharLeft 3, true
-	.copy
-	UB700 = "700 #1$3" & saveClipboard & "$4" & Application.activeWindow.Clipboard
+	UB700 = "700 #1$3" & application.activeWindow.clipboard & "$4" & .selection
 	UB700 = replace(UB700, chr(10), "")
 	.deleteLine
 	
 	.InsertText UB700 & vblf
-	
-	'Remplace le $btm des exemplaires du RCR ou signale la présence de plusieurs exemplaires dans l'ILN
-	changeExAnom notice
-	
-	Ress_goToTag "101", "none", false, true, false
     
 End With
-
-    Application.activeWindow.Clipboard = saveClipboard
     
 End Sub
 
-Sub changeExAnom(notice)
+Sub changeExAnom()
+
+Dim notice, nbOcc, nbOccRCR, exSB
 
 With Application.activeWindow.Title
+	.SelectAll
+	notice = .selection
+
 	nbOcc = Ress_CountOccurrences(notice, chr(10) & "e", true)
-	if nbOcc = 0 Then
-	ElseIf nbOcc = 1 Then
+	If nbOcc = 1 Then
 		Ress_goToTag "930", "none", false, false, false
 		.charLeft(1)
 		.charLeft 2, true
-		.copy
-		If LCase(Application.activeWindow.clipboard) = "tm" Then
+		If LCase(.selection) = "tm" Then
 			.InsertText "x"
 			exSB = .tag
 			MsgBox exSB & " : tm remplacé par x"
@@ -237,7 +199,7 @@ With Application.activeWindow.Title
 			if Left(exSB, 1) = "e" Then
 				MsgBox exSB & " à supprimer", , "Exemplaire fictif"
 			Else
-				MsgBox "Plusieurs exemplaires réels sur ce RCR." & chr(10) &"Fonds historique ?" & chr(10) &  chr(10) & "Vérification recommandée."
+				MsgBox "Plusieurs exemplaires réels sur ce RCR." & chr(10) &  chr(10) & "Vérification recommandée."
 			End If
 		Else
 			MsgBox "Plusieurs exemplaires réels." & chr(10) & chr(10) & "Vérification recommandée."
@@ -441,7 +403,7 @@ Function findUA200aUA200b()
 			case 4
 				UA200fPos = inStr(UA200, "$z")
 			case Else
-				UA200fPos = Len(UA200)
+				UA200fPos = Len(UA200) + 1
 		End Select
 		ii = ii +1
 	Wend
@@ -453,7 +415,7 @@ Function findUA200aUA200b()
 End Function
 
 Sub generalLauncher()
-'Ouvre un input box pour lancer les scripts (add et get), parce que j'ai pas non plus une infinité de touches raccorucis
+'Ouvre un input box pour lancer les scripts (add et get)
 Dim num
 
 num = Inputbox("Écrire le numéro du script à exécuter"_
@@ -463,7 +425,7 @@ num = Inputbox("Écrire le numéro du script à exécuter"_
 	& chr(10) & "[2] Ajouter bibg en fin de chapitre"_
 	& chr(10) & "[3] Ajouter e-ISBN"_
 	& chr(10) & "[4] Ajouter sujet RAMEAU"_
-	& chr(10) & "[5] Ajouter 700 $3"_
+	& chr(10) & "[15] Ajouter 700 $3"_
 	& chr(10)& chr(10) & chr(09) & "Elsevier"_
 	& chr(10) & "[6] Ajouter ISBN Elsevier"_
 	& chr(10) & "[7] Ajouter 214 Elsevier"_
@@ -472,6 +434,7 @@ num = Inputbox("Écrire le numéro du script à exécuter"_
 	& chr(10) & "[9] Récupérer la cote"_
 	& chr(10)& chr(10) & chr(09) & "Thèses"_
 	& chr(10) & "[10] Récupérer les données chantier autorités"_
+	& chr(10) & "[5] Ajouter 700 $3 & vérif. ex."_
 	& chr(10) & "[11] Récupérer la note disponibilité (310)"_
 	& chr(10) & chr(10) & chr(09) & "Notices autorité :"_
 	& chr(10) & "[12] Ajouter 400"_
@@ -490,7 +453,7 @@ Select Case num
 	case 4
 		AddSujetRAMEAU
 	case 5
-		addUB700S3
+		perso_CTaddUB700S3
 	case 6
 		addISBNElsevier
 	case 7
@@ -507,6 +470,8 @@ Select Case num
 		addUA400
 	case 13
 		application.activeWindow.clipboard	= getUA810b
+	case 15
+		addUB700S3
 	case 77
 		CorWin_Launcher
 	case else
@@ -514,10 +479,6 @@ Select Case num
 End Select
 
 End Sub
-
-Function get200Title(carClass)
-	'j'ai la fleeeeeeeeeeeeeeeeeeeeeeeeeeeeemme
-End Function
 
 Function getCoteEx()
 'Renvoie dans le presse-papier la cote du document pour ce RCR (malfonctionne s'il y a plusieurs exemplaires de ce RCR)
