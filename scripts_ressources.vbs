@@ -50,10 +50,7 @@ Sub Ress_exportVar(var, boolAppend)
 		mode = 2
 	End If
 
-	'À la BU
 	Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile("C:\/oclcpica/WinIBW30/Profiles/apeyrat001/export.txt",mode,true)
-	'En TVW
-	'Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile("C:\/oclcpica/WinIBW30/Profiles/utilisateur/export.txt",mode,true)
 	objFileToWrite.WriteLine(var)
 	objFileToWrite.Close
 	Set objFileToWrite = Nothing
@@ -268,7 +265,7 @@ Function Ress_uCaseNames(noms)
 
 Dim kk, jj, sepCheck
 
-noms = Left(noms, 1) & LCase(Mid(noms, 2, Len(noms)))
+noms = UCase(Left(noms, 1)) & LCase(Mid(noms, 2, Len(noms)))
 
 For kk = 0 to 3
 	Select Case kk
