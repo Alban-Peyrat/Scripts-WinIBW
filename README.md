@@ -609,6 +609,7 @@ Le 26/10/2021 :
   * nettoyage du code ;
 * `generalLauncher` : modification de l'ID de `addUB700S3` (pour moi, cela correspond à conserver le même ID pour le même script, la nouvelle version de `addUB700S3` étant techniquement un nouveau script) ;
 * `changeExAnom` : récupère la notice par lui-même, n'utilise plus le presse-papier et nettoyage du code ainsi que suppression de parties inutiles ;
+* `exportVar` : nettoyage du code ;
 * `uCaseNames` : force désormais la majuscule sur la première lettre (le script était conçu pour des noms entièrement en maajuscule).
 
 ### Modifications prévues
