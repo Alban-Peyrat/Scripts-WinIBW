@@ -599,6 +599,18 @@ Le 15/10/2021 :
   * `addISBNElsevier` ;
   * `AddSujetRAMEAU`.
 
+Le 26/10/2021 :
+* ajout de la documentation pour les scripts (`get`, chantiers thèse, concepts et `goToTag` exclus, qui pour une majorité nécessitent des modifications importantes) ;
+* modifications mineures de `addUA400` et nettoyage du code ;
+* `findUA200aUA200b` : correction d'un bug qui supprimait la dernière lettre de la partie rejetée si la 200 ne comprenait pas de `$` après le `$b` ;
+* `addUB700S3` :
+  * n'utilise plus le presse papier ;
+  * suppression de la partie du code spécifique au chantier thèse. Un script personnel regroupant celui-ci et la partie supprimée a été créé ;
+  * nettoyage du code ;
+* `generalLauncher` : modification de l'ID de `addUB700S3` (pour moi, cela correspond à conserver le même ID pour le même script, la nouvelle version de `addUB700S3` étant techniquement un nouveau script) ;
+* `changeExAnom` : récupère la notice par lui-même, n'utilise plus le presse-papier et nettoyage du code ainsi que suppression de parties inutiles ;
+* `uCaseNames` : force désormais la majuscule sur la première lettre (le script était conçu pour des noms entièrement en maajuscule).
+
 ### Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
