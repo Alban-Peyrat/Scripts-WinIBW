@@ -4,8 +4,6 @@ __Rappel : pour installer les scripts dans WinIBW, référez-vous au [guide pour
 
 _[Cliquez ici pour atteindre la liste des modifications.](https://github.com/Alban-Peyrat/Scripts-WinIBW#liste-des-modifications)_
 
-_Version du 15/10/2021. Une refonte est en cours de réflexion. Tous les changements apportés le 13/10/2021 ne sont pas encore écrits dans la documentation. Les scripts en revanche sont bien actualisés._
-
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
 ## De l'usage de ces scripts
