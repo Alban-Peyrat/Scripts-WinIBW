@@ -905,3 +905,152 @@ With Application.activeWindow
 End With
 
 End Sub
+
+Sub chantierThese_addJuryFromExcel()
+	Dim xlLine, juryPPN, juryFct, juryNom, juryPrenom, jury(99, 4), ii
+	Dim mentResp, nomDir, dirNoms, nonDirCount
+	Dim UB314, UB701S3, UB701a
+	Dim temp
+	
+	xlLine = Split(application.activeWindow.clipboard, chr(09))
+
+	juryPPN = Split(xlLine(11), ";")
+	juryFct = Split(xlLine(10), ";")
+	juryNom = Split(xlLine(8), ";")
+	juryPrenom = Split(xlLine(9), ";")
+	nonDirCount = 0
+	For ii = 0 to UBound(juryPPN)
+		jury(ii, 0) = juryPPN(ii)
+		jury(ii, 1) = juryFct(ii)
+		nonDirCount = nonDirCount + 1
+		Select Case jury(ii, 1)
+			case "dir"
+				nomDir = juryNom(ii)
+				nonDirCount = nonDirCount - 1
+				dirNoms = ress_appendNote(dirNoms, juryPrenom(ii) & " " & juryNom(ii))
+				jury(ii, 2) = 727
+			case "psdt"
+				jury(ii, 2) = 956
+				jury(ii, 3) = "Président"
+				jury(ii, 4) = juryPrenom(ii) & " " & juryNom(ii)
+			case "mem"
+				jury(ii, 2) = 555
+				jury(ii, 3) = "Membre"
+				jury(ii, 4) = juryPrenom(ii) & " " & juryNom(ii)
+			case "rapp"
+				jury(ii, 2) = 958
+				jury(ii, 3) = "Rapporteur"
+				jury(ii, 4) = juryPrenom(ii) & " " & juryNom(ii)
+		End Select
+	Next
+	
+	application.activeWindow.command "CHE PPN " & xlLine(2)
+	
+	mentResp = ress_getTag("200", "1", "f", "all") & " ; " & ress_getTag("200", "1", "g", "all")
+	UB314 = ress_getTag("314", "all", "a", "all")
+	UB701S3 = ress_getTag("701", "all", "3", "1")
+	UB701a = ress_getTag("701", "all", "a", "1")
+
+	ress_toEditMode false, false
+	
+'200
+	if InStr(mentResp, nomDir) = 0 Then
+		ress_goToTag "200", "none", true, false, false
+		application.activeWindow.title.insertText	"$g[sous la direction de] " & replace(dirNoms, chr(10), ", ")
+	End If
+
+'314
+	application.activeWindow.title.endOfBuffer
+	If UB314 = "Aucune 314" Then
+		If nonDirCount = 1 Then
+			application.activeWindow.title.insertText "314 ##$aAutre contribution : "
+		ElseIf nonDirCount > 1 Then
+			application.activeWindow.title.insertText "314 ##$aAutres contributions : "
+		End If
+		For ii = 0 to UBound(juryPPN)
+			If jury(ii, 1) <> "dir" Then
+				temp = ress_appendNote(temp, jury(ii, 4))
+				If jury(ii, 1) <> jury(ii + 1, 1) Then
+					If InStr(temp, chr(10)) > 0 Then
+						If jury(ii, 1) <> "rapp" Then
+							temp = replace(temp, chr(10), ", ") & " (" & jury(ii, 3) & "s du jury) ; "
+						Else
+							temp = replace(temp, chr(10), ", ") & " (" & jury(ii, 3) & "s) ; "
+						End If
+					Else
+						If jury(ii, 1) <> "rapp" Then
+							temp = replace(temp, chr(10), ", ") & " (" & jury(ii, 3) & " du jury) ; "
+						Else
+							temp = replace(temp, chr(10), ", ") & " (" & jury(ii, 3) & ") ; "
+						End If
+					End If
+					application.activeWindow.title.insertText temp
+					temp = ""
+				End If
+			End If
+		Next
+		application.activeWindow.title.charLeft 3, true
+		application.activeWindow.title.deleteSelection
+		application.activeWindow.title.insertText vblf
+	End if
+
+'701
+	temp = "VÉRIFIER :"
+	For ii = 0 to UBound(juryPPN)
+		application.activeWindow.title.insertText "701 #1$3" & jury(ii, 0) & "$4" & jury(ii, 2) & vblf
+		If InStr(UB701S3, juryPPN(ii)) > 0 OR InStr(UB701a, juryNom(ii)) > 0 Then
+			temp = Ress_appendNote(temp, juryPPN(ii) & " - " & juryNom(ii))
+		End If
+	Next
+	
+	if InStr(temp, chr(10)) > 0 Then
+		MsgBox temp
+	End If
+
+End Sub
+
+Sub chantierThese_getJuryForExcel()
+	Dim cote, PPNB, annee, discipline, nomAut, prenomAut, titre
+	Dim output, boxMsg, exceptions
+	
+	Perso_collerPPN
+	
+	PPNB = application.activeWindow.variable("P3GPP")
+	annee = Left(ress_getTag("328", "1", "d", "1"), 4)
+	discipline = LCase(ress_getTag("328", "1", "c", "1"))
+	titre = getTitle
+	cote = getCoteEx
+	nomAut = ress_getTag("700", "1", "a", "1")
+	If InStr(nomAut, "Aucun $a dans cette ") > 0 Then
+		prenomAut = ress_getTag("700", "1", "3", "1")
+		application.activeWindow.command "che ppn " & prenomAut
+		nomAut = ress_getTag("200", "1", "a", "1")
+		prenomAut = ress_getTag("200", "1", "b", "1")
+		application.activeWindow.command "che ppn " & PPNB
+	Else
+		prenomAut = ress_getTag("700", "1", "b", "1")
+		If UCase(nomAut) = nomAut Then
+			nomAut = Ress_uCaseNames(nomAut)
+			prenomAut = Ress_uCaseNames(prenomAut)
+			boxMsg = ress_appendNote(boxMsg, "Caps lock")
+		End If
+	End If
+	
+	output = cote & chr(09) & PPNB & chr(09) & annee & chr(09) & discipline & chr(09) & nomAut & chr(09) & prenomAut & chr(09) & titre
+	
+	application.activeWindow.clipboard	= output
+	
+	exceptions = ress_getTag("200", "1", "f", "all")
+	'import de getDataUAChantierThese (27/10/2021)
+	If (InStr(exceptions, "ép.") > 0) OR (InStr(exceptions, "épouse") > 0) OR (InStr(exceptions, " fille") > 0) OR (InStr(exceptions, " naissance") > 0) OR (InStr(exceptions, " née") > 0) Then
+		boxMsg = Ress_appendNote(boxMsg, "Possiblement un nom d'épouse")
+	End If
+	'Présence POSSIBLE de deux auteurs
+	If InStr(exceptions, " et ") Then
+		boxMsg = Ress_appendNote(boxMsg, "Possiblement deux auteurs")
+	End If
+	
+	If boxMsg <> "" Then
+		msgbox boxMsg
+	End if
+End Sub
