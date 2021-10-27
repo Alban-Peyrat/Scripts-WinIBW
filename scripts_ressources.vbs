@@ -57,6 +57,184 @@ Sub Ress_exportVar(var, boolAppend)
 
 End Sub
 
+Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
+'Récupère l'information
+'forceOcc = "no"-> non ; "last" -> dernier ; "all" -> toutes ; tout le reste un string de nb
+' subtag = "none" pour le champ entier
+'forceOccSub idem que forceOcc
+'Pour forceOcc et forceOccSub, si la valeur est trop grande, prend le dernier champ
+
+
+	Dim temp, temp2, editMode, notice, occList, chosenTag, chosenSubTag
+	Dim allOcc, chosenOcc, occ, ii, nbDollar, dollarOcc(99)
+
+'Détecte si on est en edit mode
+'À changer à terme
+	On Error Resume Next
+	temp = application.activeWindow.Title.canPaste
+	if Err then
+		editMode = false
+	Else
+		editMode = true
+	End If
+
+	If editMode = false Then
+		notice = Application.activeWindow.copyTitle
+	Else
+		Application.activeWindow.Title.SelectAll
+		notice = Application.activeWindow.Title.Selection
+	End If
+
+	notice = replace(notice, chr(13), chr(10))
+	notice = ";_;" & chr(10) & notice
+
+	While InStr(notice, chr(10) & chr(10)) > 0
+		notice = replace(notice, chr(10) & chr(10), chr(10))
+	Wend
+'Récupère le tag
+	occList = Split(notice, chr(10) & tag)
+
+	If UBound(occList) = 0 Then
+		chosenTag = "Aucune " & tag
+	ElseIf UBound(occList) = 1 Then
+		chosenOcc = occList(1)
+	ElseIf forceOcc = "last" Then
+		chosenOcc = occList(UBound(occList))
+	ElseIf forceOcc = "all" Then
+		for ii = 1 to UBound(occList)
+			If InStr(occList(ii), chr(10)) > 0 Then
+				chosenTag = chosenTag & ";_;_;" & tag & Left(occList(ii), InStr(occList(ii), chr(10)))
+				If Left(chosenTag, 5) = ";_;_;" Then
+					chosenTag = Mid(chosenTag, 6, len(chosenTag))
+				End If
+			Else
+				chosenTag = chosenTag & ";_;_;" &  tag & occList(ii)
+			End If
+		Next
+	ElseIf forceOcc = "no" Then 
+		for ii = 1 to UBound(occList)
+			If ii <> UBound(occList) Then
+				allOcc = Ress_appendNote(allOcc, "[" & ii & "] " & tag & occList(ii))
+			Else
+				If InStr(occList(ii), chr(10)) > 0 Then
+					allOcc = Ress_appendNote(allOcc, "[" & ii & "] " & tag & Left(occList(ii), InStr(occList(ii), chr(10))))
+				Else
+					allOcc = Ress_appendNote(allOcc, "[" & ii & "] " & tag & occList(ii))
+				End If
+			End If
+
+		Next
+		temp = Inputbox(allOcc, "Choisir le numéro de l'occurrence", 1)
+		If CInt(temp) > UBound(occList) OR CInt(temp) < 1 Then
+			MsgBox "Cette occurrence n'existe pas"
+			Exit function
+		End If
+		chosenOcc = occList(CInt(temp))
+	Else
+		If Cint(forceOcc) > UBound(occList) Then
+			chosenOcc = occList(UBound(occList))
+		Else
+			chosenOcc = occList(CInt(forceOcc))
+		End If
+	End If
+
+'Gestion output'
+	If UBound(occList) = 0 OR (UBound(occList) > 1 AND forceOcc = "all") Then
+		'skip la suite de l'instruction
+	ElseIf InStr(chosenOcc, chr(10)) > 0 Then
+		chosenTag = tag & Left(chosenOcc, InStr(chosenOcc, chr(10)))
+	Else
+		chosenTag = tag & Left(chosenOcc, Len(chosenOcc))
+	End If
+
+	if subTag <> "none" Then
+		temp2 = Split(chosenTag, ";_;_;")
+		For each occ in temp2
+			chosenSubTag = ""
+			occList = Split(occ, "$")
+			If UBound(occList) = 0 Then
+				chosenSubTag = chosenTag
+			ElseIf UBound(occList) = 1 Then
+				chosenOcc = occList(1)
+			ElseIf forceOccSub = "last" Then
+				chosenOcc = occList(UBound(occList))
+
+			ElseIf forceOccSub = "all" Then
+				for ii = 1 to UBound(occList)
+					If Left(occList(ii), 1) = subTag Then
+						'If InStr(occList(ii), chr(10)) > 0 Then
+						'	chosenSubTag = chosenSubTag & ";_#_;" & Mid(occList(ii), 2, InStr(occList(ii), chr(10))-1)
+						'Else
+							chosenSubTag = chosenSubTag & ";_#_;" & Mid(occList(ii), 2, Len(occList(ii)))
+						'End If
+					End if
+				Next
+				If Left(chosenSubTag, 5) = ";_#_;" Then
+					chosenSubTag = Mid(chosenSubTag, 6, len(chosenSubTag))
+				End If
+			ElseIf forceOccSub = "no" Then 
+			allOcc = ""
+			nbDollar = 0
+			Erase dollarOcc
+				for ii = 1 to UBound(occList)
+					If Left(occList(ii), 1) = subTag Then
+						nbDollar = nbDollar + 1
+						dollarOcc(nbDollar) = ii
+						If ii <> UBound(occList) Then
+							allOcc = Ress_appendNote(allOcc, "[" & nbDollar & "] $" & occList(ii))
+						Else
+							If InStr(occList(ii), chr(10)) > 0 Then
+								allOcc = Ress_appendNote(allOcc, "[" & nbDollar & "] $" & Left(occList(ii), InStr(occList(ii), chr(10))-1))
+							Else
+								allOcc = Ress_appendNote(allOcc, "[" & nbDollar & "] $" & occList(ii))
+							End If
+						End If
+					End If
+				Next
+				If InStr(allOcc, chr(10)) > 0 Then
+					temp = Inputbox(allOcc, "Choisir le numéro de l'occurrence", 1)
+					If CInt(temp) > nbDollar OR CInt(temp) < 1 Then
+						MsgBox "Cette occurrence n'existe pas"
+						Exit function
+					End If
+					chosenOcc = occList(dollarOcc(CInt(temp)))
+				Else
+					chosenOcc = occList(dollarOcc(CInt(Mid(allOcc, 2, 1))))
+				End If
+			Else
+				nbDollar = 0
+				Erase dollarOcc
+				for ii = 1 to UBound(occList)
+					If Left(occList(ii), 1) = subTag Then
+						nbDollar = nbDollar + 1
+						dollarOcc(nbDollar) = ii
+					End If
+				Next
+				If CInt(forceOccSub) > nbDollar Then
+					chosenOcc = occList(dollarOcc(nbDollar))
+				Else
+					chosenOcc = occList(dollarOcc(CInt(forceOccSub)))
+				End If
+			End If
+
+'Gestion output'
+			If UBound(occList) = 0 OR (InStr(chosenSubtag, ";_#_;") > 0 AND forceOccSub = "all") Then
+				'skip la suite de l'instruction
+			ElseIf InStr(chosenOcc, chr(10)) > 0 Then
+				chosenSubTag = chosenSubTag & Mid(chosenOcc, 2, InStr(chosenOcc, chr(10)))
+			Else
+				chosenSubTag = chosenSubTag & Mid(chosenOcc, 2, Len(chosenOcc))
+			End If
+			ress_getTag = ress_getTag & ";_;_;" & chosenSubTag
+		Next
+
+		ress_getTag = Mid(ress_getTag, 6, Len(ress_getTag))
+	Else
+		ress_getTag = chosenTag
+	End If
+
+End Function
+
 Sub Ress_goToTag(tag, subTag, toEndOfField, toFirst, toLast)
 'Place le curseur à l'empalcement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que toFirst ou toLast soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée
 'La fonction countOccurences est nécesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
