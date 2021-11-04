@@ -1,6 +1,6 @@
 # Scripts pour le PEB
 
-__À noter : le nom réel des scripts est précédé de `AlP_PEB_`. Le préfixe a été ici retiré pour faciliter la lecture.__
+__À noter : le nom réel des scripts est précédé de `AlP_PEB`. Le préfixe a été ici retiré pour faciliter la lecture.__
 
 ## Installation des scripts
 
@@ -58,6 +58,12 @@ Renvoie dans le presse-papier le numéro de la demande PEB __venant d'être effe
 
 __Détails :__ Le script récupère le premier message affiché dans la barre des messages et renvoie les dix premiers caractères en suivant l'expression `no.` (suivi d'un espace).
 
+### `getPPN`
+
+Renvoie dans le presse-papier le PPN de la demande PEB.
+
+__Détails :__ Renvoie la variable `P3VTA`.
+
 ### `getRCRDemandeur`
 
 Renvoie dans le presse-papier du RCR demandeur.
@@ -71,7 +77,6 @@ Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres s
 __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en VBS ou en JS. __En JS__, la boite de dialogue propose des options cliquables, qui exécuteront les scripts associés . __En VBS__, la boîte de dialogue demande d'entrer le numéro associé au script :
   * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemande) ;
   * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemandepostvalidation) ;
+  * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getppn) ;
   * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrdemandeur) ;
   * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : pas encore implenté.
-
-_À noter : le numéro 2 sera dédié à la récupération du PPN, qui est en cours de développement._
