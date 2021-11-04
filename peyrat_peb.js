@@ -34,6 +34,17 @@ function AlP_PEBgetRCRDemandeur(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("libID");
 }
 
+function AlP_PEBgetRCRFournisseurOnHold(){
+	var fournisseurs = application.activeWindow.getVariable("P3VCA").split("\u000D");
+	for(var ii = 0; ii < fournisseurs.length-1; ii++){
+		var col = fournisseurs[ii].split("\u001BE\u001BL");
+		if (col[5].indexOf("En attente") > -1) {
+			application.activeWindow.clipboard = col[1].substring(2, col[1].length);
+		}
+		
+	}
+}
+
 function AlP_PEBLauncher(){
 	const utility = {
 		newPrompter: function() {
