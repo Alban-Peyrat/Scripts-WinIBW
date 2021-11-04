@@ -68,6 +68,8 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 	Dim temp, temp2, editMode, notice, occList, chosenTag, chosenSubTag
 	Dim allOcc, chosenOcc, occ, ii, nbDollar, dollarOcc(99)
 
+	application.activeWindow.codedData = false
+
 'Détecte si on est en edit mode
 'À changer à terme
 	On Error Resume Next
@@ -78,8 +80,12 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 		editMode = true
 	End If
 
+	
+
 	If editMode = false Then
+		temp2 = application.activeWindow.clipboard
 		notice = Application.activeWindow.copyTitle
+		application.activeWindow.clipboard = temp2
 	Else
 		Application.activeWindow.Title.SelectAll
 		notice = Application.activeWindow.Title.Selection
@@ -156,6 +162,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 				chosenSubTag = chosenTag
 			ElseIf UBound(occList) = 1 Then
 				chosenOcc = occList(1)
+				nbDollar = 1
 			ElseIf forceOccSub = "last" Then
 				chosenOcc = occList(UBound(occList))
 
@@ -220,6 +227,8 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 'Gestion output'
 			If UBound(occList) = 0 OR (InStr(chosenSubtag, ";_#_;") > 0 AND forceOccSub = "all") Then
 				'skip la suite de l'instruction
+			ElseIf nbDollar = 0 Then
+				chosenSubTag = "Aucun $" & subtag & " dans cette " & tag
 			ElseIf InStr(chosenOcc, chr(10)) > 0 Then
 				chosenSubTag = chosenSubTag & Mid(chosenOcc, 2, InStr(chosenOcc, chr(10)))
 			Else
