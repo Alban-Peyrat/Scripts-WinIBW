@@ -80,6 +80,9 @@
 * `exportVar` : nettoyage du code ;
 * `uCaseNames` : force désormais la majuscule sur la première lettre (le script était conçu pour des noms entièrement en maajuscule).
 
+## Le 04/11/2021 :
+* ajout [des scripts de PEB et de leur documentation](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md) ;
+
 # Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
