@@ -14,23 +14,27 @@
 // 	}
 // };
 
-function AlP_PEB_getNumDemande(){
+function AlP_PEBgetNumDemande(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("P3GA*")
 }
 
 
-function AlP_PEB_getNumDemandePostValidation(){
+function AlP_PEBgetNumDemandePostValidation(){
     var msg;
     msg = application.activeWindow.messages.item(0).text;
     msg = msg.substring(msg.indexOf("no. ")+4, msg.indexOf('no. ')+14);
     application.activeWindow.clipboard = msg;
 }
 
-function AlP_PEB_getRCRDemandeur(){
+function AlP_PEBgetPPN(){
+	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VTA");
+}
+
+function AlP_PEBgetRCRDemandeur(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("libID");
 }
 
-function AlP_PEB_Launcher(){
+function AlP_PEBLauncher(){
 	const utility = {
 		newPrompter: function() {
 			return Components.classes["@oclcpica.nl/scriptpromptutility;1"]
@@ -42,21 +46,25 @@ function AlP_PEB_Launcher(){
 	var ans = thePrompter.select("Executer un script du PEB :", "Choisir le script a executer",
 		"Get no demande PEB" +
 		"\nGet no demande PEB post-validation" +
+		"\nGet PPN" +
 		"\nGet RCR demandeur" +
 		"\nGet RCR fournisseur en attente");
 
 	switch (ans){
 		case "Get no demande PEB":
-			AlP_PEB_getNumDemande();
+			AlP_PEBgetNumDemande();
 			break;
 		case "Get no demande PEB post-validation":
-			AlP_PEB_getNumDemandePostValidation();
+			AlP_PEBgetNumDemandePostValidation();
+			break;
+		case "Get PPN":
+			AlP_PEBgetPPN();
 			break;
 		case "Get RCR demandeur":
-			AlP_PEB_getRCRDemandeur();
+			AlP_PEBgetRCRDemandeur();
 			break;
 		case "Get RCR fournisseur en attente":
-			AlP_PEB_getRCRFournisseurOnHold();
+			AlP_PEBgetRCRFournisseurOnHold();
 			break;
 		default:
 			application.messageBox("Erreur", "Script sélectionné pas pris en charge","alert-icon");
