@@ -81,14 +81,25 @@
 * `uCaseNames` : force désormais la majuscule sur la première lettre (le script était conçu pour des noms entièrement en maajuscule).
 
 ## Le 04/11/2021 :
+* la liste de modifications se trouve désormais dans un fichier à part ;
 * ajout [des scripts de PEB et de leur documentation](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md) ;
+* ajout des scripts :
+  * `addAutFromUB` : génère un squelette de notice auteur à partir d'une notice bibliographique ;
+  * `addUB7XX` : ajoute une `7XX`, avec un fonctionnement similaire à `addSujetRAMEAU` ;
+  * `chantierThese_getJuryForExcel` : récupère des données de la thèse pour l'exporter vers Excel ;
+  * `chantierThese_addJuryFromExcel` : ajoute à la notice bibliographique une `200$g`, une `314` et les `701` prévues par Excel ;
+  * `chantierThese_addJuryAut`: ajoute une notice d'autorité auteur à partir de l'extraction de `chantierThese_getJuryforExcel` ;
+  * `ress_getTag` : renvoie la valeur du/des champs/sous-champs voulus (une phase de test est prévue) ;
+* correction de `addUA400` : détecte désormais correctement les particules rejetées quelle que soit la casse.
 
 # Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
 * scripts de type `get` : vérification de l'utilisation du presse-papier et restituer le presse-papier présent avant le lancement du script s'il est réécrit ;
-* `addUA400` (et associés) : gérer les autres informations ;
+* `addUA400` (et associés) : adapter à `getTag`, mettre des majuscules si nécessaire, gérer les autres informations ;
 * `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b` ;
 * ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
 * correction du malfonctionnement probable de `addBibgFinChap` ;
-* nettoyage et correction de code et des commentaires de début de script.
+* nettoyage et correction de code et des commentaires de début de script ;
+* séparation des scripts de chantier thèses ;
+* PEB : récupérer le PPN et récupérer le RCR de la bibliothèque avec le statut "En attente de réônse".
