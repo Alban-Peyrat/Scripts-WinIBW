@@ -17,6 +17,37 @@ Sub add214Elsevier()
 	
 End Sub
 
+Sub addAutFromUB()
+
+	Dim nom, prenom, annee, titre
+
+	nom = Inputbox("Nom :")
+	prenom = Inputbox("Prénom :")
+	titre = getTitle
+	annee = ress_getTag("100", "no", "c", "no")
+	If InStr(annee, "Aucun") > 0 Then
+		annee = ress_getTag("100", "no", "a", "no")
+	End If
+	
+	application.activeWindow.Command "cre e"
+	
+	application.activeWindow.Title.InsertText "008 $aTp5" & vblf &_
+		"106 ##$a0$b1$c0" & vblf &_
+		"101 ##$afre" & vblf &_
+		"102 ##$aFR" & vblf &_
+		"103 ##$a19XX" & vblf &_
+		"120 ##$a -----À-COMPLÉTER-MANUELLEMENT-----" & vblf &_
+		"200 #1$90y$a" & nom & "$b" & prenom & "$f19..-...." & vblf & _
+		"340 ##$a -----COMPLÉTER-AVEC-D-AUTRES-INFORMATIONS-----" & vblf & _
+		"810 ##$a" & titre & " / " & prenom & " " & nom & ", " & annee
+
+'Ajoute UA400
+	If (InStr(nom, " ") > 0) OR (InStr(nom, "-") > 0) Then
+	    	addUA400
+	End If
+
+End Sub
+
 Sub addBibgFinChap()
 	Ress_toEditMode false, false
 	Application.activeWindow.title.insertText	"Chaque fin de chapitre comprend une bibliographie"
@@ -171,6 +202,72 @@ With Application.ActiveWindow.Title
     
 End With
     
+End Sub
+
+Sub addUB7XX()
+	Dim codeFct, autType, WEMI, inds, temp, ii
+
+	codeFct = inputBox("Code fonction :" & chr(10) & "Ajouter “c” ou “f” en première position pour insérer une 71X ou une 72X"_
+	& chr(10) & "Ajouter les indicateurs entre espaces avant le code pour les choisir"_
+	& chr(10) & chr(09) & "Valeurs des indicateurs par défaut"_
+	& chr(10) & "Personne : #1"_
+	& chr(10) & "Collectivité : 02"_
+	& chr(10) & "Famille : ##")
+
+'Dizaine
+	If Left(codeFct, 1) <> "c" AND Left(codeFct, 1) <> "f" Then 
+		autType = 0
+	ElseIf Left(codeFct, 1) = "c" Then
+		autType = 1
+	ElseIf Left(codeFct, 1) = "f" Then
+		autType = 2
+	End If
+
+'Indicateurs
+	temp = Split(codeFct, " ")
+	If UBound(temp) = 2 Then
+		inds = temp(1)
+	Else
+		Select Case autType
+			Case 0
+				inds = "#1"
+			Case 1
+				inds = "02"
+			Case 2
+				inds = "##"
+		End Select
+	End If
+
+'Code fonction
+	codeFct = Right(codeFct, 3)
+		
+'Unité
+	Select Case codeFct
+		Case "070", "340", "651", "730"
+			WEMI = "0"
+		Case "555", "727", "956", "958"
+			WEMI = "1"
+		Case "080", "440"
+			WEMI = "2"
+		Case Else
+			WEMI = " -----COMPLÉTER-MANUELLEMENT-----"
+	End Select
+	
+	If WEMI = "0" Then
+		For ii = 0 to 2
+			If InStr(ress_getTag("7" & ii & "0", "no", "3", "1"), "Aucun") = 0 Then
+				WEMI = 1
+				Exit For
+			End If
+		Next
+	'check si ya un 7X0
+	End If
+	
+'Écriture
+	ress_toEditMode false, false
+
+	application.activeWindow.Title.endOfBuffer
+	application.activeWindow.Title.InsertText "7" & autType	& WEMI & " " & inds & "$3" & application.activeWindow.clipboard & "$4" & codeFct & vblf
 End Sub
 
 Sub changeExAnom()
@@ -904,6 +1001,69 @@ With Application.activeWindow
     
 End With
 
+End Sub
+
+Sub chantierThese_addJuryAut()
+'crée le squelette d'une notice autorité auteur pour une nouvelle notice
+	Dim xlLine, juryFct, juryNom, juryPrenom, jury(99, 2), ii	
+	Dim inst, chosenOcc, fct, univ, UA200output
+
+	xlLine = Split(application.activeWindow.clipboard, chr(09))
+
+	juryFct = Split(xlLine(10), ";")
+	juryNom = Split(xlLine(8), ";")
+	juryPrenom = Split(xlLine(9), ";")
+	inst = "Choisir la notice à créer :" & chr(10)
+	For ii = 0 to UBound(juryNom)
+		jury(ii, 0) = juryNom(ii)
+		jury(ii, 1) = juryPrenom(ii)
+		jury(ii, 2) = juryFct(ii)
+		inst = ress_appendNote(inst, "[" & ii & "] : " & jury(ii, 0) & ", " & jury(ii, 1) & " (" & jury(ii, 2) & ")")
+	Next
+	
+	chosenOcc = InputBox(inst, "Choisir l'auteur :", "99")
+	
+	If Not (CInt(chosenOcc) > UBound(juryNom) OR CInt(chosenOcc) < 0) Then
+		Select Case jury(chosenOcc, 2)
+			case "dir"
+				fct = "Directeur"
+			case "psdt"
+				fct = "Président de jury"
+			case "mem"
+				fct = "Membre du jury"
+			case "rapp"
+				fct = "Rapporteur"
+		End Select
+		
+		If CInt(xlLine(3)) < 1971 Then
+			univ = "l'Université de Bordeaux"
+		ElseIf CInt(xlLine(3)) < 2014 Then
+			univ = "Bordeaux 2"
+		Else
+			univ = "Bordeaux"
+		End if
+
+		application.activeWindow.Command "cre e"
+		
+		application.activeWindow.Title.InsertText "008 $aTp5" & vblf &_
+			"106 ##$a0$b1$c0" & vblf &_
+			"101 ##$afre" & vblf &_
+			"102 ##$aFR" & vblf &_
+			"103 ##$a19XX" & vblf &_
+			"120 ##$a -----À-COMPLÉTER-MANUELLEMENT-----" & vblf &_
+			"200 #1$90y$a" & jury(chosenOcc, 0) & "$b" & jury(chosenOcc, 1) & "$f19..-...." & vblf & _
+			"340 ##$a" & fct & " d'une thèse de " & xlLine(4) & " soutenue à " & univ & " en " & xlLine(3) & vblf &_
+			"340 ##$a -----COMPLÉTER-AVEC-D-AUTRES-INFORMATIONS-DE-LA-PAGE-DE-REMERCIEMENT-PAR-EXEMPLE-----" & vblf & _
+			"810 ##$a" & xlLine(7) & " / " & xlLine(6) & " " & xlLine(5) & ", " & xlLine(3) & " [thèse]$b" & jury(chosenOcc, 1) & " " & jury(chosenOcc, 0) & ", " & LCase(fct)
+
+	'Ajoute UA400
+		If (InStr(jury(chosenOcc, 0), " ") > 0) OR (InStr(jury(chosenOcc, 0), "-") > 0) Then
+		    	addUA400
+		End If
+	Else
+		MsgBox "Numéro choisi invalide"
+	End if
+	
 End Sub
 
 Sub chantierThese_addJuryFromExcel()
