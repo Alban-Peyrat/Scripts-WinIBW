@@ -4,7 +4,7 @@ __À noter : le nom réel des scripts est précédé de `AlP_PEB_`. Le préfixe 
 
 ## Installation des scripts
 
-Il existe deux manières d'installer ces scripts, les résultats sont similaires hormis le [launcher](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md#launcher) qui diffère entre les deux. 
+Il existe deux manières d'installer ces scripts, les résultats sont similaires hormis le [launcher](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#launcher) qui diffère entre les deux. 
 
 ### En tant que scripts utilisateurs (VBS)
 
@@ -69,9 +69,9 @@ __Détails :__ Renvoie la variable `libID`.
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
 
 __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en VBS ou en JS. __En JS__, la boite de dialogue propose des options cliquables, qui exécuteront les scripts associés . __En VBS__, la boîte de dialogue demande d'entrer le numéro associé au script :
-  * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md#getnumdemande) ;
-  * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md#getnumdemandepostvalidation) ;
-  * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md#getrcrdemandeur) ;
+  * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemande) ;
+  * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemandepostvalidation) ;
+  * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrdemandeur) ;
   * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : pas encore implenté.
 
 _À noter : le numéro 2 sera dédié à la récupération du PPN, qui est en cours de développement._
