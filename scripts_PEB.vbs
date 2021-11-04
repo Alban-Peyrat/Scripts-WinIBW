@@ -1,25 +1,30 @@
-Sub AlP_PEB_getNumDemande()
+Sub AlP_PEBgetNumDemande()
 	application.activeWindow.clipboard = application.activeWindow.variable("P3GA*")
 End Sub
 
-Sub AlP_PEB_getNumDemandePostValidation()
+Sub AlP_PEBgetNumDemandePostValidation()
          dim msg
     msg = application.activeWindow.messages.item(0).text
     msg = Mid(msg, InStr(msg, "no. ") + 4, 10)
     application.activeWindow.clipboard = msg
 End Sub
 
-sub AlP_PEB_getRCRDemandeur()
+Sub AlP_PEBgetPPN()
+	application.activeWindow.clipboard = application.activeWindow.variable("P3VTA")
+End Sub
+
+sub AlP_PEBgetRCRDemandeur()
 	application.activeWindow.clipboard = application.activeWindow.variable("libID")
 End Sub
 
-Sub AlP_PEB_Launcher()
+Sub AlP_PEBLauncher()
 	dim num
 
 	num = InputBox("Écrire le numéro du script à exécuter :"_
 		& chr(10) & chr(10) & chr(09) & "Récupérer des données :"_
 		& chr(10) & "[0] Récupérer le numéro de demande PEB"_
 		& chr(10) & "[1] Récupérer le numéro de demande de PEB après validation d'une demande"_
+		& chr(10) & "[2] Récupérer le PPN"_
 		& chr(10) & "[3] Récupérer le RCR demandeur", "Exécuter un script de PEB :", 99)
 		
 '	num = InputBox("Écrire le numéro du script à exécuter :"_
@@ -33,15 +38,15 @@ Sub AlP_PEB_Launcher()
 		
 	Select Case num
 		Case 0
-			AlP_PEB_getNumDemande
+			AlP_PEBgetNumDemande
 		Case 1
-			AlP_PEB_getNumDemandePostValidation
-		'Case 2
-		'	AlP_PEB_getPPN
+			AlP_PEBgetNumDemandePostValidation
+		Case 2
+			AlP_PEBgetPPN
 		Case 3
-			AlP_PEB_getRCRDemandeur
+			AlP_PEBgetRCRDemandeur
 		'Case 4
-			'AlP_PEB_getRCRFournisseurOnHold
+			'AlP_PEBgetRCRFournisseurOnHold
 		Case Else
 			MsgBox "Aucun script correspondant."
 	End Select
