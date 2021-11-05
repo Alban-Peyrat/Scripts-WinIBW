@@ -30,7 +30,7 @@ Vous pourrez retrouver les scripts dans la catégorie `Standart Fonctions`.
 
 Rappels :
 * si vous avez installé les scripts en tant que scripts utilisateurs, vous les retrouverez dans la catégorie `Fonctions`, si vous les avez installés en tant que scripts standarts, vous les retrouverez dans la catégorie `Standart Fonctions` ;
-* les scripts sont précédés de la mention `AlP_PEB_`.
+* les scripts sont précédés de la mention `AlP_PEB`.
 
 
 ### Via boutons
