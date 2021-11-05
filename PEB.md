@@ -22,7 +22,7 @@ Accédez au dossier de WinIBW (par exemple en faisant clic-droit puis `Ouvrir l'
 Modifiez ensuite le fichier `user_pref.js` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez sur une nouvelle ligne ce texte : `user_pref("ibw.standardScripts.script.99", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_peb.js");`.
 Modifiez le `[NOM D'UTILISATEUR]` avec le vôtre.
 Enregistrez et fermez le document.
-Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (clic-droit sur `raw` puis `Enregistrez la cible du lien sous...` pour télécharger le fichier) au même emplacement que `user-pref.js`.
+Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (pour télécharger le fichier : [rendez-vous sur ce lien](https://raw.githubusercontent.com/Alban-Peyrat/Scripts-WinIBW/main/peyrat_peb.js) puis faites un clic-droit `Enregistrer sous...` en choisissant `Tous les fichiers` comme type de document) au même emplacement que `user-pref.js`.
 
 Vous pourrez retrouver les scripts dans la catégorie `Standart Fonctions`.
 
