@@ -49,7 +49,7 @@ function AlP_PEBgetRCRFournisseurOnHold(){
 	for(var ii = 0; ii < fournisseurs.length-1; ii++){
 		comment = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6));
 		if(comment === "En attente de r\u00E9ponse"){
-			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6));
+			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE\u001BLSS")+15);
 			proc = true;
 			break;
 		}
