@@ -70,6 +70,15 @@ Renvoie dans le presse-papier du RCR demandeur.
 
 __Détails :__ Renvoie la variable `libID`.
 
+### `getRCRFournisseurOnHold`
+
+Renvoie dans le presse-papier du RCR fournisseur dont une réponse est attendue.
+
+__Détails :__ Divise en plusieurs parties la variable `P3VCA` (l'`iframe` contenant la liste des fournisseurs) en utilisant le retour chariot comme séparateur.
+Pour chaque fournisseur, recherche un caractère d'échappement suivi de `E` suivi d'un caractère d'échappement suivi de `LRT` et isole ce qui suit jusqu'au prochain caractère d'échappement (supposément, l'information contenue dans la colonne "Commentaire").
+Si cette donnée isolée correspond à `En attente de réponse`, il recherche alors la même expression que précédemment en remplaçant `LRT` par `LSS` (supposément le RCR de la bibliothèque) et place dans le presse-papier les 9 caractères suivant (puisque les RCR font 9 caractères).
+Le script force ensuite l'arrêt de la boucle.
+
 ### `Launcher`
 
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
@@ -79,4 +88,4 @@ __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en 
   * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemandepostvalidation) ;
   * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getppn) ;
   * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrdemandeur) ;
-  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : pas encore implenté.
+  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrfournisseuronhold).
