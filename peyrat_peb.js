@@ -35,13 +35,13 @@ function AlP_PEBgetRCRDemandeur(){
 }
 
 function AlP_PEBgetRCRFournisseurOnHold(){
+	var comment;
 	var fournisseurs = application.activeWindow.getVariable("P3VCA").split("\u000D");
 	for(var ii = 0; ii < fournisseurs.length-1; ii++){
-		var col = fournisseurs[ii].split("\u001BE\u001BL");
-		if (col[5].indexOf("En attente") > -1) {
-			application.activeWindow.clipboard = col[1].substring(2, col[1].length);
+		comment = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6));
+		if(comment === "En attente de r\u00E9ponse"){
+			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6));
 		}
-		
 	}
 }
 
@@ -54,7 +54,7 @@ function AlP_PEBLauncher(){
 	};
 	
 	var thePrompter = utility.newPrompter();
-	var ans = thePrompter.select("Executer un script du PEB :", "Choisir le script a executer",
+	var ans = thePrompter.select("Ex\u00E9cuter un script du PEB :", "Choisir le script \u00E0 ex\u00E9cuter",
 		"Get no demande PEB" +
 		"\nGet no demande PEB post-validation" +
 		"\nGet PPN" +
@@ -78,6 +78,6 @@ function AlP_PEBLauncher(){
 			AlP_PEBgetRCRFournisseurOnHold();
 			break;
 		default:
-			application.messageBox("Erreur", "Script sélectionné pas pris en charge","alert-icon");
+			application.messageBox("Erreur", "Script s\u00E9lectionn\u00E9 pas pris en charge","alert-icon");
 	}
 }
