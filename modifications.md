@@ -82,7 +82,7 @@
 
 ## Le 04/11/2021 :
 * la liste de modifications se trouve désormais dans un fichier à part ;
-* ajout [des scripts de PEB et de leur documentation](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md) ;
+* ajout [des scripts de PEB et de leur documentation](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md) ;
 * ajout des scripts :
   * `addAutFromUB` : génère un squelette de notice auteur à partir d'une notice bibliographique ;
   * `addUB7XX` : ajoute une `7XX`, avec un fonctionnement similaire à `addSujetRAMEAU` ;
