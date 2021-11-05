@@ -1,6 +1,6 @@
 # Scripts pour le PEB
 
-__À noter : le nom réel des scripts est précédé de `AlP_PEB_`. Le préfixe a été ici retiré pour faciliter la lecture.__
+__À noter : le nom réel des scripts est précédé de `AlP_PEB`. Le préfixe a été ici retiré pour faciliter la lecture.__
 
 ## Installation des scripts
 
@@ -58,11 +58,26 @@ Renvoie dans le presse-papier le numéro de la demande PEB __venant d'être effe
 
 __Détails :__ Le script récupère le premier message affiché dans la barre des messages et renvoie les dix premiers caractères en suivant l'expression `no.` (suivi d'un espace).
 
+### `getPPN`
+
+Renvoie dans le presse-papier le PPN de la demande PEB.
+
+__Détails :__ Renvoie la variable `P3VTA`.
+
 ### `getRCRDemandeur`
 
 Renvoie dans le presse-papier du RCR demandeur.
 
 __Détails :__ Renvoie la variable `libID`.
+
+### `getRCRFournisseurOnHold`
+
+Renvoie dans le presse-papier du RCR fournisseur dont une réponse est attendue.
+
+__Détails :__ Divise en plusieurs parties la variable `P3VCA` (l'`iframe` contenant la liste des fournisseurs) en utilisant le retour chariot comme séparateur.
+Pour chaque fournisseur, recherche un caractère d'échappement suivi de `E` suivi d'un caractère d'échappement suivi de `LRT` et isole ce qui suit jusqu'au prochain caractère d'échappement (supposément, l'information contenue dans la colonne "Commentaire").
+Si cette donnée isolée correspond à `En attente de réponse`, il recherche alors la même expression que précédemment en remplaçant `LRT` par `LSS` (supposément le RCR de la bibliothèque) et place dans le presse-papier les 9 caractères suivant (puisque les RCR font 9 caractères).
+Le script force ensuite l'arrêt de la boucle.
 
 ### `Launcher`
 
@@ -71,7 +86,6 @@ Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres s
 __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en VBS ou en JS. __En JS__, la boite de dialogue propose des options cliquables, qui exécuteront les scripts associés . __En VBS__, la boîte de dialogue demande d'entrer le numéro associé au script :
   * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemande) ;
   * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemandepostvalidation) ;
+  * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getppn) ;
   * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrdemandeur) ;
-  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : pas encore implenté.
-
-_À noter : le numéro 2 sera dédié à la récupération du PPN, qui est en cours de développement._
+  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrfournisseuronhold).

@@ -14,23 +14,52 @@
 // 	}
 // };
 
-function AlP_PEB_getNumDemande(){
+function AlP_PEBgetNumDemande(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("P3GA*")
 }
 
 
-function AlP_PEB_getNumDemandePostValidation(){
+function AlP_PEBgetNumDemandePostValidation(){
     var msg;
-    msg = application.activeWindow.messages.item(0).text;
-    msg = msg.substring(msg.indexOf("no. ")+4, msg.indexOf('no. ')+14);
-    application.activeWindow.clipboard = msg;
+    try{
+		msg = application.activeWindow.messages.item(0).text;
+		if(msg.indexOf("no. ") > -1){
+			msg = msg.substring(msg.indexOf("no. ")+4, msg.indexOf('no. ')+14);
+			application.activeWindow.clipboard = msg;
+		}else{
+			throw false;
+		}
+    }catch(e){
+    	application.messageBox("Erreur", "Le message de cr\u00E9ation de demande n'est pas affich\u00E9.", "alert-icon");
+    }   
 }
 
-function AlP_PEB_getRCRDemandeur(){
+function AlP_PEBgetPPN(){
+	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VTA");
+}
+
+function AlP_PEBgetRCRDemandeur(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("libID");
 }
 
-function AlP_PEB_Launcher(){
+function AlP_PEBgetRCRFournisseurOnHold(){
+	var comment;
+	var proc = false;
+	var fournisseurs = application.activeWindow.getVariable("P3VCA").split("\u000D");
+	for(var ii = 0; ii < fournisseurs.length-1; ii++){
+		comment = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6));
+		if(comment === "En attente de r\u00E9ponse"){
+			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE\u001BLSS")+15);
+			proc = true;
+			break;
+		}
+	}
+	if(proc === false){
+		application.messageBox("Erreur", "Les biblioth\u00E8ques ont r\u00E9pondu.", "alert-icon");
+	}
+}
+
+function AlP_PEBLauncher(){
 	const utility = {
 		newPrompter: function() {
 			return Components.classes["@oclcpica.nl/scriptpromptutility;1"]
@@ -39,26 +68,30 @@ function AlP_PEB_Launcher(){
 	};
 	
 	var thePrompter = utility.newPrompter();
-	var ans = thePrompter.select("Executer un script du PEB :", "Choisir le script a executer",
+	var ans = thePrompter.select("Ex\u00E9cuter un script du PEB :", "Choisir le script \u00E0 ex\u00E9cuter",
 		"Get no demande PEB" +
 		"\nGet no demande PEB post-validation" +
+		"\nGet PPN" +
 		"\nGet RCR demandeur" +
 		"\nGet RCR fournisseur en attente");
 
 	switch (ans){
 		case "Get no demande PEB":
-			AlP_PEB_getNumDemande();
+			AlP_PEBgetNumDemande();
 			break;
 		case "Get no demande PEB post-validation":
-			AlP_PEB_getNumDemandePostValidation();
+			AlP_PEBgetNumDemandePostValidation();
+			break;
+		case "Get PPN":
+			AlP_PEBgetPPN();
 			break;
 		case "Get RCR demandeur":
-			AlP_PEB_getRCRDemandeur();
+			AlP_PEBgetRCRDemandeur();
 			break;
 		case "Get RCR fournisseur en attente":
-			AlP_PEB_getRCRFournisseurOnHold();
+			AlP_PEBgetRCRFournisseurOnHold();
 			break;
 		default:
-			application.messageBox("Erreur", "Script sélectionné pas pris en charge","alert-icon");
+			application.messageBox("Erreur", "Script s\u00E9lectionn\u00E9 pas pris en charge","alert-icon");
 	}
 }

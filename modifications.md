@@ -91,6 +91,12 @@
   * `chantierThese_addJuryAut`: ajoute une notice d'autorité auteur à partir de l'extraction de `chantierThese_getJuryforExcel` ;
   * `ress_getTag` : renvoie la valeur du/des champs/sous-champs voulus (une phase de test est prévue) ;
 * correction de `addUA400` : détecte désormais correctement les particules rejetées quelle que soit la casse.
+* 
+## Le 05/11/2021 :
+* ajout de `PEBgetPPN` et `PEBgetRCRFournisseurOnHold` ;
+* ajout des accents dans les scripts PEB en JS ;
+* ajout de sécurités et réponses en cas d'échec dans les scripts PEB ;
+* correction des préfixes des scripts PEB (problème pour les scripts utilisateurs).
 
 # Modifications prévues
 
@@ -101,5 +107,4 @@
 * ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
 * correction du malfonctionnement probable de `addBibgFinChap` ;
 * nettoyage et correction de code et des commentaires de début de script ;
-* séparation des scripts de chantier thèses ;
-* PEB : récupérer le PPN et récupérer le RCR de la bibliothèque avec le statut "En attente de réônse".
+* séparation des scripts de chantier thèses.
