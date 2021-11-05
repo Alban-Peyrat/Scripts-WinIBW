@@ -91,7 +91,7 @@
   * `chantierThese_addJuryAut`: ajoute une notice d'autorité auteur à partir de l'extraction de `chantierThese_getJuryforExcel` ;
   * `ress_getTag` : renvoie la valeur du/des champs/sous-champs voulus (une phase de test est prévue) ;
 * correction de `addUA400` : détecte désormais correctement les particules rejetées quelle que soit la casse.
-* 
+
 ## Le 05/11/2021 :
 * ajout de `PEBgetPPN` et `PEBgetRCRFournisseurOnHold` ;
 * ajout des accents dans les scripts PEB en JS ;
