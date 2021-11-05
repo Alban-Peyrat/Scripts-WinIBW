@@ -21,9 +21,17 @@ function AlP_PEBgetNumDemande(){
 
 function AlP_PEBgetNumDemandePostValidation(){
     var msg;
-    msg = application.activeWindow.messages.item(0).text;
-    msg = msg.substring(msg.indexOf("no. ")+4, msg.indexOf('no. ')+14);
-    application.activeWindow.clipboard = msg;
+    try{
+		msg = application.activeWindow.messages.item(0).text;
+		if(msg.indexOf("no. ") > -1){
+			msg = msg.substring(msg.indexOf("no. ")+4, msg.indexOf('no. ')+14);
+			application.activeWindow.clipboard = msg;
+		}else{
+			throw false;
+		}
+    }catch(e){
+    	application.messageBox("Erreur", "Le message de cr\u00E9ation de demande n'est pas affich\u00E9.", "alert-icon");
+    }   
 }
 
 function AlP_PEBgetPPN(){
@@ -36,12 +44,17 @@ function AlP_PEBgetRCRDemandeur(){
 
 function AlP_PEBgetRCRFournisseurOnHold(){
 	var comment;
+	var proc = false;
 	var fournisseurs = application.activeWindow.getVariable("P3VCA").split("\u000D");
 	for(var ii = 0; ii < fournisseurs.length-1; ii++){
 		comment = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLRT")+6));
 		if(comment === "En attente de r\u00E9ponse"){
 			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6));
+			proc = true;
 		}
+	}
+	if(proc === false){
+		application.messageBox("Erreur", "Les biblioth\u00E8ques ont r\u00E9pondu.", "alert-icon");
 	}
 }
 
