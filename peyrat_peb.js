@@ -51,6 +51,7 @@ function AlP_PEBgetRCRFournisseurOnHold(){
 		if(comment === "En attente de r\u00E9ponse"){
 			application.activeWindow.clipboard = fournisseurs[ii].substring(fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6, fournisseurs[ii].indexOf("\u001BE", fournisseurs[ii].indexOf("\u001BE\u001BLSS")+6));
 			proc = true;
+			break;
 		}
 	}
 	if(proc === false){
