@@ -1,19 +1,3 @@
-//Pour pouvoir afficher un prompter
-// const utility = {
-// 	newFileInput: function() {
-// 		return Components.classes["@oclcpica.nl/scriptinputfile;1"]
-// 		.createInstance(Components.interfaces.IInputTextFile);
-// 	},
-// 	newFileOutput: function() {
-// 		return Components.classes["@oclcpica.nl/scriptoutputfile;1"]
-// 		.createInstance(Components.interfaces.IOutputTextFile);
-// 	},
-// 	newPrompter: function() {
-// 		return Components.classes["@oclcpica.nl/scriptpromptutility;1"]
-// 		.createInstance(Components.interfaces.IPromptUtilities);
-// 	}
-// };
-
 function AlP_PEBgetNumDemande(){
 	application.activeWindow.clipboard = application.activeWindow.getVariable("P3GA*")
 }
@@ -71,6 +55,7 @@ function AlP_PEBLauncher(){
 	var ans = thePrompter.select("Ex\u00E9cuter un script du PEB :", "Choisir le script \u00E0 ex\u00E9cuter",
 		"Get no demande PEB" +
 		"\nGet no demande PEB post-validation" +
+		"\nTrier recherche" +
 		"\nGet PPN" +
 		"\nGet RCR demandeur" +
 		"\nGet RCR fournisseur en attente");
@@ -81,6 +66,9 @@ function AlP_PEBLauncher(){
 			break;
 		case "Get no demande PEB post-validation":
 			AlP_PEBgetNumDemandePostValidation();
+			break;
+		case "Trier recherche":
+			AlP_PEBtriRecherche();
 			break;
 		case "Get PPN":
 			AlP_PEBgetPPN();
@@ -94,4 +82,51 @@ function AlP_PEBLauncher(){
 		default:
 			application.messageBox("Erreur", "Script s\u00E9lectionn\u00E9 pas pris en charge","alert-icon");
 	}
+}
+
+function AlP_PEBtriRecherche(){
+const utility = {
+	newFileOutput: function() {
+		return Components.classes["@oclcpica.nl/scriptoutputfile;1"]
+		.createInstance(Components.interfaces.IOutputTextFile);
+	}
+};
+var theOutputFile = utility.newFileOutput();
+theOutputFile.createSpecial("ProfD", "triPEB.xls");
+theOutputFile.setTruncate(true);
+var path = theOutputFile.getPath();
+theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0009Annee");
+	var resTable = new Array();
+	var noLot = application.activeWindow.getVariable("P3GSE");
+	application.activeWindow.command("\\too s"+noLot+" k", false);
+	var nbRes = application.activeWindow.getVariable("P3GSZ");
+
+//v2
+	var row = 0;
+	var sec = 0
+	while(row < nbRes){
+		application.activeWindow.command("\\too s"+noLot+" "+(row+1)+" k", false);
+		var segP3VKZ = application.activeWindow.getVariable("P3VKZ");
+		var records = segP3VKZ.split("\u000D");
+		for(var jj = 0; jj < records.length-1;jj++){
+			var record = records[jj];
+			record = record.replace(/\"/g, "");
+			record = AlP_js_removeAccents(record);
+			var PPN = record.substring(record.indexOf("\u001BH\u001BLPP")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLPP")+6));
+			var auteur = record.substring(record.indexOf("\u001BE\u001BLV0")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV0")+6));
+			var titre = record.substring(record.indexOf("\u001BE\u001BLV1")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV1")+6));
+			var edition = record.substring(record.indexOf("\u001BE\u001BLV2")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV2")+6));
+			var editeur = record.substring(record.indexOf("\u001BE\u001BLV3")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV3")+6));
+			var annee = record.substring(record.indexOf("\u001BE\u001BLV4")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV4")+6));
+			theOutputFile.writeLine(PPN+"\u0009"+auteur+"\u0009"+titre+"\u0009"+edition+"\u0009"+editeur+"\u0009"+annee);
+			row = parseInt(record.substring(record.indexOf("\u001BD\u001BLNR")+6, record.indexOf("\u001BE", record.indexOf("\u001BD\u001BLNR")+6)).replace(" ", ""));
+		}
+//Empêche la boucle While de tourner à l'infini
+		sec++;
+		if(sec > 9999){
+			break;
+		}
+	}
+	theOutputFile.close();
+	application.shellExecute(path, 9, "edit", "");
 }
