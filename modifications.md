@@ -98,6 +98,9 @@
 * ajout de sécurités et réponses en cas d'échec dans les scripts PEB ;
 * correction des préfixes des scripts PEB (problème pour les scripts utilisateurs).
 
+## Le 15/11/2021 :
+* ajout de `PEBtriRecherche` et mise à jour de `PEBLauncher` ;
+
 # Modifications prévues
 
 * `getTitle` : permettre son utilisation autant en mode édition que présentation ;
