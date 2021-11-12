@@ -99,7 +99,18 @@
 * correction des préfixes des scripts PEB (problème pour les scripts utilisateurs).
 
 ## Le 15/11/2021 :
-* ajout de `PEBtriRecherche` et mise à jour de `PEBLauncher` ;
+
+### Scripts pour le PEB :
+* ajout de `PEBtriRecherche` ;
+* mise à jour de `PEBLauncher` ;
+* mise à jour de la procédure d'installation et de l'introduction.
+
+### Scripts en VBS :
+* 
+
+### Scripts en JS :
+* création du fichier `peyrat_js_scripts.js` ;
+* ajout de `AlP_js_removeAccents`.
 
 # Modifications prévues
 
