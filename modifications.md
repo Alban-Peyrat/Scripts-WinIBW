@@ -98,13 +98,30 @@
 * ajout de sécurités et réponses en cas d'échec dans les scripts PEB ;
 * correction des préfixes des scripts PEB (problème pour les scripts utilisateurs).
 
+## Le 15/11/2021 :
+
+### Scripts pour le PEB :
+* ajout de `PEBtriRecherche` ;
+* mise à jour de `PEBLauncher` ;
+* mise à jour de la procédure d'installation et de l'introduction.
+
+### Scripts en VBS :
+* ajout de `add18XmonoImpIll` qui ajoute des 18X txt + sti ;
+* ajout de `searchDoublonPossible` pour rechercher le PPN signalé par l'alerte doublon possible ;
+* mise à jour du `launcher` avec l'ajout de nouveaux index ;
+* mise à jour non définitive de `getTitle` qui utilise désormais `getTag` ;
+* mise à jour de `ress_getTag` qui déselectionne désormais la notice afin d'éviter de supprimer l'intégralité de la notice si on ajoute du texte après son utilisation ;
+* mise à jour de `addEISBN` qui ajoute désormais le titre s'il est présent et le début de l'ISBN.
+
+### Scripts en JS :
+* création du fichier `peyrat_js_scripts.js` ;
+* ajout de `AlP_js_removeAccents`.
+
 # Modifications prévues
 
-* `getTitle` : permettre son utilisation autant en mode édition que présentation ;
 * scripts de type `get` : vérification de l'utilisation du presse-papier et restituer le presse-papier présent avant le lancement du script s'il est réécrit ;
 * `addUA400` (et associés) : adapter à `getTag`, mettre des majuscules si nécessaire, gérer les autres informations ;
 * `decompUA200enUA400` : gérer les cas où l'indicateurs 2 est `0` ainsi que l'absence de `$b` ;
-* ajout de `addEISBN` : ajoute une 452 avec un _place holder_ ou le titre s'il est déjà renseigné, ainsi que les trois premières parties de l'ISBN. Apparement j'ai cessé le développement en plein milieu ;
 * correction du malfonctionnement probable de `addBibgFinChap` ;
 * nettoyage et correction de code et des commentaires de début de script ;
 * séparation des scripts de chantier thèses.

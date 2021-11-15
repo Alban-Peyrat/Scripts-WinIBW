@@ -4,7 +4,9 @@ __À noter : le nom réel des scripts est précédé de `AlP_PEB`. Le préfixe a
 
 ## Installation des scripts
 
-Il existe deux manières d'installer ces scripts, les résultats sont similaires hormis le [launcher](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#launcher) qui diffère entre les deux. 
+Il existe deux manières d'installer ces scripts, les résultats sont supposément les mêmes, hormis le [launcher](#launcher) qui diffère entre les deux.
+__Toutefois__, [`triRecherche`](#trirecherche) n'existe qu'en __`JS`__.
+
 
 ### En tant que scripts utilisateurs (VBS)
 
@@ -20,9 +22,11 @@ Vous pourrez retrouver les scripts dans la catégorie `Fonctions`.
 __Fermez WinIBW.__
 Accédez au dossier de WinIBW (par exemple en faisant clic-droit puis `Ouvrir l'emplacement du fichier`), puis ouvrez le dossier `Profiles`, puis celui correspondant à votre nom d'utilisateur.
 Modifiez ensuite le fichier `user_pref.js` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez sur une nouvelle ligne ce texte : `user_pref("ibw.standardScripts.script.99", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_peb.js");`.
+_Uniquement pour [`triRecherche`](#trirecherche) : collez sur une nouvelle ligne : `user_pref("ibw.standardScripts.script.98", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_js_scripts.js");`._
 Modifiez le `[NOM D'UTILISATEUR]` avec le vôtre.
 Enregistrez et fermez le document.
 Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (pour télécharger le fichier : [rendez-vous sur ce lien](https://raw.githubusercontent.com/Alban-Peyrat/Scripts-WinIBW/main/peyrat_peb.js) puis faites un clic-droit `Enregistrer sous...` en choisissant `Tous les fichiers` comme type de document) au même emplacement que `user-pref.js`.
+_Uniquement pour [`triRecherche`](#trirecherche) : collez également le fichier [`peyrat_js_scripts.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_js_scripts.js) [(lien pour télécharger le fichier)](https://raw.githubusercontent.com/Alban-Peyrat/Scripts-WinIBW/main/peyrat_js_scripts.js)._
 
 Vous pourrez retrouver les scripts dans la catégorie `Standart Fonctions`.
 
@@ -84,8 +88,37 @@ Le script force ensuite l'arrêt de la boucle.
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
 
 __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en VBS ou en JS. __En JS__, la boite de dialogue propose des options cliquables, qui exécuteront les scripts associés . __En VBS__, la boîte de dialogue demande d'entrer le numéro associé au script :
-  * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemande) ;
-  * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getnumdemandepostvalidation) ;
-  * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getppn) ;
-  * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrdemandeur) ;
-  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md#getrcrfournisseuronhold).
+  * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](#getnumdemande) ;
+  * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](#getnumdemandepostvalidation) ;
+  * _exclusif JS :_ `Trier recherche` (JS) : exécuter [`triRecherche`](#trirecherche) ;
+  * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](#getppn) ;
+  * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](#getrcrdemandeur) ;
+  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold).
+
+### `triRecherche`
+
+Ouvre un fichier Excel permettant de trier et filtrer les résultats d'une requête.
+
+__Détails :__ le script va créer un fichier `triPEB.xls` (ou effacer ses données s'il existe déjà) dans le profil WinIBW de l'utilisateur (au même emplacement que les fichiers de scripts), puis y écrire les en-têtes.
+_Le fichier ne doit pas être ouvert avant l'exécution du script pour un bon fonctionnement de celui-ci._
+Le script récupère ensuite le numéro du lot affiché, lance une requête `\\too s{NUMÉRO DE LOT} k` pour rafficher le lot et récupérer le nombre de résultats.
+
+Il va ensuite commencer une boucle tant que la ligne traitée est strictement inférieure au nombre de résultats.
+À chaque instance de la boucle, le script lance la requête `\\too s{NUMÉRO DE LOT} {LIGNE TRAITÉE + 1 } k` et récupère la variable `P3VKZ`, qui contient l'intégralité du segment de la liste des résultats contenant la ligne traitée + 1 [(voir plus d'informations à ce sujet)](./etude_fonctionement_WinIBW.md).
+Le script divise ensuite cette variable en utilisant les retours chariots comme séparateur.
+Pour chaque chaque notice identifiée, il supprime les guillemets, puis remplace les caractères accentués et autres caractères spéciaux par des lettres classiques [(voir la fonction associée)](./).
+Cette étape est nécessaire pour faciliter la lecture du fichier puisque ces caractères seront "corrompus" si laissés tels quels (certains caractères accentués poseront quand même problèmes).
+Il isole ensuite plusieurs informations en recherchant le caractère d'échappement suivi de `L` suivi de l'identifiant de l'information, puis en conservant tout ce qui se trouve jsuqu'au prochain caractère d'échappement suivi de `E`.
+Voici la liste des informations récupérées, dans l'ordre des colonnes sur le fichier final, avec leur identifiant dans l'affichage par défaut :
+* PPN (`PP`) ;
+* auteur (`V0`) ;
+* titre (`V1`) ;
+* éditeur (`V2`) ;
+* édition (`V3`) ;
+* année (`V4`) ;
+* numéro dans le lot (`NR`, pas affiché dans Excel, correspond à la ligne traitée sus-mentionnée).
+
+Une fois ces six premières informations récupérées, il les ajoute dans une nouvelle ligne sur le fichier puis passe à la notice suivante.
+
+Une fois toutes les notices du segment traité, il ajoute 1 à une variable qui casse la boucle `While` si elle atteint 9999 puis passe à la prochaine instance de celle-ci.
+Une fois cette boucle achevée, le script ferme le fichier, puis l'ouvre en utilisant l'application configurée par défaut pour ce type de fichier.

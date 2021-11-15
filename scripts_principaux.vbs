@@ -7,6 +7,15 @@ Sub add18XmonoImp()
 	
 End Sub
 
+Sub add18XmonoImpIll()
+'Ajout une 181 txt, 182 n 183 nga pour P01
+	Ress_toEditMode false, false
+	
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"181 ##$P01$ctxt" & chr(10) & "181 ##$P02$csti" & chr(10) & "182 ##$P01$P02$cn" & chr(10) & "183 ##$P01$P02$anga" & chr(10)
+	
+End Sub
+
 Sub add214Elsevier()
 'Ajoute une 214 type pour Elsevier
 	
@@ -59,6 +68,40 @@ Sub addCouvPorte()
 	
 	Application.activeWindow.title.endOfBuffer
 	Application.activeWindow.title.insertText	"312 ##$aLa couverture porte en plus : """
+End Sub
+
+Sub addEISBN()
+	Dim atPos, title, ISBN
+	
+	Ress_toEditMode false, false
+
+'Titre
+	atPos = InStr(ress_getTag("200", "1", "a", "1"), "@")
+	title = getTitle
+	If title = "Aucune 200" Then
+		title = " -----À-COMPLÉTER-MANUELLEMENT-----"
+		atPos = 1
+	End If
+'ISBN
+	ISBN = ress_getTag("010", "1", "A", "1")
+	If ISBN = "Aucun $A dans cette 010" Then
+		ISBN = ress_getTag("010", "1", "a", "1")
+	End If
+	If InStr(ISBN, "-") > 0 Then
+		ISBN = Left(ISBN, InStrRev(ISBN, "-")-1)
+		ISBN = Left(ISBN, InStrRev(ISBN, "-"))
+	Else
+		ISBN = ""
+	End If
+
+'Output
+	Application.activeWindow.title.endOfBuffer
+	Application.activeWindow.title.insertText	"452 ##$t"& title & "$y" & ISBN
+	application.activeWindow.title.startOfField
+	application.activeWindow.title.charRight 7 + atPos
+	Application.activeWindow.title.insertText "@"
+	Application.activeWindow.title.endOfField
+	
 End Sub
 
 Sub addISBNElsevier()
@@ -516,13 +559,17 @@ Sub generalLauncher()
 Dim num
 
 num = Inputbox("Écrire le numéro du script à exécuter"_
+	& chr(10) & chr(10) & chr(09) & "Général :"_
+	& chr(10) & "[18] Rechercher le doublon possible"_
 	& chr(10) & chr(10) & chr(09) & "Notices bibg :"_
 	& chr(10) & "[14] Ajouter 18X mongraphie imprimée"_
+	& chr(10) & "[19] Ajouter 18X mongraphie imprimée illustrée"_
 	& chr(10) & "[1] Ajouter couverture porte"_
 	& chr(10) & "[2] Ajouter bibg en fin de chapitre"_
 	& chr(10) & "[3] Ajouter e-ISBN"_
 	& chr(10) & "[4] Ajouter sujet RAMEAU"_
 	& chr(10) & "[15] Ajouter 700 $3"_
+	& chr(10) & "[17] Ajouter une autorité auteur"_
 	& chr(10)& chr(10) & chr(09) & "Elsevier"_
 	& chr(10) & "[6] Ajouter ISBN Elsevier"_
 	& chr(10) & "[7] Ajouter 214 Elsevier"_
@@ -534,9 +581,11 @@ num = Inputbox("Écrire le numéro du script à exécuter"_
 	& chr(10) & "[5] Ajouter 700 $3 & vérif. ex."_
 	& chr(10) & "[11] Récupérer la note disponibilité (310)"_
 	& chr(10) & chr(10) & chr(09) & "Notices autorité :"_
+	& chr(10) & "[16] Créer une notice d'autorité auteur pour cette notice"_
 	& chr(10) & "[12] Ajouter 400"_
 	& chr(10) & "[13] Récupérer 810 $b date de naissance"_
 	& chr(10) & chr(10) & chr(09) & "[77] Lanceur de CorWin"_
+	& chr(10) & chr(10) & chr(09) & "[88] Lanceur PEB"_
 	, "Exécuter un script :", 99)
 Select Case num
 	case 14
@@ -560,7 +609,7 @@ Select Case num
 	case 9
 		application.activeWindow.clipboard	= getCoteEx
 	case 10
-		getDataUAChantierThese
+		chantierThese_auteurGlobalGet
 	case 11
 		application.activeWindow.clipboard	= getUB310
 	case 12
@@ -569,12 +618,21 @@ Select Case num
 		application.activeWindow.clipboard	= getUA810b
 	case 15
 		addUB700S3
+	case 16
+		addAutFromUB
+	case 17
+		addUB7XX
+	case 18
+		searchDoublonPossible
+	case 19
+		add18XmonoImpIll
 	case 77
 		CorWin_Launcher
+	case 88
+		AlP_PEBLauncher
 	case else
 		MsgBox "Aucun script correspondant."
 End Select
-
 End Sub
 
 Function getCoteEx()
@@ -844,41 +902,31 @@ End Sub
 Function getTitle()
 'Renvoie dans le presse papier le titre du document en remplaçant les @ et $e
 'Raccourci : Ctrl Shift Q
-'Requis : RIEN
-'_A_MOD_
+'Requis : ress_getTag
 
-	dim z, y, x, i, posUB200, posUB2XX, posA, posF
-    
-With Application.activeWindow
+	dim UB200, titre, temp
 
-	z = .copyTitle
-	'Trouve le prochain champ pour délimiter la 200
-	posUB200 = InStr(z, chr(13) & "200 ")
-	i = 201
-	posUB2xx = 0
-	While posUB2XX = 0
-	    x = chr(13) & i & " "
-	    posUB2XX = InStr(z, x)
-	    i = i + 1
-	Wend
-	
-	z = Mid(z, posUB200, posUB2xx-posUB200)
-	posA = InStr(z,"$a")+2
-	posF = InStrRev(z, "$f")
-	.clipboard = z
-	z = Mid(z, posA, posF-posA)
-	z = replace(z, "@", "")
-	z = replace(z, "$e", " : ")
-	y = UCase(z)
-	'Si le titre est uniquement en majuscule, le renovie en minuscule pour modifications
-	if z = y Then
-	     output = Left(z, 1) & Right(LCase(z), Len(z)-1)
+	UB200 = ress_getTag("200", "1", "none", "all")
+	If UB200 = "Aucune 200" Then
+		output = UB200
 	Else
-	    output = z
+		posA = InStr(UB200,"$a")+2
+		posF = InStrRev(UB200, "$f")
+		If posF = 0 Then
+			posF = Len(UB200)
+		End if
+		titre = Mid(UB200, posA, posF-posA)
+		titre = replace(titre, "@", "")
+		titre = replace(titre, "$e", " : ")
+		temp = UCase(titre)
+		'Si le titre est uniquement en majuscule, le renovie en minuscule pour modifications
+		if titre = temp Then
+		     output = Left(titre, 1) & Right(LCase(titre), Len(titre)-1)
+		Else
+		    output = titre
+		End If
 	End If
 	getTitle = output
-
-End With
 
 End Function
 
@@ -984,6 +1032,19 @@ Function PurifUB200a(UB200, isUB541)
 	PurifUB200a = Left(UB200, UB200aPos-1) & UB200a & Mid(UB200, UB200aPos, Len(UB200))
 	
 End Function
+
+Sub searchDoublonPossible()
+    dim msg
+    msg = ""
+    On Error Resume Next
+    msg = application.activeWindow.messages.item(0).text
+    If InStr(msg, "PPN ") > 0 Then
+    	msg = Mid(msg, InStr(msg, "PPN ") + 4, 9)
+    	application.activeWindow.command "che ppn " & msg
+    Else
+    	msgbox "Le message de doublon possible n'est pas affiché."
+	End If
+End Sub
 
 Sub searchExcelPPNList()
 'Recherche la liste de PPN contenu dans le presse-papier
