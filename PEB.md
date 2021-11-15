@@ -98,4 +98,26 @@ __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en 
 
 Ouvre un fichier Excel permettant de trier et filtrer les résultats d'une requête.
 
-__Détails :__ _à écrire_
+__Détails :__ le script va créer un fichier `triPEB.xls` (ou effacer ses données s'il existe déjà) dans le profil WinIBW de l'utilisateur (au même emplacement que les fichiers de scripts), puis y écrire les en-têtes.
+_Le fichier ne doit pas être ouvert avant l'exécution du script pour un bon fonctionnement de celui-ci._
+Le script récupère ensuite le numéro du lot affiché, lance une requête `\\too s{NUMÉRO DE LOT} k` pour rafficher le lot et récupérer le nombre de résultats.
+
+Il va ensuite commencer une boucle tant que la ligne traitée est strictement inférieure au nombre de résultats.
+À chaque instance de la boucle, le script lance la requête `\\too s{NUMÉRO DE LOT} {LIGNE TRAITÉE + 1 } k` et récupère la variable `P3VKZ`, qui contient l'intégralité du segment de la liste des résultats contenant la ligne traitée + 1 [(voir plus d'informations à ce sujet)](./etude_fonctionement_WinIBW.md).
+Le script divise ensuite cette variable en utilisant les retours chariots comme séparateur.
+Pour chaque chaque notice identifiée, il supprime les guillemets, puis remplace les caractères accentués et autres caractères spéciaux par des lettres classiques [(voir la fonction associée)](./).
+Cette étape est nécessaire pour faciliter la lecture du fichier puisque ces caractères seront "corrompus" si laissés tels quels (certains caractères accentués poseront quand même problèmes).
+Il isole ensuite plusieurs informations en recherchant le caractère d'échappement suivi de `L` suivi de l'identifiant de l'information, puis en conservant tout ce qui se trouve jsuqu'au prochain caractère d'échappement suivi de `E`.
+Voici la liste des informations récupérées, dans l'ordre des colonnes sur le fichier final, avec leur identifiant dans l'affichage par défaut :
+* PPN (`PP`) ;
+* auteur (`V0`) ;
+* titre (`V1`) ;
+* éditeur (`V2`) ;
+* édition (`V3`) ;
+* année (`V4`) ;
+* numéro dans le lot (`NR`, pas affiché dans Excel, correspond à la ligne traitée sus-mentionnée).
+
+Une fois ces six premières informations récupérées, il les ajoute dans une nouvelle ligne sur le fichier puis passe à la notice suivante.
+
+Une fois toutes les notices du segment traité, il ajoute 1 à une variable qui casse la boucle `While` si elle atteint 9999 puis passe à la prochaine instance de celle-ci.
+Une fois cette boucle achevée, le script ferme le fichier, puis l'ouvre en utilisant l'application configurée par défaut pour ce type de fichier.
