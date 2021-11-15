@@ -81,6 +81,21 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la 
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
+#### `add18XmonoImpIll`
+
+Ajoute les 181-2-3 pour une monographie imprimée avec illustration.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `181 ##$P01$ctxt`
+* `181 ##$P01$csti`
+* `182 ##$P01$P02$cn`
+* `183 ##$P01$P02$anga`
+* un retour à la ligne.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
 #### `add214Elsevier`
 
 Ajoute une 214 type pour Elsevier (2021).
@@ -366,6 +381,17 @@ _Paramètres :_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
+#### `searchDoublonPossible`
+
+Recherche le PPN qualifié de doublon possible par WinIBW.
+
+_Type de procédure : SUB_
+
+Récupère le premier message affiché, si celui-ci contient `PPN` suivi d'un espace, isole les neuf caractères suivant cette expression et lance la recherche `che ppn` avec le PPN isolé.
+Si l'expression n'est pas trouvée, renvoie un message d'erreur.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+
 #### `searchExcelPPNList`
 
 Recherche la liste de PPN contenue dans le presse-papier.
@@ -380,7 +406,7 @@ Transforme la liste de PPN du presse-papier en :
 
 Place ensuite la requête dans le presse-papier et lance la requête.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
 
 ### Scripts ressources
 
