@@ -106,7 +106,12 @@
 * mise à jour de la procédure d'installation et de l'introduction.
 
 ### Scripts en VBS :
-* 
+* ajout de `add18XmonoImpIll` qui ajoute des 18X txt + sti ;
+* ajout de `searchDoublonPossible` pour rechercher le PPN signalé par l'alerte doublon possible ;
+* mise à jour du `launcher` avec l'ajout de nouveaux index ;
+* mise à jour non définitive de `getTitle` qui utilise désormais `getTag` ;
+* mise à jour de `ress_getTag` qui déselectionne désormais la notice afin d'éviter de supprimer l'intégralité de la notice si on ajoute du texte aorès son utilisation ;
+* mise à jour de `addEISBN` qui ajoute désormais le titre s'il est présent et le début de l'ISBN.
 
 ### Scripts en JS :
 * création du fichier `peyrat_js_scripts.js` ;
