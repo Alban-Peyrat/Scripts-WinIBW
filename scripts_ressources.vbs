@@ -87,8 +87,20 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 		notice = Application.activeWindow.copyTitle
 		application.activeWindow.clipboard = temp2
 	Else
-		Application.activeWindow.Title.SelectAll
-		notice = Application.activeWindow.Title.Selection
+		With application.activeWindow.title
+			'temp = .startOfField(true)
+			'temp = .selection
+			'temp = Len(temp)+1
+			'temp2 = .currentLineNumber
+			.SelectAll
+			notice = .Selection
+			.selectNone
+			.StartOfBuffer
+			'.lineDown temp2
+			'.charRight temp
+			'.InsertText "-----TEST-----"
+		End With
+		
 	End If
 
 	notice = replace(notice, chr(13), chr(10))
@@ -241,7 +253,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 	Else
 		ress_getTag = chosenTag
 	End If
-
+	
 End Function
 
 Sub Ress_goToTag(tag, subTag, toEndOfField, toFirst, toLast)
