@@ -48,7 +48,7 @@
   * `addUA400` ne cessera plus de fonctionner s'il n'y a ni $f, ni $c dans le cas de nom non-composé ;
   * `addUA400` prend désormais en compte la présence d'un $x, $y ou $z avant de considérer le champ comme achevé ;
   * `decompUA200enUA400` est maintenant bien plus lisible ;
-  * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](./modifications#modifications-prevues).
+  * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](./modifications#modifications-prévues).
 * refonte des scripts de type `get` et ajout du lanceur général (`generalLauncher`) : création d'une interface pour pouvoir lancer les scripts de type `add` et `get`. L'implentation de ce lanceur a été l'occasion de modifier tous les scripts de type `get` pour qu'ils puissent être utilisables dans d'autres scripts sans devoir stocker le résultat dans le presse-papier. De fait, il n'est plus possible de leur attribuer un raccourci sans créer spécialement un nouveau script qui se contente d'appeler la fonction et de placer le résultat dans le presse-papier. La création de ce lanceur est lié à la multiplication de courts scripts que j'utilise et une multiplication trop importantes des raccourcis associés.
 * ajout de `add18XmonoImp` : ajoute une 181 P01 txt, 182 c et 183 nga ;
 * ajout de `addISBNElsevier` : ajoute une 010 avec le début d'un IBSN type d'Elsevier ;
