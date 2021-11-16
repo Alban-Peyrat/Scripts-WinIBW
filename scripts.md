@@ -2,9 +2,9 @@
 
 __Rappel : pour installer les scripts dans WinIBW, référez-vous au [guide pour les scripts utilisateurs de l'Abes](http://documentation.abes.fr/sudoc/manuels/logiciel_winibw/scripts/index.html#CreerScriptUtilisateur).__
 
-_[Cliquez ici pour voir les scripts pour le PEB.](https://github.com/Alban-Peyrat/Scripts-WinIBW/PEB.md)_
+_[Cliquez ici pour voir les scripts pour le PEB.](./PEB.md)_
 
-_[Cliquez ici pour atteindre la liste des modifications.](https://github.com/Alban-Peyrat/Scripts-WinIBW/modifications.md)_
+_[Cliquez ici pour atteindre la liste des modifications.](./modifications.md)_
 
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
@@ -79,7 +79,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la 
 * `183 ##$P01$anga`
 * un retour à la ligne.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `add18XmonoImpIll`
 
@@ -94,7 +94,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la 
 * `183 ##$P01$P02$anga`
 * un retour à la ligne.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `add214Elsevier`
 
@@ -106,7 +106,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la 
 * `214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2021`
 * un retour à la ligne
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addBibgFinChap`
 
@@ -119,7 +119,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à l'e
 
 __Malfonctionnement possible : si la notice n'était pas en mode édition, le texte ne s'écrira probablement pas si la grille des données codées n'est pas affichée.__
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addCouvPorte`
 
@@ -130,7 +130,7 @@ _Type de procédure : SUB_
 Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
 * `312 ##$aLa couverture porte en plus : "`
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addISBNElsevier`
 
@@ -141,7 +141,7 @@ _Type de procédure : SUB_
 Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
 * `010 ##$A978-2-294-`
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `AddSujetRAMEAU`
 
@@ -174,7 +174,7 @@ Une fois le traitement des commandes terminé, il conserve alors en mémoire un 
 
 Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addUA400`
 
@@ -182,14 +182,14 @@ Rajoute des UA400 pour les noms composés en se basant sur la UA200, sinon rajou
 
 _Type de procédure : SUB_
 
-Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
-Il lance ensuite le script [`decompUA200enUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
+Il lance ensuite le script [`decompUA200enUA400`](#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
 Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` est inférieure à 5 (= si aucune 400 n'a été générée) :
 * si c'est le cas, il va copier la 200 précédemment obtenue en supprimant tout ce qui se trouve après la position du premier dollar après le `$b`, puis remplace dans ce qu'il reste `200` par `400` et supprime `$90y`.
 Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
 * si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addUB700S3`
 
@@ -203,7 +203,7 @@ Le script sélectionne ensuite les trois derniers caractères de ce champ (suppo
 
 Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `changeExAnom`
 
@@ -212,8 +212,8 @@ Remplace le `$btm` de la zone eXX associée au RCR par `$bx` ou signale la prés
 _Type de procédure : SUB_
 
 Passe la notice en mode édition si elle ne l'est pas déjà, puis copie l'intégralité de la notice.
-Le script exécute ensuite [`CountOccurrences`](https://github.com/Alban-Peyrat/Scripts-WinIBW#countoccurences) pour compter le nombre de `chr(10)` suivi de `e` en tenant compte de la casse (= compte le nombre de notices d'exemplaires dans l'ILN) :
-* si une occurrence est détectée, exécute [`goToTag`](https://github.com/Alban-Peyrat/Scripts-WinIBW#gototag) pour se rendre sur le champ 930, puis recule de 1 caractère (bascule sur le champ précédent) et sélectionne les deux prochains caractères sur la gauche (= les deux derniers caractères du champ).
+Le script exécute ensuite [`CountOccurrences`](#countoccurences) pour compter le nombre de `chr(10)` suivi de `e` en tenant compte de la casse (= compte le nombre de notices d'exemplaires dans l'ILN) :
+* si une occurrence est détectée, exécute [`goToTag`](#gototag) pour se rendre sur le champ 930, puis recule de 1 caractère (bascule sur le champ précédent) et sélectionne les deux prochains caractères sur la gauche (= les deux derniers caractères du champ).
 Il compare ensuite si ces deux caractères en minuscule sont égaux à `tm`, auquel cas, ils les remplacent par `x`, récupère le numéro de champ et affiche une infobulle (numéro de champ + `: tm remplacé par x`) ;
 * si plus d'une occurrence est détectée, il réexécute `countOccurrences` en comptant cette fois-ci le nombre  `$b` suivi du RCR __(pour utiliser le script sur votre RCR, changez `330632101` en votre RCR)__ :
   * si plus d'une occurrence est trouvée, recherche `$btm` suivi d'un `chr(10)` suivi de `930 ` et récupère le numéro du champ. Si ce numéro commence par `e`, affiche une infobulle (numéro du champ + `à supprimer`, avec comme titre de fenêtre `Exemplaire fictif`), sinon affiche une autre infobulle (`Plusieurs exemplaires réels sur ce RCR. Vérification recommandée.`) ;
@@ -223,7 +223,7 @@ _Contexte de développement : dans le cadre d'un chantier sur les thèses, des e
 Ainsi, certains exemplaires téléthèses ont été réutilisés sans changer la valeur du `$b`, d'autres sont seulement des exemplaires fictifs en complément de l'exemplaire réel.
 Par ailleurs, nous sommes généralement la seule biblitohèque de l'ILN possédant les thèses de ce chantier, ce qui explique les demandes de vérification du script si plusieurs exemplaires sont détectés dans l'ILN._
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `ChantierTheseAddUB183`
 
@@ -231,7 +231,7 @@ Ajoute une UB183 en fonction de la UB215 (notamment des chiffres détectés dans
 
 _Type de procédure : SUB_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `chantierTheseLoopAddUB183`
 
@@ -239,7 +239,7 @@ Exécute `ChantierTheseAddUB183`, sauf si l'utilisateur refuse l'ajout, sur la l
 
 _Type de procédure : SUB_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `decompUA200enUA400`
 
@@ -255,10 +255,10 @@ Le script est une grande boucle `While` qui boucle tant que `UA200a` contient un
 À chaque isntance, il détecte quel est le séparateur (en comparant quelle est la plus petite position, 0 exclu, entre l'espace et le tiret).
 Il construit ensuite la nouvelle forme, en ajoutant à la fin de `UA200b` (avec un espace si le dernier caractère n'est pas `'` ou `-`) le début de `UA200a` jusqu'au séparateur, supprimant ensuite cette partie (séparateur compris) dans `UA200a`.
 Le script analyse ensuite si les caractères au début du nouveau `UA200a` sont les particules rejetées françaises (`de` suivi d'un espace ou `d'`), si c'est le cas, il les retire de `UA200a` et les rajoute à la fin de `UA200b` (sans espace si nécessaire).
-Il rajoute ensuite le champ ci-dessous à la valeur qui sera renvoyée (via [`appendNote`](https://github.com/Alban-Peyrat/Scripts-WinIBW#appendnote)) avant de passer à la prochaine instance :
+Il rajoute ensuite le champ ci-dessous à la valeur qui sera renvoyée (via [`appendNote`](#appendnote)) avant de passer à la prochaine instance :
 * `400 #1$a` + la valeur actuelle de `UA200a` + `$b` + la valeur actuelle de `UA200b`
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `findUA200aUA200b`
 
@@ -273,11 +273,11 @@ Récupère le premier champ 200 de la notice puis initie une boucle `While` tant
 * compteur = 2 : `$x` ;
 * compteur = 3 : `$y` ;
 * compteur = 4 : `$z` ;
-* si le compteur a une autre valeur, assigne à `UA200fPos` la longueur de la 200 __+ 1__ (sinon [`addUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addua400) supprimerait parfois la dernière lettre du prénom).
+* si le compteur a une autre valeur, assigne à `UA200fPos` la longueur de la 200 __+ 1__ (sinon [`addUA400`](#addua400) supprimerait parfois la dernière lettre du prénom).
 
 Il isole ensuite la valeur du `$a` puis du `$b` et renvoie la 200, la `$a` isolé, le `$b` isolé et `UA200fPos` __sous forme d'une seule chaîne de caractères en séparant les différentes valeurs par `;_;`__.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `generalLauncher`
 
@@ -288,25 +288,25 @@ _Type de procédure : SUB_
 
 Ouvre une boîte de dialogue contenant la liste des scripts suivants accompagnés de leur identifiant, la liste étant décomposée en plusieurs parties :
 * notices bibliographiques :
-  * 14 : exécuter [`add18XmonoImp`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add18xmonoimp) ;
-  * 1 : exécuter [`addCouvPorte`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addcouvporte) ;
-  * 2 : exécuter [`addBibgFinChap`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addbibgfinchap) ;
-  * 3 : exécuter [`addEISBN`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addeisbn) ;
-  * 4 : exécuter [`AddSujetRAMEAU`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addsujetrameau) ;
-  * 15 : placer dans le presse-papier le renvoi de [`addUB700S3`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addub700s3) ;
+  * 14 : exécuter [`add18XmonoImp`](#add18xmonoimp) ;
+  * 1 : exécuter [`addCouvPorte`](#addcouvporte) ;
+  * 2 : exécuter [`addBibgFinChap`](#addbibgfinchap) ;
+  * 3 : exécuter [`addEISBN`](#addeisbn) ;
+  * 4 : exécuter [`AddSujetRAMEAU`](#addsujetrameau) ;
+  * 15 : placer dans le presse-papier le renvoi de [`addUB700S3`](#addub700s3) ;
 * Elsevier :
-  * 6 : exécuter [`addISBNElsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addisbnelsevier) ;
-  * 7 : exécuter [`add214Elsevier`](https://github.com/Alban-Peyrat/Scripts-WinIBW#add214elsevier) ;
+  * 6 : exécuter [`addISBNElsevier`](#addisbnelsevier) ;
+  * 7 : exécuter [`add214Elsevier`](#add214elsevier) ;
 * récupérer des informations :
-  * 8 : placer dans le presse-papier le renvoi de [`getTitle`](https://github.com/Alban-Peyrat/Scripts-WinIBW#gettitle) ;
-  * 9 : placer dans le presse-papier le renvoi de [`getCoteEx`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getcoteex) ;
+  * 8 : placer dans le presse-papier le renvoi de [`getTitle`](#gettitle) ;
+  * 9 : placer dans le presse-papier le renvoi de [`getCoteEx`](#getcoteex) ;
 * thèses
-  * 10 : exécuter [`getDataUAChantierThese`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getdatauachantierthese) ;
+  * 10 : exécuter [`getDataUAChantierThese`](#getdatauachantierthese) ;
   * 5 : exécuter `perso_CTaddUB700S3` ;
-  * 11 : placer dans le presse-papier le renvoi de [`getUB310`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getub310) ;
+  * 11 : placer dans le presse-papier le renvoi de [`getUB310`](#getub310) ;
 * notices d'autorités
-  * 12 : exécuter [`addUA400`](https://github.com/Alban-Peyrat/Scripts-WinIBW#addua400) ;
-  * 13 : placer dans le presse-papier le renvoi de [`getUA810b`](https://github.com/Alban-Peyrat/Scripts-WinIBW#getua810b) ;
+  * 12 : exécuter [`addUA400`](#addua400) ;
+  * 13 : placer dans le presse-papier le renvoi de [`getUA810b`](#getua810b) ;
 * CorWin :
   * 77 : lance le lanceur de [CorWin](https://github.com/Alban-Peyrat/CorWin).
 
@@ -321,7 +321,7 @@ _Type de procédure : FUNCTION_
 
 _Renvoi :_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `getDataUAChantierThese`
 
@@ -333,7 +333,7 @@ _Renvoi :_
 
 Créé dans le cadre d'un chantier sur les thèses, l'exploitation de ces données se fait dans un tableur Excel particulier.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `getTitle`
 
@@ -343,7 +343,7 @@ _Type de procédure : FUNCTION_
 
 _Renvoi :_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `getUA810b`
 
@@ -355,7 +355,7 @@ _Type de procédure : FUNCTION_
 
 _Renvoi :_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `getUB310`
 
@@ -365,7 +365,7 @@ _Type de procédure : FUNCTION_
 
 _Renvoi :_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `PurifUB200a`
 
@@ -379,7 +379,7 @@ _Paramètres :_
 * UB200 : PAS A JOUR
 * isUB541 : PAS A JOUR
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `searchDoublonPossible`
 
@@ -390,7 +390,7 @@ _Type de procédure : SUB_
 Récupère le premier message affiché, si celui-ci contient `PPN` suivi d'un espace, isole les neuf caractères suivant cette expression et lance la recherche `che ppn` avec le PPN isolé.
 Si l'expression n'est pas trouvée, renvoie un message d'erreur.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `searchExcelPPNList`
 
@@ -406,7 +406,7 @@ Transforme la liste de PPN du presse-papier en :
 
 Place ensuite la requête dans le presse-papier et lance la requête.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_principaux.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 ### Scripts ressources
 
@@ -426,7 +426,7 @@ Regarde si `var` est vide :
 * si oui, renvoie le `text` ;
 * si non, renvoie `var` + `chr(10)` + `text`.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `CountOccurrences`
 
@@ -442,7 +442,7 @@ _Paramètres :_
 Renvoie le nombre de fois où `p_strSubString` apparait dans `p_strStringToCheck` en comptant le nombre de parties lorsque l'on divise `p_strStringToCheck` en utilisant `p_strSubString` comme séparateur.
 Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temps les deux autres variables en minuscule.
 
-[Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `exportVar`
 
@@ -454,7 +454,7 @@ _Paramètres :_
 * `var` : le texte à exporter ;
 * `boolAppend` : __bool__ définit si le script doit ajouter à la fin du fichier (`true`) ou réécrire le fichier.
 
-[Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `goToTag`
 
@@ -471,7 +471,7 @@ _Paramètres :_
 * toFirst : [bool] A FAIRE
 * toLast : [bool] A FAIRE
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `goToTagInputBox`
 
@@ -479,7 +479,7 @@ Permet d'essayer `goToTag` en indiquant les paramètres voulus.
 
 _Type de procédure : SUB_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `Sleep`
 
@@ -490,7 +490,7 @@ _Type de procédure : SUB_
 _Paramètres :_
 * `time` : __int__ temps à attendre (en secondes).
 
-[Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `toEditMode`
 
@@ -511,7 +511,7 @@ Il agit ensuite selon trois scénarios :
 * il doit passer en mode présentation et sauvegarder la notice, il simule la validation de la notice ;
 * il doit passer en mode présentation et ne pas sauvegarder la notice, il simule alors une annulation puis une validation (= pour le message qui apparait en cas de tentative d'annulation alors que des modifications ont été effectuées).
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 #### `uCaseNames`
 
@@ -530,7 +530,7 @@ Une fois la boucle `While` interrompue, il passe ensuite à la prochaine instanc
 Une fois les trois instances de celle-ci terminée, il remplace `De` (espace avant et après) et `D'` (espace avant) par leur équivalent en minuscule, avant de renvoyer le résultat final.
 
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_ressources.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
 ### Concepts de scripts
 
@@ -544,7 +544,7 @@ Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste 
 
 _Type de procédure : SUB_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/concepts.vbs)
 
 #### `ctrlUB700S3`
 
@@ -554,4 +554,4 @@ Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le pres
 
 _Type de procédure : SUB_
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs)
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/concepts.vbs)
