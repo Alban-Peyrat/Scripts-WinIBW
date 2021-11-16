@@ -2,9 +2,10 @@
 
 __Rappel : pour installer les scripts dans WinIBW, référez-vous au [guide pour les scripts utilisateurs de l'Abes](http://documentation.abes.fr/sudoc/manuels/logiciel_winibw/scripts/index.html#CreerScriptUtilisateur).__
 
-_[Cliquez ici pour voir les scripts pour le PEB.](./PEB.md)_
-
-_[Cliquez ici pour atteindre la liste des modifications.](./modifications.md)_
+_Consulter les autres pages dédiées à WinIBW :_
+* _[les scripts pour le PEB ;](./PEB.md)_
+* _[la liste des modifications ;](./modifications.md)_
+* _[mes "études" sur le fonctionnement.](./etude-fonctionnement.md)_
 
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
