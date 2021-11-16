@@ -1,5 +1,10 @@
 # Liste des modifications
 
+_Consulter les autres pages dédiées à WinIBW :_
+* _[les scripts ;](./scripts.md)_
+* _[les scripts pour le PEB ;](./PEB.md)_
+* _[mes "études" sur le fonctionnement.](./etude-fonctionnement.md)_
+
 ## Le 02/08/2021 :
 * suppression de `PurifUB200a` car peu d'intérêts à être partagé ;
 * suppression de `CollerPPN` car peu d'intérêts à être partagé ;
