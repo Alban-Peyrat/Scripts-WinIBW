@@ -19,7 +19,7 @@
 
 ## Le 25/08/2021 :
 * suppression de `ctrlTraitementInterne`, que j'avais dû arrêter en plein milieu du développement ;
-* modification de la description de [concepts](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
+* modification de la description de [concepts](./scripts/concepts.vbs) et ajout de la mention de [Constance](https://github.com/Alban-Peyrat/ConStance) ;
 
 ## Le 01/09/2021 :
 * ajout de `appendNote` pour ajouter à une variable la donnée voulue ;
@@ -48,7 +48,7 @@
   * `addUA400` ne cessera plus de fonctionner s'il n'y a ni $f, ni $c dans le cas de nom non-composé ;
   * `addUA400` prend désormais en compte la présence d'un $x, $y ou $z avant de considérer le champ comme achevé ;
   * `decompUA200enUA400` est maintenant bien plus lisible ;
-  * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](https://github.com/Alban-Peyrat/Scripts-WinIBW#modifications-prevues).
+  * attention toutefois, ce couple de scripts requièrent toujours la présence d'un $a et d'un $b pour pouvoir fonctionner [(voir les modifications prévues)](./modifications#modifications-prevues).
 * refonte des scripts de type `get` et ajout du lanceur général (`generalLauncher`) : création d'une interface pour pouvoir lancer les scripts de type `add` et `get`. L'implentation de ce lanceur a été l'occasion de modifier tous les scripts de type `get` pour qu'ils puissent être utilisables dans d'autres scripts sans devoir stocker le résultat dans le presse-papier. De fait, il n'est plus possible de leur attribuer un raccourci sans créer spécialement un nouveau script qui se contente d'appeler la fonction et de placer le résultat dans le presse-papier. La création de ce lanceur est lié à la multiplication de courts scripts que j'utilise et une multiplication trop importantes des raccourcis associés.
 * ajout de `add18XmonoImp` : ajoute une 181 P01 txt, 182 c et 183 nga ;
 * ajout de `addISBNElsevier` : ajoute une 010 avec le début d'un IBSN type d'Elsevier ;
@@ -82,7 +82,7 @@
 
 ## Le 04/11/2021 :
 * la liste de modifications se trouve désormais dans un fichier à part ;
-* ajout [des scripts de PEB et de leur documentation](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/PEB.md) ;
+* ajout [des scripts de PEB et de leur documentation](./PEB.md) ;
 * ajout des scripts :
   * `addAutFromUB` : génère un squelette de notice auteur à partir d'une notice bibliographique ;
   * `addUB7XX` : ajoute une `7XX`, avec un fonctionnement similaire à `addSujetRAMEAU` ;
