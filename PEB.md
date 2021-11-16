@@ -12,7 +12,7 @@ __Toutefois__, [`triRecherche`](#trirecherche) n'existe qu'en __`JS`__.
 
 __Fermez WinIBW.__
 Accédez au dossier de WinIBW (par exemple en faisant clic-droit puis `Ouvrir l'emplacement du fichier`), puis ouvrez le dossier `Profiles`, puis celui correspondant à votre nom d'utilisateur.
-Modifiez ensuite le fichier `winibw.vbs` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez l'intégralité du contenu du fichier [`scripts_PEB.vbs`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts_PEB.vbs).
+Modifiez ensuite le fichier `winibw.vbs` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez l'intégralité du contenu du fichier [`scripts_PEB.vbs`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_PEB.vbs).
 Enregistrez et fermez le document.
 
 Vous pourrez retrouver les scripts dans la catégorie `Fonctions`.
@@ -25,8 +25,8 @@ Modifiez ensuite le fichier `user_pref.js` avec `Bloc-notes` (par exemple), rend
 _Uniquement pour [`triRecherche`](#trirecherche) : collez sur une nouvelle ligne : `user_pref("ibw.standardScripts.script.98", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_js_scripts.js");`._
 Modifiez le `[NOM D'UTILISATEUR]` avec le vôtre.
 Enregistrez et fermez le document.
-Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (pour télécharger le fichier : [rendez-vous sur ce lien](https://raw.githubusercontent.com/Alban-Peyrat/Scripts-WinIBW/main/peyrat_peb.js) puis faites un clic-droit `Enregistrer sous...` en choisissant `Tous les fichiers` comme type de document) au même emplacement que `user-pref.js`.
-_Uniquement pour [`triRecherche`](#trirecherche) : collez également le fichier [`peyrat_js_scripts.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_js_scripts.js) [(lien pour télécharger le fichier)](https://raw.githubusercontent.com/Alban-Peyrat/Scripts-WinIBW/main/peyrat_js_scripts.js)._
+Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (pour télécharger le fichier : [téléchargez ce .zip](https://github.com/Alban-Peyrat/WinIBW/archive/refs/heads/main.zip), vous retrouverez le fichier dans le dossier `scripts`) au même emplacement que `user-pref.js`.
+_Uniquement pour [`triRecherche`](#trirecherche) : collez également le fichier [`peyrat_js_scripts.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_js_scripts.js)._
 
 Vous pourrez retrouver les scripts dans la catégorie `Standart Fonctions`.
 
