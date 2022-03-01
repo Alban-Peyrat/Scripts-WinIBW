@@ -23,7 +23,7 @@ function AlP_PEBgetPPN(){
 }
 
 function AlP_PEBgetRCRDemandeur(){
-	application.activeWindow.clipboard = application.activeWindow.getVariable("libID");
+	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VF1");
 }
 
 function AlP_PEBgetRCRFournisseurOnHold(){
