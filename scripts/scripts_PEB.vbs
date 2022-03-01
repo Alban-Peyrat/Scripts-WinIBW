@@ -20,7 +20,7 @@ Sub AlP_PEBgetPPN()
 End Sub
 
 sub AlP_PEBgetRCRDemandeur()
-	application.activeWindow.clipboard = application.activeWindow.variable("libID")
+	application.activeWindow.clipboard = application.activeWindow.variable("P3VF1")
 End Sub
 
 sub AlP_PEBgetRCRFournisseurOnHold()
