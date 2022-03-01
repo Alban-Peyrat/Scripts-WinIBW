@@ -72,7 +72,7 @@ __Détails :__ Renvoie la variable `P3VTA`.
 
 Renvoie dans le presse-papier du RCR demandeur.
 
-__Détails :__ Renvoie la variable `libID`.
+__Détails :__ Renvoie la variable `P3VF1`.
 
 ### `getRCRFournisseurOnHold`
 
