@@ -20,7 +20,26 @@ Sub AlP_PEBgetPPN()
 End Sub
 
 sub AlP_PEBgetRCRDemandeur()
-	application.activeWindow.clipboard = application.activeWindow.variable("P3VF1")
+	Dim VF1, VF0, num
+	VF1 = application.activeWindow.variable("P3VF1")
+	VF0 = application.activeWindow.variable("P3VF0")
+	
+	if VF0 <> VF1 Then
+		num = InputBox("Quel RCR (écrire le numéro) :"_
+			& chr(10)& chr(10) & " - [0] " & VF0 _
+			& chr(10) & " - [1] " & VF1, "Quel RCR choisir :", 0)
+			
+		Select Case num
+			Case 0
+				application.activeWindow.clipboard = VF0
+			Case 1
+				application.activeWindow.clipboard = VF1
+			Case Else
+				MsgBox "Aucun RCR copié"
+		End Select
+	Else
+		application.activeWindow.clipboard = VF0
+	End If
 End Sub
 
 sub AlP_PEBgetRCRFournisseurOnHold()
