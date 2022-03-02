@@ -23,7 +23,29 @@ function AlP_PEBgetPPN(){
 }
 
 function AlP_PEBgetRCRDemandeur(){
-	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VF1");
+	var VF0 = application.activeWindow.getVariable("P3VF0");
+	var VF1 = application.activeWindow.getVariable("P3VF1");
+	
+	if(VF1 != VF0){
+		var prompter = Components.classes["@oclcpica.nl/scriptpromptutility;1"]
+				.createInstance(Components.interfaces.IPromptUtilities);
+		var ans = prompter.confirmEx("Quel RCR choisir", "Quel RCR (cliquer sur le bouton)", "Aucun", VF0, VF1, null, null)
+		switch (ans){
+			case 0:
+				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+				break;
+			case 1:
+				application.activeWindow.clipboard = VF0;
+				break;
+			case 2:
+				application.activeWindow.clipboard = VF1;
+				break;
+			default:
+				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+			}
+	}else{
+		application.activeWindow.clipboard = application.activeWindow.getVariable("P3VF0");
+	}
 }
 
 function AlP_PEBgetRCRFournisseurOnHold(){
