@@ -89,7 +89,7 @@ Renvoie dans le presse-papier, séparés par un retour à la ligne, le titre du 
 Attention, si une de ces informations n'existe pas, cela ne supprime pas le retour à la ligne pour autant.
 Ainsi, si vous collez le résultat dans Excel, la 3e ligne sera toujours le titre de la partie, qu'un auteur pour le document existe ou non.
 
-__Détails :__ Renvoie les variables `P3VTC`, `P3VTD`, `P3VAB`, `P3VAA`, séparées par des retours à la ligne (`vblf` (VBS) / `/n` (JS)).
+__Détails :__ Renvoie les variables `P3VTC`, `P3VTD`, `P3VAB`, `P3VAA`, séparées par des retours à la ligne (`vblf` (VBS) / `\n` (JS)).
 
 ### `Launcher`
 
