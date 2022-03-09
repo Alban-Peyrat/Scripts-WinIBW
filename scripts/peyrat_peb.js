@@ -65,6 +65,14 @@ function AlP_PEBgetRCRFournisseurOnHold(){
 	}
 }
 
+function AlP_PEBgetTitleAuth(){
+    var titre = application.activeWindow.getVariable("P3VTC");
+    var auteur = application.activeWindow.getVariable("P3VTD");
+    var article = application.activeWindow.getVariable("P3VAB");
+    var auteurArt = application.activeWindow.getVariable("P3VAA");
+    application.activeWindow.clipboard = titre + "\n" + auteur + "\n" + article + "\n" + auteurArt
+}
+
 function AlP_PEBLauncher(){
 	const utility = {
 		newPrompter: function() {
@@ -100,6 +108,9 @@ function AlP_PEBLauncher(){
 			break;
 		case "Get RCR fournisseur en attente":
 			AlP_PEBgetRCRFournisseurOnHold();
+			break;
+		case "Get titre et auteur document":
+			AlP_PEBgetTitleAuth();
 			break;
 		default:
 			application.messageBox("Erreur", "Script s\u00E9lectionn\u00E9 pas pris en charge","alert-icon");
