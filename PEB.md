@@ -83,6 +83,14 @@ Pour chaque fournisseur, recherche un caractère d'échappement suivi de `E` sui
 Si cette donnée isolée correspond à `En attente de réponse`, il recherche alors la même expression que précédemment en remplaçant `LRT` par `LSS` (supposément le RCR de la bibliothèque) et place dans le presse-papier les 9 caractères suivant (puisque les RCR font 9 caractères).
 Le script force ensuite l'arrêt de la boucle.
 
+### `getTitleAuth`
+
+Renvoie dans le presse-papier, séparés par un retour à la ligne, le titre du document, l'auteur du document, le titre de la partie et l'auteur de la partie, tels que visibles sur la demande.
+Attention, si une de ces informations n'existe pas, cela ne supprime pas le retour à la ligne pour autant.
+Ainsi, si vous collez le résultat dans Excel, la 3e ligne sera toujours le titre de la partie, qu'un auteur pour le document existe ou non.
+
+__Détails :__ Renvoie les variables `P3VTC`, `P3VTD`, `P3VAB`, `P3VAA`, séparées par des retours à la ligne (`vblf` (VBS) / `/n` (JS)).
+
 ### `Launcher`
 
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
@@ -93,7 +101,8 @@ __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en 
   * _exclusif JS :_ `Trier recherche` (JS) : exécuter [`triRecherche`](#trirecherche) ;
   * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](#getppn) ;
   * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](#getrcrdemandeur) ;
-  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold).
+  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold) ;
+  * 5 (VBS) / `Get titre et auteur document` (JS) : exécuter [`getTitleAuth`](#getTitleAuth).
 
 ### `triRecherche`
 
