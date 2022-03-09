@@ -59,6 +59,15 @@ sub AlP_PEBgetRCRFournisseurOnHold()
 	Next 
 End Sub
 
+Sub AlP_PEBgetTitleAuth()
+    dim titre, article, auteur, auteurArt
+    titre = application.activeWindow.variable("P3VTC")
+    auteur = application.activeWindow.variable("P3VTD")
+    article = application.activeWindow.variable("P3VAB")
+    auteurArt = application.activeWindow.variable("P3VAA")
+    application.activeWindow.clipboard = titre & vblf & auteur & vblf & article & vblf & auteurArt
+End Sub
+
 Sub AlP_PEBLauncher()
 	dim num
 
@@ -68,7 +77,8 @@ Sub AlP_PEBLauncher()
 		& chr(10) & "[1] Récupérer le numéro de demande de PEB après validation d'une demande"_
 		& chr(10) & "[2] Récupérer le PPN"_
 		& chr(10) & "[3] Récupérer le RCR demandeur"_
-		& chr(10) & "[4] Récupérer le RCR fournisseur en attente de réponse", "Exécuter un script de PEB :", 99)
+		& chr(10) & "[4] Récupérer le RCR fournisseur en attente de réponse"_
+		& chr(10) & "[5] Récupérer le titre et l'auteur du document demandé", "Exécuter un script de PEB :", 99)
 		
 	Select Case num
 		Case 0
@@ -81,6 +91,8 @@ Sub AlP_PEBLauncher()
 			AlP_PEBgetRCRDemandeur
 		Case 4
 			AlP_PEBgetRCRFournisseurOnHold
+		Case 5
+			AlP_PEBgetTitleAuth
 		Case Else
 			MsgBox "Aucun script correspondant."
 	End Select
