@@ -96,13 +96,13 @@ __Détails :__ Renvoie les variables `P3VTC`, `P3VTD`, `P3VAB`, `P3VAA`, sépar�
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
 
 __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en VBS ou en JS. __En JS__, la boite de dialogue propose des options cliquables, qui exécuteront les scripts associés . __En VBS__, la boîte de dialogue demande d'entrer le numéro associé au script :
-  * 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](#getnumdemande) ;
-  * 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](#getnumdemandepostvalidation) ;
-  * _exclusif JS :_ `Trier recherche` (JS) : exécuter [`triRecherche`](#trirecherche) ;
-  * 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](#getppn) ;
-  * 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](#getrcrdemandeur) ;
-  * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold) ;
-  * 5 (VBS) / `Get titre et auteur document` (JS) : exécuter [`getTitleAuth`](#getTitleAuth).
+* 0 (VBS) / `Get no demande PEB` (JS) : exécuter [`getNumDemande`](#getnumdemande) ;
+* 1 (VBS) / `Get no demande PEB post-validation` (JS) : exécuter [`getNumDemandePostValidation`](#getnumdemandepostvalidation) ;
+* _exclusif JS :_ `Trier recherche` (JS) : exécuter [`triRecherche`](#trirecherche) ;
+* 2 (VBS) / `Get PPN` (JS) : exécuter [`getPPN`](#getppn) ;
+* 3 (VBS) / `Get RCR demandeur` (JS) : exécuter [`getRCRDemandeur`](#getrcrdemandeur) ;
+* 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold) ;
+* 5 (VBS) / `Get titre et auteur document` (JS) : exécuter [`getTitleAuth`](#getTitleAuth).
 
 ### `triRecherche`
 
