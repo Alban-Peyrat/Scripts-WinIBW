@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # External import
-import python_init
+import python_init # I think this only is necessary in my environment of work
 import get_python_parameters # To retrieve Python-WinIBW parameters
 from Abes_Apis_Interface.AbesXml import AbesXml # by Alexandre Faure (github.com/louxfaure)
 # To connect to Abes's SudocXML webservice
