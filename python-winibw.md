@@ -75,4 +75,109 @@ _You can access the 1.17 version [in the Abes's GitHub](https://github.com/abes-
 
 ## Example
 
-_not yet published_
+This example displays the MARCXML record of the current title in a message box in WinIBW.
+It is pointless but shows a practical use of Python-WinIBW to retrieve data from the internet (here using [Abes's UNIMARC/MARCXML webservice](http://documentation.abes.fr/sudoc/manuels/administration/aidewebservices/index.html#SudocMarcXML)).
+Both scripts can be found in the [`scripts/python` subdirectory](https://github.com/Alban-Peyrat/WinIBW/tree/main/scripts/python).
+
+### WinIBW standart script (in Javascript)
+
+_In this script, the utility objects are already declared as a `const` and a sleep function is also declared (see the script file)._
+
+``` Javascript
+function pythonWinIBWexample(){
+	// Gets the type of document
+	var isAut = application.activeWindow.getVariable("P3VMC");
+
+	// Checks if the script can properly execute
+	if (isAut == ""){
+		application.messageBox("Python-WinIBW example failed", "Please select a record before executing the script.", "error-icon")
+		return
+	}else if (isAut.charAt(0) == "T"){
+		application.messageBox("Python-WinIBW example failed", "This is record is an authority record, not a document record.", "error-icon")
+		return
+	}
+
+	// Gets the PPN
+	var PPN = application.activeWindow.getVariable("P3GPP");
+
+	// Writes the PPN in js_to_pyth_file
+	var jsToPyth = utility.newFileOutput();
+	jsToPyth.setTruncate(true); // The path will be created in writing-mode and not in append-mode
+	jsToPyth.create(pythPar["js_to_pyth_file"]);
+	jsToPyth.write(PPN);
+	jsToPyth.close();
+
+	// Executes the python script
+	__execute_python("C:\\oclcpica\\WinIBW30\\SCOOP\\scripts\\python\\python-winibw_example.py");
+
+	// Defines the FileInput
+	var pythToJs = utility.newFileInput();
+	
+	// Waits for pyth_to_js_file to exist AND to be opened 
+	var maxWait = 10; // in sec
+	var success = false;
+	var ii = 0;
+	while((ii < maxWait*2) && (success == false)){
+		try {
+			success = pythToJs.open(pythPar["pyth_to_js_file"]); // Opens pyth_to_js_file
+		}
+		catch (e){}
+		ii++;
+		__sleep(500) // This waits for 0,5 sec
+	}
+	if(ii==maxWait){ // This only occurs if the file could not be opened
+		application.messageBox("Python-WinIBW example failed", "WinIBW could not open pyth_to_js_file after "+maxWait+" seconds. The script will delete temporary files and stop.", "error-icon");
+		__clean_python_temp_file();
+		return
+	}
+		
+	// Retrieves the data returned by the python script	
+	var record = "";
+	while(!pythToJs.isEOF()){
+		record += pythToJs.readLine()+"\n";
+	}
+	pythToJs.close();
+	
+	// Display the data
+	application.messageBox("Python-WinIBW example result", record, "message-icon");
+
+	// Deletes the temporary files
+	__clean_python_temp_file();
+}
+```
+
+### Python script
+
+``` Python
+# -*- coding: utf-8 -*-
+
+# External import
+import python_init # I think this only is necessary in my environment of work
+import get_python_parameters # To retrieve Python-WinIBW parameters
+from Abes_Apis_Interface.AbesXml import AbesXml # by Alexandre Faure (github.com/louxfaure)
+# To connect to Abes's SudocXML webservice
+
+# Stores Python-WinIBW parameters in pyth_par
+pyth_par = get_python_parameters.main()
+
+# Retrieves the PPN from js_to_pyth_file
+with open(pyth_par["js_to_pyth_file"], "r", encoding="utf-8") as js_to_pyth:
+    ppn = js_to_pyth.read()
+
+# Connects to Abes's SudocXML webservice and retrieve the XML record
+record = AbesXml(ppn)
+if record.get_init_status() == "Succes":
+    record = record.get_record # Returns the XML record as a string
+else:
+    record = "Could not return the record"
+
+# Writes the result to pyth_to_js_file
+with open(pyth_par["pyth_to_js_file"], "w", encoding="utf-8") as pyth_to_js:
+    pyth_to_js.write(record)
+
+# The python script ends, now we go back to the javascript script
+```
+
+### Result (as an image)
+
+![](img/python-winibw_example_result.png)
