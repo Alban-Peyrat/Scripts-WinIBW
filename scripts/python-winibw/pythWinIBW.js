@@ -61,7 +61,7 @@ function __is_valid_for_Python_WinIBW(key){
 	}
 }
 
-pythPar = __get_python_parameters(); // Defines pythPar as a global variable
+const pythPar = __get_python_parameters(); // Defines pythPar as a global variable
 // Checks on WinIBW's initialisation if Python-WinIBW can be used.
 // /!\ Does not check if pyth_to_js_file and js_to_pyth_file are valid paths.
 missingParams = []
