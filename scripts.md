@@ -77,13 +77,186 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 
 ### Scripts utilisateurs (VBS)
 
+#### Fichier `alp_cat_add.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_add.vbs)_
+
+##### `add18XmonoImp()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée sans illustration (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+
+``` MARC
+181 ##$P01$ctxt
+182 ##$P01$cn
+183 ##$P01$anga
+```
+
+##### `add18XmonoImpIll()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée avec illustration (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+
+``` MARC
+181 ##$P01$ctxt
+181 ##$P01$csti
+182 ##$P01$P02$cn
+183 ##$P01$P02$anga
+```
+
+#### `add214Elsevier()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 214 type pour Elsevier (2022) (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+
+``` MARC
+214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2022
+```
+
+------------------------------------------------------------------------------------------------------------
+||| Ci-dessous pas encore modifié
+
+
+
+#### `addBibgFinChap`
+
+Ajoute une mention de bibliographie à la fin de chaque chapitre.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à l'emplacement du curseur :
+* `Chaque fin de chapitre comprend une bibliographie`
+
+__Malfonctionnement possible : si la notice n'était pas en mode édition, le texte ne s'écrira probablement pas si la grille des données codées n'est pas affichée.__
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+#### `addCouvPorte`
+
+Ajoute le début d'une 312 `La couverture porte en plus`.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `312 ##$aLa couverture porte en plus : "`
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+#### `addISBNElsevier`
+
+Ajoute une 010 avec le début de l'ISBN d'Elsevier.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
+* `010 ##$A978-2-294-`
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+#### `AddSujetRAMEAU`
+
+Ouvre une boîte de dialogue permettant d'insérer des UB60X à partir du PPN.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance une boucle qui s'exécutera jusqu'à 1000 fois. À chaque exécution, ouvre une boite de dialogue permettant de coller directement le PPN et montrant la liste des commandes supplémentaires disponibles :
+* ajouter `UX` devant le PPN (sans espace) permet de choisir la 60X à insérer :
+  * par défaut, le script ajoute une `606 ##` ;
+  * `U0` pour insérer une `600 #1` ;
+  * `U1` pour insérer une `601 02` ;
+  * `U2` pour insérer une `602 ##` ;
+  * `U4` pour insérer une `604 ##` ;
+  * `U5` pour insérer une `605 ##` ;
+  * `U7` pour insérer une `607 ##` ;
+  * `U8` pour insérer une `608 ##` ;
+* ajouter `_[IndicateurNo1][IndicateurNo2]` après le PPN (sans espace) permet de changer les indicateurs. __Il est obligatoire d'indiquer les 2 indicateurs.__ Cette commande est cumulable avec l'option `UX` ;
+* ajouter `$3` devant le PPN permet de rajouter ce PPN en tant que subdivision __au dernier PPN entré durant cette activation du script__ ;
+* écrire `ok` (valeur par défaut de la boite de dialogue) permet de sortir de la boucle et de terminer le script.
+
+Une fois la donnée saisie, le script supprime `PPN` suivi d'un espace, `(PPN)`, les espaces, les retours à la ligne et les retours chariot (`chr(10)` et `chr(13)`, ce qui permet notamment d'éviter des problèmes si le PPN est copié depuis une cellule Excel) et place le curseur à la fin de la notice. Dans la suite de l'explication, la donnée saisie par l'utilisateur correspondra au résultat de cette opération de suppression.
+
+Concrètement, si le troisième caractère en partant de la fin est un `_`, les indicateurs prennent la valeur des deux derniers caractères renseignés.
+Ensuite, si les deux premiers caractères sont `$3`, le script va réécrire le champ UNIMARC stocké en mémoire (cf ci-après) en insérant avant le neuvième dernier caractère (= avant `$2rameau` et un retour à la ligne (`chr(10)`)) la donnée saisie par l'utilisateur. En clair, il rajoute supposément `$3123456789` avant le `$2`.
+En revanche, si les deux premiers caractères ne sont pas `$3`, le script insère à l'emplacement du curseur (= fin de la notice) le champ qu'il a en mémoire (donc rien pour la première occurrence) puis va isoler comme `PPN` les 9 premiers caractères en commençant à partir du troisième caractère (supposément le PPN dans la forme `UX123456789`).
+Il regarde ensuite si les deux premiers caractères de la donnée saisie équivalent à un des `UX` précédemment cités. Si oui, il détermine la valeur du `X` de la `60X`associée. Si non, il attribue `6` au `X` et isole alors comme `PPN` les neufs premiers caractère de la donnée saisie. Ainsi, saisir `U9123456789` écrire une `606` avec comme PPN `U91234567`.
+Une fois le traitement des commandes terminé, il conserve alors en mémoire un champ :
+* `60` + la valeur du `X` + un espace + la valeur des indicateurs + `$3` + le PPN qu'il a isolé + `$2rameau` + un retour à la ligne (`chr(10)`)
+
+Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+#### `addUA400`
+
+Rajoute des UA400 pour les noms composés en se basant sur la UA200, sinon rajoute une UA400 copiant la UA200. _Ce script n'est pas universel et ne fonctionne qu'en présence d'un `$a` et d'un `$b`._
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
+Il lance ensuite le script [`decompUA200enUA400`](#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
+Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` est inférieure à 5 (= si aucune 400 n'a été générée) :
+* si c'est le cas, il va copier la 200 précédemment obtenue en supprimant tout ce qui se trouve après la position du premier dollar après le `$b`, puis remplace dans ce qu'il reste `200` par `400` et supprime `$90y`.
+Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
+* si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+#### `addUB700S3`
+
+Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant le PPN du presse-papier et le $4 de l'ancienne UB700.
+
+_Type de procédure : SUB_
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis recherche à l'intérieur de celle-ci un retour à la ligne (`chr(10)`) suivi de `700` (supposément, la première 700).
+Le script sélectionne ensuite les trois derniers caractères de ce champ (supposément le code fonction) puis génère :
+* `700 #1$3` + le contenu du presse-papier + `$4` + la sélection en cours.
+
+Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
+
+[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
+------------------------------------------------------------------------------------------------------------
+
+#### Fichier `alp_cat_get.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_get.vbs)_
+
+#### Fichier `alp_chantier_theses.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_chantier_theses.vbs)_
+
+#### Fichier `alp_concepts.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_concepts.vbs)_
+
+#### Fichier `alp_corwin.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_corwin.vbs)_
+
+#### Fichier `alp_dumas.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_dumas.vbs)_
+
 #### Fichier `alp_PEB.vbs`
 
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_PEB.vbs)_
 
 _[Voir le document dédié](./PEB.md)_
 
+#### Fichier `alp_ressources.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_ressources.vbs)_
+
 ### Scripts standarts (JS)
+
+#### Fichier `peyrat_main.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
+
+__Ce fichier ne contient pas de scripts actuellement.__
+
+#### Fichier `peyrat_peb.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_peb.js)_
+
+_[Voir le document dédié](./PEB.md)_
 
 #### Fichier `peyrat_ressources.js`
 
@@ -218,17 +391,9 @@ _Paramètres :_
 
 Renvoie la différence entre `start` et `end` sous forme d'une chaîne de caractères au format `X minute(s) X seconde(s)`.
 
-#### Fichier `peyrat_peb.js`
 
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_peb.js)_
 
-_[Voir le document dédié](./PEB.md)_
 
-#### Fichier `peyrat_main.js`
-
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
-
-__Ce fichier ne contient pas de scripts actuellement.__
 
 
 
