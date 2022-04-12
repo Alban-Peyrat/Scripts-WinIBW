@@ -41,7 +41,7 @@ function pythonWinIBWexample(){
 	jsToPyth.close();
 
 	// Executes the python script
-	__execute_python("C:\\oclcpica\\WinIBW30\\SCOOP\\scripts\\python\\python-winibw_example.py");
+	__execute_python("C:\\oclcpica\\WinIBW30\\Profiles\\apeyrat001\\alp_scripts\\python\\python-winibw_example.py");
 
 	// Defines the FileInput
 	var pythToJs = utility.newFileInput();
@@ -58,7 +58,7 @@ function pythonWinIBWexample(){
 		ii++;
 		__sleep(500) // This waits for 0,5 sec
 	}
-	if(ii==maxWait){ // This only occurs if the file could not be opened
+	if(ii==maxWait*2){ // This only occurs if the file could not be opened
 		application.messageBox("Python-WinIBW example failed", "WinIBW could not open pyth_to_js_file after "+maxWait+" seconds. The script will delete temporary files and stop.", "error-icon");
 		__clean_python_temp_file();
 		return
@@ -76,14 +76,4 @@ function pythonWinIBWexample(){
 
 	// Deletes the temporary files
 	__clean_python_temp_file();
-}
-
-//Réponse de BeNdErR à : https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing
-function __sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
 }
