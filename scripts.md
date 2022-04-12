@@ -4,7 +4,7 @@
 
 ### En Visual Basic Script (VBS)
 
-_Vous retrouverez les scripts dans les `fonctions`._
+_Dans WinIBW, vous retrouverez les scripts dans les `fonctions`._
 
 || Finir de l'écrire
 
@@ -40,21 +40,38 @@ End Sub
 
 ### En Javascript
 
-_Vous retrouverez les scripts dans les `fonctions standarts`._
+_Dans WinIBW, vous retrouverez les scripts dans les `fonctions standarts`._
 
-||| refaire les changements à efefctuer
+Procédure d'installation :
+* [Téléchargez ce dépôt](https://github.com/Alban-Peyrat/WinIBW/archive/refs/heads/main.zip).
+* Au sein de celui-ci, vous trouverez dans le dossier `scripts` un sous-dossier appelé `js` ainsi qu'un fichier `alp_central_scripts.js`.
+C'est au sein du sous-dossier `js` que se trouvent les fichiers contenant les scripts.
+Vous pouvez placer ces scripts où vous le souhaitez (dans votre profil WinIBW semble être une bonne idée.
+Par exemple, les miens se trouvent sous `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts`).
+* Au sein de `alp_central_scripts.js`, vous devrez éditer la liste des fichiers que vous voulez charger.
+Pour ce faire, ouvrez le fichier dans un éditeur de texte et rendez-vous à la ligne 28 du fichier (qui commence par `const alpScripts =`).
+Remplacer les noms complets (chemin d'accès au fichier + nom du fichier + extension du fichier) des fichiers par défaut par ceux que vous voulez charger (si les fichiers se trouvent au sein de WinIBW, vous pouvez remplacer le début par `resource:/`).
+Veillez à respecter la mise en forme déjà présente : à la fin, votre liste doit ressembler à :
 
-* Dans WinIBW, ouvrez le menu `Script` puis `Éditer`.
+``` Javascript
+const alpScripts = ["fichier1",
+"fichier2",
+"fichier3"];
+```
+
+* Une fois les modifications effectuées, sauvegardez le fichier et fermez-le.
+* Ouvrez WinIBW (ou rallumez-le s'il était ouvert).
+* Ouvrez le menu `Script` puis `Éditer`.
 * Sélectionnez `(General)` et `(Declarations)`.
-* Puis collez l'intégralité du code ci-dessous.
-* __Modifiez ensuite le chemin d'accès à votre dossier dans le dernier  (première ligne du code que vous avez collé) pour qu'il pointe vers votre dossier.__
-* Fermez l'éditeur de script.
-* Redémarrez WinIBW pour bien sauvegarder les changemnts et les appliquer.
+* Puis collez cette ligne de code tout en haut de la fenêtre :
 
 ``` VBScript
 application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Profiles/apeyrat001/alp_scripts/alp_central_scripts.js"
 ```
 
+* __Modifiez ensuite le nom complet de votre fichier `alp_central_scripts.js` dans le code que vous avez collé pour qu'il pointe vers votre fichier.__
+* Fermez l'éditeur de scripts.
+* Redémarrez WinIBW pour bien sauvegarder les changements et les appliquer.
 
 ## Présentation des scripts
 
@@ -191,7 +208,7 @@ _Paramètre :_
 
 Met en pause le script durant `milliseconds` millisecondes.
 
-[Provient de la réponse de BeNdErR à la question _JavaScript sleep/wait before continuing_ sur _StackOverflow_](https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing#16873849).
+[Provient de la réponse de BeNdErR à la question _JavaScript sleep/wait before continuing_ sur _StackOverflow_, consultée le 12/04/2022](https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing#16873849).
 
 ##### `__timerToReal()`
 
@@ -223,6 +240,8 @@ __Ce fichier ne contient pas de scripts actuellement.__
 
 
 
+
+# Ancienne doc
 
 
 
