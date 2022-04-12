@@ -75,15 +75,33 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 
 ## Informations pour scripter dans WinIBW
 
-* Pour que les accents soient pris en compte dans vos fichiers, vous devez les encoder en `Western (Windows 1252)`, pas en `UTF-8` (ou autres).
-* Il est tout à fait possible de valider via un script les modifications apportées à une notice à l'aide de la commande `Application.ActiveWindow.SimulateIBWKey` avec comme paramètre `"FR"`, mes scripts ne le font pas par choix.
-* Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés sur le bon type de notice, en revanche, cette vérification est tout à fait possible :
-  * Récupérez la valeur de la variable `P3VMC`,
-  * Si elle est vide, vous n'êtes pas sur une notice (ou vous êtes en train de créer une notice _ex-nihilo_ sans avoir affiché les données codées depuis que vous avez écrit la `008`.
+### Prise en compte des accents
+
+Pour que les accents soient pris en compte dans vos fichiers, vous devez les encoder en `Western (Windows 1252)`, pas en `UTF-8` (ou autres).
+
+### Validation des notices par script
+
+Il est tout à fait possible de valider via un script les modifications apportées à une notice à l'aide de la commande `Application.ActiveWindow.SimulateIBWKey` avec comme paramètre `"FR"`, mes scripts ne le font pas par choix :
+
+``` Javascript
+// Validation des notices en Javascript
+application.activeWindow.simulateIBWKey("FR");
+```
+
+```VBScript
+' Validation des notices en VBScript
+Application.ActiveWindow.SimulateIBWKey "FR"
+```
+
+### Vérification du type de notice
+
+Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés sur le bon type de notice, en revanche, cette vérification est tout à fait possible :
+* Récupérez la valeur de la variable `P3VMC`,
+* Si elle est vide, vous n'êtes pas sur une notice (ou vous êtes en train de créer une notice _ex-nihilo_ sans avoir affiché les données codées depuis que vous avez écrit la `008`.
 Il est possible d'également vérifier cette information mais je l'ai pas encore écrite),
-  * Si elle n'est pas vide et que le premier caractère est égal à `T`, vous êtes sur une notice d'autorité,
-  * Dans tous les autres cas, vous êtes sur une notice bibliographique
-  * Ci-dessous un exemple de vérification en Javascript puis en VBScript :
+* Si elle n'est pas vide et que le premier caractère est égal à `T`, vous êtes sur une notice d'autorité,
+* Dans tous les autres cas, vous êtes sur une notice bibliographique
+* Ci-dessous un exemple de vérification en Javascript puis en VBScript :
 
 ``` Javascript
 // Vérification du type de notice en Javascript
