@@ -14,7 +14,7 @@ function __get_python_parameters(){
 	// Stringifies the file (in UTF-8)
 	var pythParameters = Components.classes["@oclcpica.nl/scriptinputfile;1"]
 		.createInstance(Components.interfaces.IInputTextFile);
-	pythParameters.openSpecial("BinDir", "\\SCOOP\\scripts\\python-winibw\\python_parameters");
+	pythParameters.openSpecial("ProfD", "\\alp_scripts\\python-winibw\\python_parameters");
 	var doc = ""
 	while (pythParameters.isEOF() === false){
 		doc += pythParameters.readLine();
