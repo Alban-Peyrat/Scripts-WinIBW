@@ -1,6 +1,66 @@
 # Scripts pour WinIBW
 
-__Rappel : pour installer les scripts dans WinIBW, référez-vous au [guide pour les scripts utilisateurs de l'Abes](http://documentation.abes.fr/sudoc/manuels/logiciel_winibw/scripts/index.html#CreerScriptUtilisateur).__
+## Installer les scripts utlisateurs
+
+
+
+### En Visual Basic Script (VBS)
+
+|| Finir de l'écrire
+
+* Dans WinIBW, ouvrez le menu `Script` puis `Éditer`.
+* Sélectionnez `(General)` et `(Declarations)`.
+* Puis collez l'intégralité du code ci-dessous.
+* __Modifiez ensuite le chemin d'accès à votre dossier dans `sluitMapIn` (première ligne du code que vous avez collé) pour qu'il pointe vers votre dossier.__
+* Fermez l'éditeur de script.
+* Redémarrez WinIBW pour bien sauvegarder les changemnts et les appliquer.
+
+``` VBScript
+sluitMapIn("C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts\vbs")
+
+' Import all vbs files from a directory'
+'From https://cbs-nl.oclc.org/htdocs/winibw/scripts/WinIBW3.installatie.scriptbeheer.html'
+Private Sub sluitMapIn(map)
+   Set oFSO = CreateObject("Scripting.FileSystemObject")
+   If map = "" Then
+      msgbox "Aucun nom de dossier renseigné."
+   elseif oFSO.FolderExists(map) Then
+      Set folder = oFSO.GetFolder(map)
+      Set bestanden  = folder.Files
+      For each bestand In bestanden
+         if lcase(mid(bestand.Name,len(bestand.Name)-3))=".vbs" then
+            sluitVBSin(map & "\" & bestand.Name)
+         end if
+      Next
+   else
+      msgbox "Le dossier """ + map + """ n'existe pas ?"
+   End If
+End Sub
+```
+
+### En Javascript
+
+||| refaire les changements à efefctuer
+
+* Dans WinIBW, ouvrez le menu `Script` puis `Éditer`.
+* Sélectionnez `(General)` et `(Declarations)`.
+* Puis collez l'intégralité du code ci-dessous.
+* __Modifiez ensuite le chemin d'accès à votre dossier dans le dernier  (première ligne du code que vous avez collé) pour qu'il pointe vers votre dossier.__
+* Fermez l'éditeur de script.
+* Redémarrez WinIBW pour bien sauvegarder les changemnts et les appliquer.
+
+``` VBScript
+application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Profiles/apeyrat001/alp_scripts/alp_central_scripts.js"
+```
+
+
+
+
+
+
+
+
+
 
 _Consulter les autres pages dédiées à WinIBW :_
 * _[les scripts pour le PEB ;](./PEB.md)_
