@@ -74,7 +74,132 @@ _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts
 
 ##### `__AbesDelTitleCreated()`
 
-Supprime 
+Basé sur la fonction `standart_copy` de l'Abes.
+
+Supprime de la notice tous champs commençant par `Cré`.
+Sert à supprimer les informations de création d'une notice copiée via la fonction dédiée dans WinIBW (et qui aurait été collée sans passer par la fonction `Coller notice`.
+
+##### `__AbesDelItemData()`
+
+Basé sur la fonction `standart_copy` de l'Abes.
+
+Supprime de la notice tous champs commençant par `A`, `9`, `E` ou `e`.
+Sert à supprimer les informations d'exemplaires d'une notice __en affichage UNM__ copiée via la fonction dédiée dans WinIBW (et qui aurait été collée sans passer par la fonction `Coller notice`).
+
+##### `__addTextToVar()`
+
+_Paramètres :_
+* `vari` : la variable originale
+* `text` : le texte à rajouter à `vari`
+* `sep` : le séparateur à placer entre `vari` et `text`
+
+Renvoie `vari` avec `sep` puis `text` ajoutés à la fin de `vari`.
+Si `vari` est une chaîne de caractères vide, renvoie `text`.
+
+##### `__connectBaseProd()`
+
+Se connecte à la base de production du Sudoc.
+
+##### `__connectBaseTest()`
+
+Se connecte à la base de test du Sudoc.
+
+##### `__createWindow()`
+
+Crée une nouvelle fenêtre dans WinIBW.
+
+##### `__dateToYYYYMMDD_HHMM()`
+
+_Paramètre :_
+* `date` : un objet Javascript `date`
+
+Renvoie la `date` sous forme de chaîne de caractères au format `YYYYMMDD_HHMM`.
+
+##### `__deconnect()`
+
+Ferme __l'intégralité__ des fenêtres ouvertes dans WinIBW.
+
+##### `__findExactText()`
+
+_A TESTER_
+
+_Paramètre :_
+* `txt` : le texte à rechercher
+
+Recherche la première occurrence de `txt` (sensible à la casse) dans la notice et la sélectionne.
+
+##### `__getEnvVar()`
+
+_Paramètre :_
+* `varName` : le nom de la variable environnementale voulue
+
+Renvoie la valeur de la variable environnementale `varName` si elle existe, sinon renvoie `false`.
+
+##### `__hasWarningMsg()`
+
+Renvoie tous les messages d'alerte (messages de type `2`) actuellement affichés dans la fenêtre active, séparés par des `;`.
+S'il n'y a aucun message d'alerte, renvoie une chaîne de caractères vide.
+
+##### `__insertText()`
+
+_A TESTER_
+
+_Paramètre :_
+* `txt` : le texte à insérer
+
+Insère `txt` à la fin de la notice.
+
+##### `__isTitle()`
+
+Renvoie `true` ou `false` selon si la fenêtre active a un `title` ou non.
+
+##### `__logIn()`
+
+_Paramètre :_
+* `identifiants` : la paire identifiant / mot de passe séparée par un espace
+
+S'identifie à la base (en utilisant la commande `log`).
+
+##### `__parseDocLine()`
+
+_Paramètre :_
+* `line` : la ligne à diviser
+
+Renvoie sous forme d'_array_ `line` en utilisant les tabulations horizontales comme séparateur. 
+
+##### `__removeAccents()`
+
+_A REVOIR_
+
+_Paramètre :_
+* `str` : le texte à modifier
+
+Renvoie `str` en retirant les accents des voyelles, la cédille des `C` et en séparant en deux lettres `Æ` et `Œ` (majuscules et minuscules).
+
+##### `__serializeArray()`
+
+_Paramètres :_
+* `vari` : l'_array_ à transformer
+* `sep` : le séparateur à employer
+
+Renvoie `vari` sous forme de chaîne de caractères en utilisant `sep` comme séparateur entre chaque élément.
+
+##### `__sleep()`
+
+_Paramètre :_
+* `milliseconds` : le nombre de millisecondes à attendre
+
+Met en pause le script durant `milliseconds` millisecondes.
+
+[Provient de la réponse de BeNdErR à la question _JavaScript sleep/wait before continuing_ sur _StackOverflow_](https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing#16873849).
+
+##### `__timerToReal()`
+
+_Paramètres :_
+* `start` : un objet Javascript `date` correspondant au début d'un intervalle
+* `end` : un objet Javascript `date` correspondant à la fin d'un intervalle
+
+Renvoie la différence entre `start` et `end` sous forme d'une chaîne de caractères au format `X minute(s) X seconde(s)`.
 
 #### Fichier `peyrat_peb.js`
 
