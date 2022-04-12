@@ -73,6 +73,45 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 * Fermez l'éditeur de scripts.
 * Redémarrez WinIBW pour bien sauvegarder les changements et les appliquer.
 
+## Informations pour scripter dans WinIBW
+
+* Pour que les accents soient pris en compte dans vos fichiers, vous devez les encoder en `Western (Windows 1252)`, pas en `UTF-8` (ou autres).
+* Il est tout à fait possible de valider via un script les modifications apportées à une notice à l'aide de la commande `Application.ActiveWindow.SimulateIBWKey` avec comme paramètre `"FR"`, mes scripts ne le font pas par choix.
+* Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés sur le bon type de notice, en revanche, cette vérification est tout à fait possible :
+  * Récupérez la valeur de la variable `P3VMC`,
+  * Si elle est vide, vous n'êtes pas sur une notice (ou vous êtes en train de créer une notice _ex-nihilo_ sans avoir affiché les données codées depuis que vous avez écrit la `008`.
+Il est possible d'également vérifier cette information mais je l'ai pas encore écrite),
+  * Si elle n'est pas vide et que le premier caractère est égal à `T`, vous êtes sur une notice d'autorité,
+  * Dans tous les autres cas, vous êtes sur une notice bibliographique
+  * Ci-dessous un exemple de vérification en Javascript puis en VBScript :
+
+``` Javascript
+// Vérification du type de notice en Javascript
+var isAut = application.activeWindow.getVariable("P3VMC");
+
+if (isAut == ""){
+   // Pas une notice
+}else if (isAut.charAt(0) == "T"){
+   // Notice d'autorité
+}else {
+   // Notice bibliographique
+}
+```
+
+``` VBScript
+' Vérification du type de notice en VB Script
+Dim isAut
+isAut = application.activeWindow.variable("P3VMC")
+
+If isAut = "" Then
+   ' Pas une notice
+ElseIf Left(isAut, 1) = "T" Then
+   ' Notice d'autorité
+Else
+   ' Notice bibliographique
+End If
+```
+
 ## Présentation des scripts
 
 ### Scripts utilisateurs (VBS)
@@ -441,25 +480,7 @@ Exemples :
 
 
 
-## La validation automatique
 
-Il est à noter que normalement, aucun des scripts qui effectueraient des modifications sur une notice ne se termine par une validation automatique de celles-ci : je préfère toujours pouvoir vérifier que tout est bon avant validation.
-
-Toutefois, cette validation se met en place très facilement avec l'ajout de `Application.ActiveWindow.SimulateIBWKey "FR"` à la fin du script.
-
-## L'absence de contrôle du type de notice
-
-À l'heure actuelle, les scripts destinés à un type de notice particulier (lecture ou modification) ne contrôlent pas s'ils sont exécutés sur ce type de notice ou sur un autre. J'envisage à terme d'en configurer un, si j'y arrive.
-
-## Sources extérieures
-
-Voici les sources des quelques scripts que j'ai récupérés sur l'internet, en espérant n'en avoir oublié aucun :
-
-1. CountOccurrences : [VBScript - Count occurrences in a text string / Stephen Millard, publié le 30 juillet 2009](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/) [cons. le 29/05/2021]
-
-1. Sleep : [Réponse de Original Paulie D à la question How to set delay in vbscript de Mark posée le 13 novembre 2009 sur StackOverflow](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137) [cons. le 29/05/2021]
-
-1. ExportVar : [VBScript Text Files: Read, Write, Append / MrNetTek, publié le 19 novembre 2015](http://eddiejackson.net/wp/?p=8619) [cons. le 29/05/2021]
 
 ## Présentation des scripts
 
