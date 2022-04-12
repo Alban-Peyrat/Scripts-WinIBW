@@ -1,10 +1,10 @@
 # Scripts pour WinIBW
 
-## Installer les scripts utlisateurs
-
-
+## Installer les scripts
 
 ### En Visual Basic Script (VBS)
+
+_Vous retrouverez les scripts dans les `fonctions`._
 
 || Finir de l'écrire
 
@@ -40,6 +40,8 @@ End Sub
 
 ### En Javascript
 
+_Vous retrouverez les scripts dans les `fonctions standarts`._
+
 ||| refaire les changements à efefctuer
 
 * Dans WinIBW, ouvrez le menu `Script` puis `Éditer`.
@@ -54,6 +56,37 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 ```
 
 
+## Présentation des scripts
+
+### Scripts utilisateurs (VBS)
+
+#### Fichier `alp_PEB.vbs`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_PEB.vbs)_
+
+_[Voir le document dédié](./PEB.md)_
+
+### Scripts standarts (JS)
+
+#### Fichier `peyrat_ressources.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_ressources.js)_
+
+##### `__AbesDelTitleCreated()`
+
+Supprime 
+
+#### Fichier `peyrat_peb.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_peb.js)_
+
+_[Voir le document dédié](./PEB.md)_
+
+#### Fichier `peyrat_main.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
+
+__Ce fichier ne contient pas de scripts actuellement.__
 
 
 
@@ -62,10 +95,11 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 
 
 
-_Consulter les autres pages dédiées à WinIBW :_
-* _[les scripts pour le PEB ;](./PEB.md)_
-* _[la liste des modifications ;](./modifications.md)_
-* _[mes "études" sur le fonctionnement.](./etude-fonctionnement.md)_
+
+
+
+
+
 
 Les scripts proposés visent généralement à accélérer des traitements répétitifs dans WinIBW. Certains d'entre eux, classés en tant que concepts, visent à contrôler des données sans devoir les modifier via des outils externes type tableur.
 
@@ -96,11 +130,7 @@ Exemples :
 * `UB200a` : dans une notice bibliographique, le sous-champ `a` de la zone 200 ;
 * `UA700S4` : dans une notice d'autorité auteur, le sous-champ `4` de la zone 700.
 
-## Les informations à modifier selon son environnement de travail
 
-Certaines informations propres à ma bibliothèque sont à remplacer :
-* le RCR de ma bibliothèque (330632101) ;
-* le chemin d'accès au profil WinIBW (C:\/oclcpica/WinIBW30/Profiles).
 
 ## La validation automatique
 
