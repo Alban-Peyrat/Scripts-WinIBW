@@ -90,6 +90,29 @@ function __getEnvVar(varName){
   }
 }
 
+function __getNoticeType(){
+// Returns 0 if it's an authority record, 1 a bibliographic record, 2 not a record
+  var isAut = application.activeWindow.getVariable("P3VMC");
+
+  if (isAut == ""){
+    var scrCode = application.activeWindow.getVariable("scr");
+    if (scrCode == "II"){ // Invoer Ingang
+      // Creating an Authority record
+      return 0
+    }else if (scrCode == "IT"){ // Invoer Titel
+      // Creating a bibliographic record
+      return 1
+    }else {
+      // Supposedly, every other option is covered
+      return 2
+    }
+  }else if (isAut.charAt(0) == "T"){
+    return 0
+  }else {
+    return 1
+  }
+}
+
 function __hasWarningMsg(){
 // Returns all warnings messages as a string separated by a semi-colon.
 // Returns an empty string if there are no warning messages
