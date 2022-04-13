@@ -136,6 +136,7 @@ End If
 
 #### Fichier `alp_cat_add.vbs`
 
+Contient tous les scripts permettant de rajouter des informations à une notice d'autorité ou bibliographique.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_add.vbs)_
 
 ##### `add18XmonoImp()`
@@ -273,32 +274,40 @@ Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supp
 
 #### Fichier `alp_cat_get.vbs`
 
+Contient tous les scripts permettant de récupérer des informations depuis WinIBW.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_get.vbs)_
 
 #### Fichier `alp_chantier_theses.vbs`
 
+Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_chantier_theses.vbs)_
 
 #### Fichier `alp_concepts.vbs`
 
+Contient tous les concepts de scripts que j'ai pu développer pour contrôler le signalement.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_concepts.vbs)_
 
 #### Fichier `alp_corwin.vbs`
 
+Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_corwin.vbs)_
 
 #### Fichier `alp_dumas.vbs`
 
+Contient tous les scripts développés en lien avec [DUMAS](https://dumas.ccsd.cnrs.fr/).
+[Le dépôt ub-svs contient plus d'informations à ce sujet](../../../ub-svs).
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_dumas.vbs)_
 
 #### Fichier `alp_PEB.vbs`
 
+Contient tous les scripts développés à destination du module PEB de WinIBW.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_PEB.vbs)_
 
 _[Voir le document dédié](./PEB.md)_
 
 #### Fichier `alp_ressources.vbs`
 
+Contient tous les scripts ressources que j'utilise au sein des autres scripts.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_ressources.vbs)_
 
 ### Scripts standarts (JS)
@@ -311,12 +320,14 @@ __Ce fichier ne contient pas de scripts actuellement.__
 
 #### Fichier `peyrat_peb.js`
 
+Contient tous les scripts développés à destination du module PEB de WinIBW.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_peb.js)_
 
 _[Voir le document dédié](./PEB.md)_
 
 #### Fichier `peyrat_ressources.js`
 
+Contient tous les scripts ressources que j'utilise au sein des autres scripts.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_ressources.js)_
 
 ##### `__AbesDelTitleCreated()`
