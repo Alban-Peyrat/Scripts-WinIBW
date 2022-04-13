@@ -38,7 +38,7 @@ Private Sub sluitMapIn(map)
 End Sub
 ```
 
-### En Javascript
+### En Javascript (JS)
 
 _Dans WinIBW, vous retrouverez les scripts dans les `fonctions standarts`._
 
