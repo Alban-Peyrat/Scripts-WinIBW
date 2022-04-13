@@ -101,40 +101,7 @@ Application.ActiveWindow.SimulateIBWKey "FR"
 
 ### Vérification du type de notice
 
-Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés sur le bon type de notice, en revanche, cette vérification est tout à fait possible :
-* Récupérez la valeur de la variable `P3VMC`,
-* Si elle est vide, vous n'êtes pas sur une notice (ou vous êtes en train de créer une notice _ex-nihilo_ sans avoir affiché les données codées depuis que vous avez écrit la `008`.
-Il est possible d'également vérifier cette information mais je l'ai pas encore écrite),
-* Si elle n'est pas vide et que le premier caractère est égal à `T`, vous êtes sur une notice d'autorité,
-* Dans tous les autres cas, vous êtes sur une notice bibliographique
-* Ci-dessous un exemple de vérification en Javascript puis en VBScript :
-
-``` Javascript
-// Vérification du type de notice en Javascript
-var isAut = application.activeWindow.getVariable("P3VMC");
-
-if (isAut == ""){
-   // Pas une notice
-}else if (isAut.charAt(0) == "T"){
-   // Notice d'autorité
-}else {
-   // Notice bibliographique
-}
-```
-
-``` VBScript
-' Vérification du type de notice en VB Script
-Dim isAut
-isAut = application.activeWindow.variable("P3VMC")
-
-If isAut = "" Then
-   ' Pas une notice
-ElseIf Left(isAut, 1) = "T" Then
-   ' Notice d'autorité
-Else
-   ' Notice bibliographique
-End If
-```
+Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés sur le bon type de notice, en revanche, cette vérification est tout à fait possible à l'aide du script [`getNoticeType()` en VBS](#getnoticetype) ou de [`__getNoticeType()` en JS](#__getnoticetype).
 
 ## Présentation des scripts
 
@@ -328,6 +295,17 @@ _[Voir le document dédié](./PEB.md)_
 Contient tous les scripts ressources que j'utilise au sein des autres scripts.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_ressources.vbs)_
 
+##### `getNoticeType()`
+
+Renvoie l'entier :
+* `0` si c'est une notice d'autorité,
+* `1` si c'est une notice bibliographique,
+* `2` si ce n'est aucune des deux.
+
+Pour déterminer cette information, il se base sur la variable `P3VMC` qui correspond au type de document (`008 position 1 et 2`) et, si la première variable n'a pas de valeur, sur la variable `scr` qui correspond au code de l'écran.
+Pour `scr`, son utilisation n'est supposée avoir lieu que si le script est utilisé dans le cadre d'une création de notice _ex-nihilo_ ou sur un écran autre qu'une notice.
+Le script vérifie donc uniquement si `scr` est égal à `II` (création de notice d'autorité) ou `IT` (création de notice bibliographique).
+
 ### Scripts standarts (JS)
 
 #### Fichier `peyrat_main.js`
@@ -410,6 +388,17 @@ _Paramètre :_
 * `varName` : le nom de la variable environnementale voulue
 
 Renvoie la valeur de la variable environnementale `varName` si elle existe, sinon renvoie `false`.
+
+##### `__getNoticeType()`
+
+Renvoie l'entier :
+* `0` si c'est une notice d'autorité,
+* `1` si c'est une notice bibliographique,
+* `2` si ce n'est aucune des deux.
+
+Pour déterminer cette information, il se base sur la variable `P3VMC` qui correspond au type de document (`008 position 1 et 2`) et, si la première variable n'a pas de valeur, sur la variable `scr` qui correspond au code de l'écran.
+Pour `scr`, son utilisation n'est supposée avoir lieu que si le script est utilisé dans le cadre d'une création de notice _ex-nihilo_ ou sur un écran autre qu'une notice.
+Le script vérifie donc uniquement si `scr` est égal à `II` (création de notice d'autorité) ou `IT` (création de notice bibliographique).
 
 ##### `__hasWarningMsg()`
 
