@@ -6,8 +6,14 @@
 
 _Dans WinIBW, vous retrouverez les scripts dans les `fonctions`._
 
-|| Finir de l'écrire
-
+Procédure d'installation :
+* [Téléchargez ce dépôt](https://github.com/Alban-Peyrat/WinIBW/archive/refs/heads/main.zip).
+* Au sein de celui-ci, vous trouverez dans le dossier `scripts` un sous-dossier appelé `vbs`.
+C'est au sein du sous-dossier `vbs` que se trouvent les fichiers contenant les scripts.
+Vous pouvez placer ces scripts où vous le souhaitez (dans votre profil WinIBW semble être une bonne idée.
+Par exemple, les miens se trouvent sous `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts`).
+__Ne placez pas ces scripts dans le même dossier que `winibw.vbs`, sinon WinIBW pourrait charger à l'infini au démarrage.__
+__Je vous invite à les placer dans un sous-dossier.__
 * Dans WinIBW, ouvrez le menu `Script` puis `Éditer`.
 * Sélectionnez `(General)` et `(Declarations)`.
 * Puis collez l'intégralité du code ci-dessous.
