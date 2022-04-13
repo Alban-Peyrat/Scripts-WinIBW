@@ -293,6 +293,18 @@ _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts
 Contient tous les concepts de scripts que j'ai pu développer pour contrôler le signalement.
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_concepts.vbs)_
 
+##### `ctrlUA103eqUA200f()`
+
+___Voir [ConStance CS1](../../../ConStance#cs1--équivalence-champs-103--200f-idref) pour un outil équivalent.___
+
+Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
+
+##### `ctrlUB700S3()`
+
+___Voir [ConStance CS2](../../../ConStance#cs2--présence-dun-lien-en-700) pour un outil équivalent et [ConStance CS3](../../../ConStance#cs3--pr%ésence-dun-lien-en-7xx) pour un outil équivalent utilisable sur toutes les 700.___
+
+Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papier.
+
 #### Fichier `alp_corwin.vbs`
 
 Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
@@ -988,26 +1000,3 @@ Une fois les trois instances de celle-ci terminée, il remplace `De` (espace ava
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
-### Concepts de scripts
-
-Ce fichier contient des concepts que je n'utilise pas mais qui théoriquement fonctionnent, ou des scripts de mon bac à sable que je pense utiles à partager. Certains d'entre eux ont des équivalents dans mes outils, auquel cas, un lien vers ceux-ci sera présent.
-
-#### `ctrlUA103eqUA200f`
-
-___Voir [ConStance CS1](https://github.com/Alban-Peyrat/ConStance#cs1--%C3%A9quivalence-champs-103--200f-idref) pour un outil équivalent.___
-
-Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
-
-_Type de procédure : SUB_
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/concepts.vbs)
-
-#### `ctrlUB700S3`
-
-___Voir [ConStance CS2](https://github.com/Alban-Peyrat/ConStance#cs2--pr%C3%A9sence-dun-lien-en-700) pour un outil équivalent et [ConStance CS3](https://github.com/Alban-Peyrat/ConStance#cs3--pr%C3%A9sence-dun-lien-en-7xx) pour un outil équivalent utilisable sur toutes les 700.___
-
-Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papier.
-
-_Type de procédure : SUB_
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/concepts.vbs)
