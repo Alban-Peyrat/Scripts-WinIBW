@@ -10,25 +10,15 @@ __Toutefois__, [`triRecherche`](#trirecherche) n'existe qu'en __`JS`__.
 
 ### En tant que scripts utilisateurs (VBS)
 
-__Fermez WinIBW.__
-Accédez au dossier de WinIBW (par exemple en faisant clic-droit puis `Ouvrir l'emplacement du fichier`), puis ouvrez le dossier `Profiles`, puis celui correspondant à votre nom d'utilisateur.
-Modifiez ensuite le fichier `winibw.vbs` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez l'intégralité du contenu du fichier [`scripts_PEB.vbs`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_PEB.vbs).
-Enregistrez et fermez le document.
-
-Vous pourrez retrouver les scripts dans la catégorie `Fonctions`.
+[Voir la procédure d'installation des scripts utilisateurs dans WinIBW](./scripts.md#en-visual-basic-script-vbs).
+Le fichier se trouve dans le sous-dossier `scripts` puis `vbs`, sous le nom `alp_PEB.vbs`.
 
 ### En tant que scripts standarts (JS)
 
-__Fermez WinIBW.__
-Accédez au dossier de WinIBW (par exemple en faisant clic-droit puis `Ouvrir l'emplacement du fichier`), puis ouvrez le dossier `Profiles`, puis celui correspondant à votre nom d'utilisateur.
-Modifiez ensuite le fichier `user_pref.js` avec `Bloc-notes` (par exemple), rendez-vous à la fin du fichier et collez sur une nouvelle ligne ce texte : `user_pref("ibw.standardScripts.script.99", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_peb.js");`.
-_Uniquement pour [`triRecherche`](#trirecherche) : collez sur une nouvelle ligne : `user_pref("ibw.standardScripts.script.98", "resource:/Profiles/[NOM D'UTILISATEUR]/peyrat_js_scripts.js");`._
-Modifiez le `[NOM D'UTILISATEUR]` avec le vôtre.
-Enregistrez et fermez le document.
-Collez ensuite le fichier [`peyrat_peb.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_peb.js) (pour télécharger le fichier : [téléchargez ce .zip](https://github.com/Alban-Peyrat/WinIBW/archive/refs/heads/main.zip), vous retrouverez le fichier dans le dossier `scripts`) au même emplacement que `user-pref.js`.
-_Uniquement pour [`triRecherche`](#trirecherche) : collez également le fichier [`peyrat_js_scripts.js`](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/peyrat_js_scripts.js)._
+[Voir la procédure d'installation des scripts standarts dans WinIBW](./scripts.md#en-javascript-js).
+Le fichier se trouve dans le sous-dossier `scripts` puis `js`, sous le nom `peyrat_peb.js`.
 
-Vous pourrez retrouver les scripts dans la catégorie `Standart Fonctions`.
+_Uniquement pour [`triRecherche`](#trirecherche) : vous nécessiterez également le fichier `peyrat_ressources.js`._
 
 ## Utiliser les scripts
 
@@ -50,31 +40,31 @@ Retrouvez le script qui vous intéresse dans la liste des commandes de la bonne 
 
 ## Présentation des scripts
 
-### `getNumDemande`
+### `getNumDemande()`
 
 Renvoie dans le presse-papier le numéro de la demande PEB.
 
 __Détails :__ Renvoie la variable `P3GA*`.
 
-### `getNumDemandePostValidation`
+### `getNumDemandePostValidation()`
 
 Renvoie dans le presse-papier le numéro de la demande PEB __venant d'être effectuée__.
 
 __Détails :__ Le script récupère le premier message affiché dans la barre des messages et renvoie les dix premiers caractères en suivant l'expression `no.` (suivi d'un espace).
 
-### `getPPN`
+### `getPPN()`
 
 Renvoie dans le presse-papier le PPN de la demande PEB.
 
 __Détails :__ Renvoie la variable `P3VTA`.
 
-### `getRCRDemandeur`
+### `getRCRDemandeur()`
 
 Renvoie dans le presse-papier du RCR demandeur.
 
 __Détails :__ Renvoie la variable `P3VF1`.
 
-### `getRCRFournisseurOnHold`
+### `getRCRFournisseurOnHold()`
 
 Renvoie dans le presse-papier du RCR fournisseur dont une réponse est attendue.
 
@@ -83,7 +73,7 @@ Pour chaque fournisseur, recherche un caractère d'échappement suivi de `E` sui
 Si cette donnée isolée correspond à `En attente de réponse`, il recherche alors la même expression que précédemment en remplaçant `LRT` par `LSS` (supposément le RCR de la bibliothèque) et place dans le presse-papier les 9 caractères suivant (puisque les RCR font 9 caractères).
 Le script force ensuite l'arrêt de la boucle.
 
-### `getTitleAuth`
+### `getTitleAuth()`
 
 Renvoie dans le presse-papier, séparés par un retour à la ligne, le titre du document, l'auteur du document, le titre de la partie et l'auteur de la partie, tels que visibles sur la demande.
 Attention, si une de ces informations n'existe pas, cela ne supprime pas le retour à la ligne pour autant.
@@ -91,7 +81,7 @@ Ainsi, si vous collez le résultat dans Excel, la 3e ligne sera toujours le titr
 
 __Détails :__ Renvoie les variables `P3VTC`, `P3VTD`, `P3VAB`, `P3VAA`, séparées par des retours à la ligne (`vblf` (VBS) / `\n` (JS)).
 
-### `Launcher`
+### `Launcher()`
 
 Ouvre une boîte de dialogue qui permet de lancer l'exécution d'un des autres scripts de PEB que j'ai développés.
 
@@ -104,7 +94,7 @@ __Détails :__ la boîte de dialogue varie selon si l'on utilise les scripts en 
 * 4 (VBS) / `Get RCR fournisseur en attente` (JS) : exécuter [`getRCRFournisseurOnHold`](#getrcrfournisseuronhold) ;
 * 5 (VBS) / `Get titre et auteur document` (JS) : exécuter [`getTitleAuth`](#getTitleAuth).
 
-### `triRecherche`
+### `triRecherche()`
 
 Ouvre un fichier Excel permettant de trier et filtrer les résultats d'une requête.
 
