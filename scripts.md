@@ -157,8 +157,6 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère à l'e
 
 __Malfonctionnement possible : si la notice n'était pas en mode édition, le texte ne s'écrira probablement pas si la grille des données codées n'est pas affichée.__
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
 #### `addCouvPorte`
 
 Ajoute le début d'une 312 `La couverture porte en plus`.
@@ -167,8 +165,6 @@ _Type de procédure : SUB_
 
 Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
 * `312 ##$aLa couverture porte en plus : "`
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
 #### `addISBNElsevier`
 
@@ -179,7 +175,7 @@ _Type de procédure : SUB_
 Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
 * `010 ##$A978-2-294-`
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
 
 #### `AddSujetRAMEAU`
 
@@ -212,7 +208,7 @@ Une fois le traitement des commandes terminé, il conserve alors en mémoire un 
 
 Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
 
 #### `addUA400`
 
@@ -227,7 +223,7 @@ Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` es
 Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
 * si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
 
 #### `addUB700S3`
 
@@ -241,7 +237,7 @@ Le script sélectionne ensuite les trois derniers caractères de ce champ (suppo
 
 Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
 
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
+
 
 ------------------------------------------------------------------------------------------------------------
 
