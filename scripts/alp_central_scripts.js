@@ -1,6 +1,6 @@
 // ------------------------------ Initialisation of consts ------------------------------
 
-// Already declared by the Abes I think
+// Utility is declared in standart_utility.js
 // const utility = {
 // 	newFileInput: function() {
 // 		return Components.classes["@oclcpica.nl/scriptinputfile;1"]
