@@ -33,7 +33,7 @@ function AlP_PEBgetRCRDemandeur(){
 		var ans = prompter.confirmEx("Quel RCR choisir", "Quel RCR (cliquer sur le bouton)", "Aucun", VF0, VF1, null, null)
 		switch (ans){
 			case 0:
-				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+				application.messageBox("Erreur", "Aucun RCR copiÃ©","alert-icon");
 				break;
 			case 1:
 				application.activeWindow.clipboard = VF0;
@@ -42,7 +42,7 @@ function AlP_PEBgetRCRDemandeur(){
 				application.activeWindow.clipboard = VF1;
 				break;
 			default:
-				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+				application.messageBox("Erreur", "Aucun RCR copiÃ©","alert-icon");
 			}
 	}else{
 		application.activeWindow.clipboard = application.activeWindow.getVariable("P3VF0");
@@ -152,7 +152,7 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 			theOutputFile.writeLine(PPN+"\u0009"+auteur+"\u0009"+titre+"\u0009"+edition+"\u0009"+editeur+"\u0009"+annee);
 			row = parseInt(record.substring(record.indexOf("\u001BLNR")+4, record.indexOf("\u001BE", record.indexOf("\u001BLNR")+4)).replace(" ", ""));
 		}
-//Empêche la boucle While de tourner à l'infini
+//EmpÃªche la boucle While de tourner Ã  l'infini
 		sec++;
 		if(sec > 9999){
 			break;
@@ -160,4 +160,39 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 	}
 	theOutputFile.close();
 	application.shellExecute(path, 9, "edit", "");
+}
+
+
+
+
+function AlP_PEBsearchSuDb(){
+/* Marche pas si Ã§a vient d'un lien */
+
+application.activeWindow.command("\\too \\adi", false);
+var lim = application.activeWindow.messages.item(0).text;
+var query = application.activeWindow.getVariable("P3VCO");
+if (query.substring(0, 11).indexOf("recherche") > -1){
+    query = query.replace("recherche", "\\zoe");
+}else {
+    application.messageBox("Erreur", "Ce type de recherche n'est pas pris en compte.", "error-icon");
+    return
+}
+
+
+// Connects to Sudoc catalog, launches the search aff k
+application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query+";\\too k", false);
+
+// Checks if the default display is ISBD
+// Actually the parameter is reseted when switching database so the check is kinda useless
+var affDl = application.activeWindow.getVariable("P3GDL", "I");
+if (affDl !== "I"){
+    // Opens a new window to set default parameters
+    application.activeWindow.command("\\mut \\par", true);
+    application.activeWindow.setVariable("P3VDL", "I");
+    application.activeWindow.simulateIBWKey("FR");
+    application.activeWindow.closeWindow();
+}
+
+// Without this, WinIBW won't display the list
+application.activeWindow.command("\\too k 1", false);	
 }
