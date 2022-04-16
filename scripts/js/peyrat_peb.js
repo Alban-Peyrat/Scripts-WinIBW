@@ -196,3 +196,30 @@ if (affDl !== "I"){
 // Without this, WinIBW won't display the list
 application.activeWindow.command("\\too k 1", false);	
 }
+
+function AlP_PEBaskFromSu(){
+	var ppn = application.activeWindow.getVariable("P3GPP");
+	// Checks if there's a PPN
+	if (ppn == "") {
+	    application.messageBox("Erreur", "Veuillez sélectionner une notice.", "error-icon");
+	    return
+	// Checks if it's a bibliographic record
+	}else if (application.activeWindow.getVariable("P3VMC").charAt(0) == "T") {
+	    application.messageBox("Erreur", "Ceci est une notice d'autorité. Veuillez sélectionner une notice bibliographique.", "error-icon");
+	    return
+	}
+
+	application.activeWindow.command("\\sys 2;\\bes 1;\\zoe ppn "+ppn+";\\too i", false);
+	// Checks if the search worked
+	if (application.activeWindow.getVariable("P3GSY") != "SU PEB") {
+	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
+
+	application.activeWindow.simulateIBWKey("F9");
+	// Checks if the ILL request started
+	if (application.activeWindow.getVariable("scr") != "AA") {
+	    application.messageBox("Erreur", "La demande de PEB a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
+}
