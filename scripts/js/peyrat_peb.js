@@ -165,36 +165,46 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 
 
 
-function AlP_PEBsearchSuDb(){
-/* Marche pas si ça vient d'un lien */
+function AlP_PEBsearchInSuDb(){
+/* Marche pas pour le moment si ça vient d'un lien*/
 
-application.activeWindow.command("\\too \\adi", false);
-var lim = application.activeWindow.messages.item(0).text;
-var query = application.activeWindow.getVariable("P3VCO");
-if (query.substring(0, 11).indexOf("recherche") > -1){
-    query = query.replace("recherche", "\\zoe");
-}else {
-    application.messageBox("Erreur", "Ce type de recherche n'est pas pris en compte.", "error-icon");
-    return
-}
+	// Gets the limitations parameters
+	application.activeWindow.command("\\too \\adi", false);
+	var lim = application.activeWindow.messages.item(0).text;
+
+	// Gets the query
+	var query = application.activeWindow.getVariable("P3VCO");
+	if (query.substring(0, 11).indexOf("recherche") > -1){
+	    query = query.replace("recherche", "\\zoe");
+	// Exits if the query is not initiated with "che"
+	}else {
+	    application.messageBox("Erreur", "Ce type de recherche n'est pas pris en compte.", "error-icon");
+	    return
+	}
 
 
-// Connects to Sudoc catalog, launches the search aff k
-application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query+";\\too k", false);
+	// Connects to Sudoc catalog, launches the search aff k
+	application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query, false);
 
-// Checks if the default display is ISBD
-// Actually the parameter is reseted when switching database so the check is kinda useless
-var affDl = application.activeWindow.getVariable("P3GDL", "I");
-if (affDl !== "I"){
-    // Opens a new window to set default parameters
-    application.activeWindow.command("\\mut \\par", true);
-    application.activeWindow.setVariable("P3VDL", "I");
-    application.activeWindow.simulateIBWKey("FR");
-    application.activeWindow.closeWindow();
-}
+	// Checks if the search worked
+	if (application.activeWindow.getVariable("P3GSY") != "SU") {
+	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
 
-// Without this, WinIBW won't display the list
-application.activeWindow.command("\\too k 1", false);	
+	// Checks if the default display is ISBD
+	// Actually the parameter is reseted when switching database so the check is kinda useless
+	var affDl = application.activeWindow.getVariable("P3GDL", "I");
+	if (affDl !== "I"){
+	    // Opens a new window to set default parameters
+	    application.activeWindow.command("\\mut \\par", true);
+	    application.activeWindow.setVariable("P3VDL", "I");
+	    application.activeWindow.simulateIBWKey("FR");
+	    application.activeWindow.closeWindow();
+	}
+
+	// Without this, WinIBW won't display the list
+	application.activeWindow.command("\\too k 1", false);
 }
 
 function AlP_PEBaskFromSu(){
