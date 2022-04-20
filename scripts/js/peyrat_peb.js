@@ -183,8 +183,8 @@ function AlP_PEBsearchInSuDb(){
 	}
 
 
-	// Connects to Sudoc catalog, launches the search aff k
-	application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query, false);
+	// Connects to Sudoc catalog, launches the search aff k with TOV O & A
+	application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query+" AND (TOV O OR TOV A)", false);
 
 	// Checks if the search worked
 	if (application.activeWindow.getVariable("P3GSY") != "SU") {
