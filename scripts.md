@@ -338,6 +338,38 @@ _Paramètre :_
 
 Ouvre une boîte de dialogue avec l'icône d'erreur, le titre `Erreur` et `meldungstext` comme texte.
 
+##### `__msg()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __meldung()`._
+
+_Paramètre :_
+* `meldungstext` : une chaîne de caractères
+
+Ouvre une boîte de dialogue avec l'icône d'information, le titre `Message` et `meldungstext` comme texte.
+
+##### `__question()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __frage()`._
+
+_Paramètre :_
+* `meldungstext` : une chaîne de caractères
+
+Ouvre une boîte de dialogue avec l'icône de question, le titre `Question` et `meldungstext` comme texte.
+
+##### `__getMsgs()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __alleMeldungen()`._
+
+Renvoie l'intégralité des messages affichés par WinIBW séparés par des retours à la ligne.
+Ne renvoie pas le type du message.
+
+##### `GBVgetMsgsClipboard()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function meldungenKopieren()`._
+
+Copie dans le presse papier l'intégralité des messages affichés par WinIBW.
+Utilise la fonction [`__getMsgs()`](#__getmsgs) pour la récupération.
+
 #### Fichier `peyrat_main.js`
 
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
