@@ -304,6 +304,40 @@ Le script vérifie donc uniquement si `scr` est égal à `II` (création de noti
 
 ### Scripts standarts (JS)
 
+#### Fichier `GBV.js`
+
+_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/GBV.js)_
+
+__Ce fichier contient des scripts que j'ai récupérés parmi ceux proposés par la [Gemeinsame Bibliotheksverbund](https://www.gbv.de/).__
+Je les ai récupérés de la page [d'informations de version de WinIBW](https://wiki.k10plus.de/display/K10PLUS/SWB-WinIBW-Versionsinformationen).
+
+##### `alert()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function alert()`._
+
+_Paramètre :_
+* `meldungstext` : une chaîne de caractères
+
+Ouvre une boîte de dialogue avec l'icône d'alerte, le titre `Alerte` et `meldungstext` comme texte.
+
+##### `__warning()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __warnung()`._
+
+_Paramètre :_
+* `meldungstext` : une chaîne de caractères
+
+Ouvre une boîte de dialogue avec l'icône d'alerte, le titre `Attention` et `meldungstext` comme texte.
+
+##### `__error()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __fehler()`._
+
+_Paramètre :_
+* `meldungstext` : une chaîne de caractères
+
+Ouvre une boîte de dialogue avec l'icône d'erreur, le titre `Erreur` et `meldungstext` comme texte.
+
 #### Fichier `peyrat_main.js`
 
 _[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
