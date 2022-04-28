@@ -109,7 +109,7 @@ __executeVBScript(vbsPath)
 
 function __executeVBScript(filePath) {
 // This only executes a VBS file
-  application.shellExecute(vbsPath, 5, "open", "")
+  application.shellExecute(filePath, 5, "open", "")
 }
 
 //voir Abes parce que sinon ça dysfonctionne
