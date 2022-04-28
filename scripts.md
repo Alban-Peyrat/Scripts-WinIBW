@@ -81,6 +81,15 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 
 ## Informations pour scripter dans WinIBW
 
+### Exécuter des scripts utilisateurs depuis les scripts standarts
+
+Pour ce faire, vous devrez utiliser :
+* le script `__executeVBScript()` dans `peyrat_ressource.js`,
+* le script `__executeUserScript()` dans `peyrat_ressource.js`,
+* le script `executeVBScriptFromName` dans `alp_ressources.vbs` et l'avoir sur le raccourci Maj + Ctrl + Alt + L (ou changer dans `__executeUserScript()`la combinaison de touches.
+
+Une fois que tout ceci est prêt, il vous suffit d'appeler `__executeUserScript()` avec comme seul paramètre le nom de la fonction que vous voulez appeler.
+
 ### Prise en compte des accents
 
 Pour que les accents soient pris en compte dans vos fichiers, vous devez les encoder en `Western (Windows 1252)`, pas en `UTF-8` (ou autres).
