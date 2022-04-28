@@ -4,7 +4,7 @@ function __AbesDelTitleCreated(){
 //See Abes' standart_copy.js
 // But reworked to only delete the top line of P3CLIP var
   //suptag("Cr\u00E9"); // If the file is not encoded in Wetsern Windows 1252
-  suptag("Cré");
+  suptag("CrÃ©");
 }
 
 function __AbesDelItemData(){
@@ -69,12 +69,50 @@ function __deconnect(){
 //Closes all windows to be safe
   var nbWin = application.windows.count;
   for(var ii = 0; ii < nbWin; ii++){
-    //Quand une fenêtre se ferme, l'index descend automatiquement
+    //Quand une fenÃªtre se ferme, l'index descend automatiquement
     application.windows.item(0).close();
   }
 }
 
-//voir Abes parce que sinon ça dysfonctionne
+function __executeUserScript(fctName){
+// Executes a User Script by creating a VBS file that will launch from WinIBW a user script
+// Needs executeVBScriptFromName() (alp_ressources.vbs) to be installed AND to have a shortcut assigned.
+// If it's not Shift + Ctrl + Alt + L, change the SendKeys in the function.
+// Ressources used to create the whole process :
+// https://web.archive.org/web/20140815070455/http://combot.univ-tln.fr:80/winibw/interactions/applis.html
+// https://vb.developpez.com/faq/vbs?page=Shell-wshShell
+
+//Defines the code
+  var vbsCodeLines = ['Dim oShell',
+                    'Set oShell = CreateObject("WScript.Shell")',
+                    'oShell.AppActivate("WinIBW")',
+                    'oShell.SendKeys "+^%l"',
+                    'oShell.SendKeys "'+fctName+'"',
+                    'oShell.SendKeys "{Enter}"',
+                    'Set oShell = Nothing'];
+  var vbsCode = "";
+  for (var ii = 0; ii < vbsCodeLines.length; ii++){
+    vbsCode += vbsCodeLines[ii] + "\n"
+  }
+
+// Writes the file
+  var vbsFile = utility.newFileOutput();
+  vbsFile.createSpecial("ProfD", "execute_VBS_from_JS.vbs");
+  vbsFile.setTruncate(true);
+  var vbsPath = vbsFile.getPath();
+  vbsFile.write(vbsCode);
+  vbsFile.close();
+
+// Executes the file
+__executeVBScript(vbsPath)
+}
+
+function __executeVBScript(filePath) {
+// This only executes a VBS file
+  application.shellExecute(vbsPath, 5, "open", "")
+}
+
+//voir Abes parce que sinon Ã§a dysfonctionne
 function __findExactText(txt){
 // A TESTER
   application.activeWindow.title.startOfBuffer(false);
@@ -126,7 +164,7 @@ function __hasWarningMsg(){
   return output
 }
 
-//voir Abes parce que sinon ça dysfonctionne
+//voir Abes parce que sinon Ã§a dysfonctionne
 function __insertText(txt){
 // A TESTER
   application.activeWindow.title.endOfBuffer(false);
@@ -186,7 +224,7 @@ function __serializeArray(vari, sep){
   return output.substr(0, (output.length - sep.length))
 }
 
-//Réponse de BeNdErR à : https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing
+//RÃ©ponse de BeNdErR Ã  : https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing
 function __sleep(milliseconds) {
 // Sleeps the script execution for X milliseconds
   var start = new Date().getTime();
