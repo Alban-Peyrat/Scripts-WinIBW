@@ -151,7 +151,7 @@ Permet de charger le fichier `VBSbestand` de scripts en `.vbs` pour pouvoir exé
 #### Fichier `alp_cat_add.vbs`
 
 Contient tous les scripts permettant de rajouter des informations à une notice d'autorité ou bibliographique.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_add.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_cat_add.vbs)_
 
 ##### `add18XmonoImp()`
 
@@ -285,17 +285,17 @@ Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supp
 #### Fichier `alp_cat_get.vbs`
 
 Contient tous les scripts permettant de récupérer des informations depuis WinIBW.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_cat_get.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_cat_get.vbs)_
 
 #### Fichier `alp_chantier_theses.vbs`
 
 Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_chantier_theses.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
 
 #### Fichier `alp_concepts.vbs`
 
 Contient tous les concepts de scripts que j'ai pu développer pour contrôler le signalement.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_concepts.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_concepts.vbs)_
 
 ##### `ctrlUA103eqUA200f()`
 
@@ -312,25 +312,25 @@ Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le pres
 #### Fichier `alp_corwin.vbs`
 
 Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_corwin.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_corwin.vbs)_
 
 #### Fichier `alp_dumas.vbs`
 
 Contient tous les scripts développés en lien avec [DUMAS](https://dumas.ccsd.cnrs.fr/).
 [Le dépôt ub-svs contient plus d'informations à ce sujet](../../../ub-svs).
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_dumas.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_dumas.vbs)_
 
 #### Fichier `alp_PEB.vbs`
 
 Contient tous les scripts développés à destination du module PEB de WinIBW.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_PEB.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_PEB.vbs)_
 
 _[Voir le document dédié](./PEB.md)_
 
 #### Fichier `alp_ressources.vbs`
 
 Contient tous les scripts ressources que j'utilise au sein des autres scripts.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/vbs/alp_ressources.vbs)_
+_[Consulter le fichier](/scripts/vbs/alp_ressources.vbs)_
 
 ##### `getNoticeType()`
 
@@ -347,7 +347,7 @@ Le script vérifie donc uniquement si `scr` est égal à `II` (création de noti
 
 #### Fichier `GBV.js`
 
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/GBV.js)_
+_[Consulter le fichier](/main/scripts/js/GBV.js)_
 
 __Ce fichier contient des scripts que j'ai récupérés parmi ceux proposés par la [Gemeinsame Bibliotheksverbund](https://www.gbv.de/).__
 Je les ai récupérés de la page [d'informations de version de WinIBW](https://wiki.k10plus.de/display/K10PLUS/SWB-WinIBW-Versionsinformationen).
@@ -413,21 +413,21 @@ Utilise la fonction [`__getMsgs()`](#__getmsgs) pour la récupération.
 
 #### Fichier `peyrat_main.js`
 
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_main.js)_
+_[Consulter le fichier](/scripts/js/peyrat_main.js)_
 
 __Ce fichier ne contient pas de scripts actuellement.__
 
 #### Fichier `peyrat_peb.js`
 
 Contient tous les scripts développés à destination du module PEB de WinIBW.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_peb.js)_
+_[Consulter le fichier](/main/scripts/js/peyrat_peb.js)_
 
 _[Voir le document dédié](./PEB.md)_
 
 #### Fichier `peyrat_ressources.js`
 
 Contient tous les scripts ressources que j'utilise au sein des autres scripts.
-_[Consulter le fichier](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/js/peyrat_ressources.js)_
+_[Consulter le fichier](/scripts/js/peyrat_ressources.js)_
 
 ##### `__AbesDelTitleCreated()`
 
