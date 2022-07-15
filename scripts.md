@@ -146,7 +146,7 @@ _Provient de [Installatie van WinIBW3 (3.7) ter ondersteuning van script-beheer 
 _Paramètre :_
 * `VBSbestand` : chemin d'accès d'un fichier
 
-Permet de charger un fichier de scripts en `.vbs` pour pouvoir exécuter les exécuter dans WinIBW.
+Permet de charger le fichier `VBSbestand` de scripts en `.vbs` pour pouvoir exécuter les exécuter dans WinIBW.
 
 #### Fichier `alp_cat_add.vbs`
 
