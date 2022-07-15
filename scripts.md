@@ -116,6 +116,38 @@ Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés
 
 ### Scripts utilisateurs (VBS)
 
+#### Fichier `winibw.vbs`
+
+Contient uniquement les scrripts utilisés pour paramétrer WinIBW autant pour son interface () que pour récupérer des variables communes à VBS et JS que pour charger les autres scripts en VBS que pour permettre au fichier central de paramétrage de JS d'être chargé.
+_[Consulter le fichier](/scripts/winibw.vbs)_
+
+##### Lignes de code hors des fonctions
+
+* `application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Profiles/apeyrat001/alp_scripts/alp_central_scripts.js"` : permet de charger le script central de JS qui permettra de charger par la suite les autres scripts JS.
+Changez `resource:/Profiles/apeyrat001/alp_scripts/alp_central_scripts.js` par le chemin d'accès à votre script central de JS.
+* `sluitMapIn("C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts\vbs")` : permet de charger les autres scripts VBS.
+Changez `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts\vbs` par le chemin d'accès à votre dossier contenant les scripts VBS.
+Vous pouvez charger plusieurs dossiers, ou charger un fichier individuellement à l'aide de [la fonction `sluitVBSin()`](#sluitVBSin).
+* `Set WSHShell = CreateObject("WScript.Shell")` : permet de créer un objet `WScript.Shell` qui vous permettra de récupérer les informations d'une variable environnementale, à l'aide de `WSHShell.ExpandEnvironmentStrings("%MY_RCR%")`, en remplaçant `MY_RCR` part le nom de la variable.
+
+##### `sluitMapIn()`
+
+_Provient de [Installatie van WinIBW3 (3.7) ter ondersteuning van script-beheer - VBScript centraal beheerd](https://cbs-nl.oclc.org/htdocs/winibw/scripts/WinIBW3.installatie.scriptbeheer.html)._
+
+_Paramètre :_
+* `map` : chemin d'accès d'un dossier
+
+Permet de charger tous les scripts en `.vbs` du dossier `map` pour pouvoir les exécuter dans WinIBW. _Requiert [la fonction `sluitVBSin()`](#sluitVBSin)_
+
+##### `sluitVBSin()`
+
+_Provient de [Installatie van WinIBW3 (3.7) ter ondersteuning van script-beheer - VBScript centraal beheerd](https://cbs-nl.oclc.org/htdocs/winibw/scripts/WinIBW3.installatie.scriptbeheer.html)._
+
+_Paramètre :_
+* `VBSbestand` : chemin d'accès d'un fichier
+
+Permet de charger un fichier de scripts en `.vbs` pour pouvoir exécuter les exécuter dans WinIBW.
+
 #### Fichier `alp_cat_add.vbs`
 
 Contient tous les scripts permettant de rajouter des informations à une notice d'autorité ou bibliographique.
