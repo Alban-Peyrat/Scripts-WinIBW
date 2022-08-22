@@ -148,6 +148,10 @@ _Paramètre :_
 
 Permet de charger le fichier `VBSbestand` de scripts en `.vbs` pour pouvoir exécuter les exécuter dans WinIBW.
 
+
+------------------------------------------------------------
+
+
 #### Fichier `alp_cat_add.vbs`
 
 Contient tous les scripts permettant de rajouter des informations à une notice d'autorité ou bibliographique.
@@ -280,17 +284,30 @@ Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supp
 
 
 
-------------------------------------------------------------------------------------------------------------
+*Fin du truc qui a pas été edit*
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------
+
 
 #### Fichier `alp_cat_get.vbs`
 
 Contient tous les scripts permettant de récupérer des informations depuis WinIBW.
 _[Consulter le fichier](/scripts/vbs/alp_cat_get.vbs)_
 
+
+------------------------------------------------------------
+
+
 #### Fichier `alp_chantier_theses.vbs`
 
 Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses.
 _[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
+
+
+------------------------------------------------------------
+
 
 #### Fichier `alp_concepts.vbs`
 
@@ -309,10 +326,18 @@ ___Voir [ConStance CS2](../../../ConStance#cs2--présence-dun-lien-en-700) pour 
 
 Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papier.
 
+
+------------------------------------------------------------
+
+
 #### Fichier `alp_corwin.vbs`
 
 Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
 _[Consulter le fichier](/scripts/vbs/alp_corwin.vbs)_
+
+
+------------------------------------------------------------
+
 
 #### Fichier `alp_dumas.vbs`
 
@@ -320,12 +345,20 @@ Contient tous les scripts développés en lien avec [DUMAS](https://dumas.ccsd.c
 [Le dépôt ub-svs contient plus d'informations à ce sujet](../../../ub-svs).
 _[Consulter le fichier](/scripts/vbs/alp_dumas.vbs)_
 
+
+------------------------------------------------------------
+
+
 #### Fichier `alp_PEB.vbs`
 
 Contient tous les scripts développés à destination du module PEB de WinIBW.
 _[Consulter le fichier](/scripts/vbs/alp_PEB.vbs)_
 
 _[Voir le document dédié](./PEB.md)_
+
+
+------------------------------------------------------------
+
 
 #### Fichier `alp_ressources.vbs`
 
@@ -343,6 +376,10 @@ Pour déterminer cette information, il se base sur la variable `P3VMC` qui corre
 Pour `scr`, son utilisation n'est supposée avoir lieu que si le script est utilisé dans le cadre d'une création de notice _ex-nihilo_ ou sur un écran autre qu'une notice.
 Le script vérifie donc uniquement si `scr` est égal à `II` (création de notice d'autorité) ou `IT` (création de notice bibliographique).
 
+
+------------------------------------------------------------
+
+
 ### Scripts standarts (JS)
 
 #### Fichier `GBV.js`
@@ -351,6 +388,7 @@ _[Consulter le fichier](/main/scripts/js/GBV.js)_
 
 __Ce fichier contient des scripts que j'ai récupérés parmi ceux proposés par la [Gemeinsame Bibliotheksverbund](https://www.gbv.de/).__
 Je les ai récupérés de la page [d'informations de version de WinIBW](https://wiki.k10plus.de/display/K10PLUS/SWB-WinIBW-Versionsinformationen).
+Il n'est pas exclu que certaines fonctions soient similaires à certaines que j'aurais pu développer avant d'analyser ces fichiers.
 
 ##### `alert()`
 
@@ -411,11 +449,142 @@ _Provient de `Update_2022_10/scripts/k10_public.js - function meldungenKopieren(
 Copie dans le presse papier l'intégralité des messages affichés par WinIBW.
 Utilise la fonction [`__getMsgs()`](#__getmsgs) pour la récupération.
 
+##### `__delFields()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function felderLoeschen()`._
+
+_Paramètre :_
+* `regexpFelder` : une expression régulière correspondant au numéro du champ voulu **(pas une chaîne de caractères)**.
+Exemple : `/70[0-9]|606/` si l'on veut supprimer n'importe quel champ en 70X ou le champ 606.
+
+En mode édition, supprime tous les champs dont le numéro de la zone correspond à `regexpFelder`.
+Le script passe sur chacune des lignes de la notice et vérifie si le numéro du champ correspond à l'expression régulière : si c'est le cas, supprime l'intégralité du champ.
+
+##### `__delFieldsContent()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function feldInhaltLoeschen()`._
+
+_Paramètre :_
+* `regexFeld` : une expression régulière correspondant au numéro du champ voulu **(pas une chaîne de caractères)**.
+Exemple : `/70[0-9]|606/` si l'on veut supprimer le contenu de n'importe quel champ en 70X ou le champ 606.
+
+En mode édition, supprime le contenu de tous les champs dont le numéro de la zone correspond à `regexFeld`.
+Le script passe sur chacune des lignes de la notice et vérifie si le numéro du champ correspond à l'expression régulière : si c'est le cas, supprime l'intégralité du champ à l'exception du premier mot.
+__Attention, la détection du premier mot se fait avec la fonction `application.activeWindow.title.wordRight` de WinIBW, ce qui veut dire que si l'une des lignes de la notice ne contient qu'un seul mot et qu'elle correspond à l'expression régulière renseignée, la ligne suivant sera entièrement supprimée sans vérification de correspondance avec `regexFeld`.__
+Pour tester les séparateurs de mots, il est possible d'utiliser la commande `Ctrl+{Flèche directionelles latérales}` pour voir le comportement de WinIBW.
+Voici quelques informations (les listes sont non exhaustives) :
+* caractères non séparateurs (WinIBW les considère comme faisant partie du mot et ne s'arrête ni avant ni après eux) :
+  * `.`
+  * `-`
+* caractères séparateurs compris dans le mot (WinIBW comprend ces caractères dans les mots mais s'arrête avant le prochain caractère ne faisant pas partie de cette liste) :
+  * espace
+  * retour à la ligne
+* caractères séparateurs exclus du mot (WinIBW s'arrête avant ceux-ci) :
+  * `_`
+  * `/`
+  * `\`
+  * `:`
+  * `;`
+  * `!`
+  * `?`
+  * `(`
+  * `[`
+  * `{`
+  * `#`
+
+##### `__insFieldIfInexistant()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function feldEinfuegenNummerisch()`._
+
+_Paramètres :_
+* `ergaenzeFeld` : le numéro de champ que l'on souhaite insérer ;
+* `strInhalt` : le contenu du champ que l'on souhaite insérer.
+
+En mode édition, ajoute le champ `ergaenzeFeld` avec le contenu `strInhalt` à l'emplacement correspondant s'il n'existe aucun champ avec ce numéro.
+Le script vérifie dans un premier temps si un champs existe déjà avec le numéro `ergaenzeFeld`, à l'aide de la fonction `application.activeWindow.title.findTag`.
+__Attention, cette fonction de WinIBW renvoie le premier champ qui commence par la chaîne de caractère renseignée,__ ainsi `70` renverra la première 70X, `610 2` renverra la première 610 dont le premier indicateur est 2, même s'il y a des `610 1` avant.
+Si un champ est renvoyé, le script s'arrête, sinon parcourt l'intégralité des champs et insère `ergaenzeFeld` et `strInhalt` séparés par un espace à l'emplacement correspondant (ou à la fin de la notice).
+Pour déterminer l'emplacement correspondant, compare pour chaque champ le numéro avec `ergaenzeFeld` pour déterminer lequel est le plus grand.
+
+##### `__insField()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function feldEinfuegenNummerischOhnePruefung()`._
+
+_Paramètres :_
+* `ergaenzeFeld` : le numéro de champ que l'on souhaite insérer ;
+* `strInhalt` : le contenu du champ que l'on souhaite insérer.
+
+En mode édition, ajoute le champ `ergaenzeFeld` avec le contenu `strInhalt` à l'emplacement correspondant.
+Insère `ergaenzeFeld` et `strInhalt` séparés par un espace à l'emplacement correspondant (ou à la fin de la notice).
+Pour déterminer l'emplacement correspondant, compare pour chaque champ le numéro avec `ergaenzeFeld` pour déterminer lequel est le plus grand : s'il existe déjà des champs avec ce numéro, il sera inséré à après ceux existants.
+
+##### `__getFields()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function felderSammeln()`._
+
+_Paramètre :_
+* `regexpFelder` : une expression régulière correspondant au numéro du champ voulu **(pas une chaîne de caractères)**.
+Exemple : `/70[0-9]|606/` si l'on veut supprimer le contenu de n'importe quel champ en 70X ou le champ 606.
+
+En mode édition, renvoie une chaîne de caractères contenant tous les champs dont le numéro de champ correspond à `regexpFelder`, séparés par des retours à la ligne.
+Le script passe sur chacune des lignes de la notice et vérifie si le numéro du champ correspond à l'expression régulière : si c'est le cas, ajoute à la variable renvoyée un retour à la ligne suivant du champ complet.
+__Cela signifie que le premier caractère sera toujours un retour à la ligne.__
+
+##### `__dateYMD()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __datum()`._
+
+Renvoie la date actuelle au format `AAAA.MM.JJ`.
+
+##### `__dateDMY`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __datumTTMMJJJJ()`._
+
+Renvoie la date actuelle au format `JJ.MM.AAAA`.
+
+##### `__dateHours`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function __datumUhrzeit()`._
+
+Renvoie la date et l'heure actuelles au format `AAAAMMJJHHMMSS`.
+
+##### `__trim()`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function stringTrim()`._
+
+_Paramètre :_
+* `meinString` : une chaîne de caractères.
+
+Renvoie la chaîne de caractère en supprimant les espaces devant et derrière le texte.
+Tant que le script détecte une correspondance entre `meinString` et l'expression régulière `/^ | $/` (le premier caractère est un espace ou le dernier caractère est un espace), supprime le caractère qui a provoqué la correspondance.
+
+##### `GBVhackSystemVariables`
+
+_Provient de `Update_2022_10/scripts/k10_public.js - function hackSystemVariables()`._
+
+_De ce que je comprends, le script est d'OCLC.
+De plus, elle fait supposément le même travail que la fonction `hackSystemvariables` déjà présente dans la version WinIBW de l'Abes, à l'exception près que celle de l'Abes située dans le fichier `scripts/AFF.JS` est mal codée et renvoie très justement une erreur (sur les ordinateurs que j'ai vu en tout cas)._
+
+Copie dans le presse-papier la plupart des variables (nom et valeurs) de WinIBW.
+Le script regarde pour chacune des combinaisons ci-dessous s'il existe une variable non nulle dans WinIBW : si elle existe, ajoute à la variable renvoyée `- {nom de la variable}: {valeur de la variable}` suivi d'un retour à la ligne.
+
+Les combinaisons testées sont : `P3G` / `P3V` / `P3G` suivis de deux variables qui prennent comme valeur soit `!`, soit un chiffre, soit une lettre en majuscule.
+L'intégralité des combinaisons possibles sont testées une par une (`P3G!!`, puis `P3G!0`, etc.), ce qui représente 1369 variables pour chaque `P3`, mais moins d'une centaine sont renvoyées.
+Toutes les variables ne sont donc pas renvoyées, par exemple `P3CLIP`, qui contient la notice renvoyée par la fonction `Copier notice`, n'est pas renvoyée, mais la majorité des variables prennent la forme testée par cette fonction.
+
+
+------------------------------------------------------------
+
+
 #### Fichier `peyrat_main.js`
 
 _[Consulter le fichier](/scripts/js/peyrat_main.js)_
 
-__Ce fichier ne contient pas de scripts actuellement.__
+__Ce fichier ne contient pas de scripts publics actuellement.__
+
+
+------------------------------------------------------------
+
 
 #### Fichier `peyrat_peb.js`
 
@@ -424,6 +593,10 @@ _[Consulter le fichier](/main/scripts/js/peyrat_peb.js)_
 
 _[Voir le document dédié](./PEB.md)_
 
+
+------------------------------------------------------------
+
+
 #### Fichier `peyrat_ressources.js`
 
 Contient tous les scripts ressources que j'utilise au sein des autres scripts.
@@ -431,24 +604,24 @@ _[Consulter le fichier](/scripts/js/peyrat_ressources.js)_
 
 ##### `__AbesDelTitleCreated()`
 
-Basé sur la fonction `standart_copy` de l'Abes.
+_Inspirée des fonctions de `scripts/standart_copy.js` de l'Abes, utilise la fonction `suptag()`._
 
-Supprime de la notice tous champs commençant par `Cré`.
-Sert à supprimer les informations de création d'une notice copiée via la fonction dédiée dans WinIBW (et qui aurait été collée sans passer par la fonction `Coller notice`.
+En mode édition, supprime de la notice tous champs commençant par `Cré`.
+Sert à supprimer les informations de création d'une notice copiée via la fonction dédiée dans WinIBW (et qui auraient été collées sans passer par la fonction `Coller notice`).
 
 ##### `__AbesDelItemData()`
 
-Basé sur la fonction `standart_copy` de l'Abes.
+_Inspirée des fonctions de `scripts/standart_copy.js` de l'Abes, utilise la fonction `suptag()`._
 
-Supprime de la notice tous champs commençant par `A`, `9`, `E` ou `e`.
+En mode édition, supprime de la notice tous champs commençant par `A`, `9`, `E` ou `e`.
 Sert à supprimer les informations d'exemplaires d'une notice __en affichage UNM__ copiée via la fonction dédiée dans WinIBW (et qui aurait été collée sans passer par la fonction `Coller notice`).
 
 ##### `__addTextToVar()`
 
 _Paramètres :_
-* `vari` : la variable originale
-* `text` : le texte à rajouter à `vari`
-* `sep` : le séparateur à placer entre `vari` et `text`
+* `vari` : la variable originale ;
+* `text` : le texte à rajouter à `vari` ;
+* `sep` : le séparateur à placer entre `vari` et `text`.
 
 Renvoie `vari` avec `sep` puis `text` ajoutés à la fin de `vari`.
 Si `vari` est une chaîne de caractères vide, renvoie `text`.
@@ -468,7 +641,7 @@ Crée une nouvelle fenêtre dans WinIBW.
 ##### `__dateToYYYYMMDD_HHMM()`
 
 _Paramètre :_
-* `date` : un objet Javascript `date`
+* `date` : un objet Javascript `date`.
 
 Renvoie la `date` sous forme de chaîne de caractères au format `YYYYMMDD_HHMM`.
 
@@ -476,19 +649,57 @@ Renvoie la `date` sous forme de chaîne de caractères au format `YYYYMMDD_HHMM`
 
 Ferme __l'intégralité__ des fenêtres ouvertes dans WinIBW.
 
-##### `__findExactText()`
+##### `__executeUserScript()`
 
-_A TESTER_
+__En état expérimental, utilisation fortement non recommandée.
+Et ce n'est probablement pas une solution efficace si l'on souhaite reprendre le script standart ensuite.__
+
+_Inspiré des travaux de Philippe Combot, notamment ceux pour [lancer des applciations depuis WinIBW](https://web.archive.org/web/20140815070455/http://combot.univ-tln.fr:80/winibw/interactions/applis.html)_
 
 _Paramètre :_
-* `txt` : le texte à rechercher
+* `fctName` : le nom de la fonction utilisateur voulue ;
+* `sleep` : supposément le nombre de millisecondes de pause.
+Au vu du script, cette option n'a pas été implémentée, probablement parce que la fonction `sleep` empêcherait la bonne exécution du script utilisateur.
+
+Exécute un script utilisateur en créant un fichier VBS qui sera ensuite exécuter par WinIBW.
+Nécessite que la fonction [`executeVBScriptFromName` de `alp_ressources.vbs`](#executeVBScriptFromName) soit installée et __est un raccourci clavier associé.__
+Si ce dernier n'est pas `Ctrl+Shift+Alt+L`, il est nécessaire de changer la première fonction `sendKeys` dans la variable `vbsCodeLines`.
+
+Le script écrase (ou crée) le fichier `execute_VBS_from_JS.vbs` dans le profil WinIBW de l'utilisateur avec le code suivant (`vbs_test` prenant la valeur de `fctName`) :
+
+``` VBS
+Dim oShell
+Set oShell = CreateObject("WScript.Shell")
+oShell.AppActivate("WinIBW")
+oShell.SendKeys "+^%l"
+WScript.Sleep 100
+oShell.SendKeys "vbs_test"
+WScript.Sleep 100
+oShell.SendKeys "{Enter}"
+Set oShell = Nothing
+
+```
+
+Ensuite, utilise la fonction [`__executeVBScript`](#__executeVBScript) pour exécuter ce fichier.
+
+##### `__executeVBScript()`
+
+_Paramètre :_
+* `filePath` : le chemin d'accès complet d'un fichier.
+
+Exécute le fichier indiqué.
+
+##### `__findExactText()`
+
+_Paramètre :_
+* `txt` : le texte à rechercher.
 
 Recherche la première occurrence de `txt` (sensible à la casse) dans la notice et la sélectionne.
 
 ##### `__getEnvVar()`
 
 _Paramètre :_
-* `varName` : le nom de la variable environnementale voulue
+* `varName` : le nom de la variable environnementale voulue.
 
 Renvoie la valeur de la variable environnementale `varName` si elle existe, sinon renvoie `false`.
 
@@ -510,8 +721,6 @@ S'il n'y a aucun message d'alerte, renvoie une chaîne de caractères vide.
 
 ##### `__insertText()`
 
-_A TESTER_
-
 _Paramètre :_
 * `txt` : le texte à insérer
 
@@ -524,51 +733,53 @@ Renvoie `true` ou `false` selon si la fenêtre active a un `title` ou non.
 ##### `__logIn()`
 
 _Paramètre :_
-* `identifiants` : la paire identifiant / mot de passe séparée par un espace
+* `identifiants` : la paire identifiant / mot de passe séparée par un espace.
 
 S'identifie à la base (en utilisant la commande `log`).
 
 ##### `__parseDocLine()`
 
 _Paramètre :_
-* `line` : la ligne à diviser
+* `line` : la ligne à diviser.
 
 Renvoie sous forme d'_array_ `line` en utilisant les tabulations horizontales comme séparateur. 
 
 ##### `__removeAccents()`
 
-_A REVOIR_
+_Vieux script, il y a possiblement plus efficace._
 
 _Paramètre :_
-* `str` : le texte à modifier
+* `str` : le texte à modifier.
 
 Renvoie `str` en retirant les accents des voyelles, la cédille des `C` et en séparant en deux lettres `Æ` et `Œ` (majuscules et minuscules).
 
 ##### `__serializeArray()`
 
 _Paramètres :_
-* `vari` : l'_array_ à transformer
-* `sep` : le séparateur à employer
+* `vari` : l'_array_ à transformer ;
+* `sep` : le séparateur à employer.
 
 Renvoie `vari` sous forme de chaîne de caractères en utilisant `sep` comme séparateur entre chaque élément.
 
 ##### `__sleep()`
 
+_[Provient de la réponse de BeNdErR à la question _JavaScript sleep/wait before continuing_ sur _StackOverflow_, consultée le 12/04/2022](https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing#16873849)._
+
 _Paramètre :_
-* `milliseconds` : le nombre de millisecondes à attendre
+* `milliseconds` : le nombre de millisecondes à attendre.
 
 Met en pause le script durant `milliseconds` millisecondes.
-
-[Provient de la réponse de BeNdErR à la question _JavaScript sleep/wait before continuing_ sur _StackOverflow_, consultée le 12/04/2022](https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing#16873849).
 
 ##### `__timerToReal()`
 
 _Paramètres :_
-* `start` : un objet Javascript `date` correspondant au début d'un intervalle
-* `end` : un objet Javascript `date` correspondant à la fin d'un intervalle
+* `start` : un objet Javascript `date` correspondant au début d'un intervalle ;
+* `end` : un objet Javascript `date` correspondant à la fin d'un intervalle.
 
 Renvoie la différence entre `start` et `end` sous forme d'une chaîne de caractères au format `X minute(s) X seconde(s)`.
 
+
+------------------------------------------------------------
 
 
 
