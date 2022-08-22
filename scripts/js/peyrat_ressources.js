@@ -4,7 +4,7 @@ function __AbesDelTitleCreated(){
 //See Abes' standart_copy.js
 // But reworked to only delete the top line of P3CLIP var
   //suptag("Cr\u00E9"); // If the file is not encoded in Wetsern Windows 1252
-  suptag("CrÃ©");
+  suptag("Cré");
 }
 
 function __AbesDelItemData(){
@@ -69,12 +69,12 @@ function __deconnect(){
 //Closes all windows to be safe
   var nbWin = application.windows.count;
   for(var ii = 0; ii < nbWin; ii++){
-    //Quand une fenÃªtre se ferme, l'index descend automatiquement
+    //Quand une fenêtre se ferme, l'index descend automatiquement
     application.windows.item(0).close();
   }
 }
 
-function __executeUserScript(fctName){
+function __executeUserScript(fctName, sleep){
 // Executes a User Script by creating a VBS file that will launch from WinIBW a user script
 // Needs executeVBScriptFromName() (alp_ressources.vbs) to be installed AND to have a shortcut assigned.
 // If it's not Shift + Ctrl + Alt + L, change the SendKeys in the function.
@@ -87,20 +87,20 @@ function __executeUserScript(fctName){
                     'Set oShell = CreateObject("WScript.Shell")',
                     'oShell.AppActivate("WinIBW")',
                     'oShell.SendKeys "+^%l"',
+                    'WScript.Sleep 100',
                     'oShell.SendKeys "'+fctName+'"',
+                    'WScript.Sleep 100',
                     'oShell.SendKeys "{Enter}"',
                     'Set oShell = Nothing'];
-  var vbsCode = "";
-  for (var ii = 0; ii < vbsCodeLines.length; ii++){
-    vbsCode += vbsCodeLines[ii] + "\n"
-  }
 
 // Writes the file
   var vbsFile = utility.newFileOutput();
   vbsFile.createSpecial("ProfD", "execute_VBS_from_JS.vbs");
   vbsFile.setTruncate(true);
   var vbsPath = vbsFile.getPath();
-  vbsFile.write(vbsCode);
+  for (var ii = 0; ii < vbsCodeLines.length; ii++){
+    vbsFile.writeLine(vbsCodeLines[ii]);
+  }
   vbsFile.close();
 
 // Executes the file
@@ -112,9 +112,9 @@ function __executeVBScript(filePath) {
   application.shellExecute(filePath, 5, "open", "")
 }
 
-//voir Abes parce que sinon Ã§a dysfonctionne
+//voir Abes parce que sinon ça dysfonctionne
+//MàJ : j'ai aucune idée de ce que je voulais dire par ce commentaire :)
 function __findExactText(txt){
-// A TESTER
   application.activeWindow.title.startOfBuffer(false);
   application.activeWindow.title.find(txt, true, false, false);
 }
@@ -164,9 +164,9 @@ function __hasWarningMsg(){
   return output
 }
 
-//voir Abes parce que sinon Ã§a dysfonctionne
+//voir Abes parce que sinon ça dysfonctionne
+//MàJ : j'ai aucune idée de ce que je voulais dire par ce commentaire :)
 function __insertText(txt){
-// A TESTER
   application.activeWindow.title.endOfBuffer(false);
   application.activeWindow.title.insertText(txt);
 }
@@ -192,7 +192,6 @@ function __parseDocLine(line){
 }
 
 function __removeAccents(str){
-// A revoir
 //rip normalize
   str = str.replace(/[\u00EA\u00E9\u00EB\u00E8]/g, "e");
   str = str.replace(/[\u00C8\u00C9\u00CA\u00CB]/g, "E");
@@ -224,7 +223,7 @@ function __serializeArray(vari, sep){
   return output.substr(0, (output.length - sep.length))
 }
 
-//RÃ©ponse de BeNdErR Ã  : https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing
+//Réponse de BeNdErR à : https://stackoverflow.com/questions/16873323/javascript-sleep-wait-before-continuing
 function __sleep(milliseconds) {
 // Sleeps the script execution for X milliseconds
   var start = new Date().getTime();
