@@ -159,7 +159,7 @@ _[Consulter le fichier](/scripts/vbs/alp_cat_add.vbs)_
 
 ##### `add18XmonoImp()`
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée sans illustration (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée sans illustration à la fin de celle-ci suivi d'un retour à la ligne :
 
 ``` MARC
 181 ##$P01$ctxt
@@ -169,7 +169,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 18
 
 ##### `add18XmonoImpIll()`
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée avec illustration (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 181-2-3 pour une monographie imprimée avec illustration à la fin de celle-ci suivi d'un retour à la ligne :
 
 ``` MARC
 181 ##$P01$ctxt
@@ -178,55 +178,87 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère les 18
 183 ##$P01$P02$anga
 ```
 
-#### `add214Elsevier()`
+##### `add214Elsevier()`
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 214 type pour Elsevier (2022) (code ci-dessous) à la fin de celle-ci suivi d'un retour à la ligne :
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 214 type pour Elsevier (2022) à la fin de celle-ci suivi d'un retour à la ligne :
 
 ``` MARC
 214 #0$aIssy-les-Moulineaux$cElsevier Masson SAS$dDL 2022
 ```
 
-------------------------------------------------------------------------------------------------------------
-||| Ci-dessous pas encore modifié
+##### `addAutFromUB()`
 
+Permet de créer un squelette de notice d'autorité à partir d'une notice bibliographique (pour préremplir la 810).
 
+Ouvre une boîte de dialogue demandant d'entrer le patronyme puis une seconde demandant les éléments rejetés.
+Le script récupère ensuite le titre du document via la fonction [`getTitle`](`#gettitle`) ainsi que l'année en utilisant la `100 $c` ou `100 $a`.
+Crée ensuite une notice d'autorité sous la forme suivante :
 
-#### `addBibgFinChap`
+``` MARC
+008 $aTp5
+106 ##$a0$b1$c0
+101 ##$afre
+102 ##$aFR
+103 ##$a19XX
+120 ##$a -----À-COMPLÉTER-MANUELLEMENT-----
+200 #1$90y$a{nom}$b{prenom}$f19..-....
+340 ##$a -----COMPLÉTER-AVEC-D-AUTRES-INFORMATIONS-----
+810 ##$a{titre} / {prenom} {nom}, {annee}
+```
 
-Ajoute une mention de bibliographie à la fin de chaque chapitre.
+Enfin, génère des 400 en cas de nom composé (si le nom comprend un espace ou un `-`) via la fonction [`addUA400`](#addua400).
 
-_Type de procédure : SUB_
+##### `addBibgFinChap()`
 
 Passe la notice en mode édition si elle ne l'est pas déjà puis insère à l'emplacement du curseur :
-* `Chaque fin de chapitre comprend une bibliographie`
+
+``` MARC
+Chaque fin de chapitre comprend une bibliographie
+```
 
 __Malfonctionnement possible : si la notice n'était pas en mode édition, le texte ne s'écrira probablement pas si la grille des données codées n'est pas affichée.__
 
-#### `addCouvPorte`
+##### `addCouvPorte()`
 
-Ajoute le début d'une 312 `La couverture porte en plus`.
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 312 indiquant que la couverture porte des informations supplémentaires à la fin de celle-ci, en plaçant le curseur à la fin du champ généré :
 
-_Type de procédure : SUB_
+``` MARC
+312 ##$aLa couverture porte en plus : "
+```
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
-* `312 ##$aLa couverture porte en plus : "`
+##### `addEISBN()`
 
-#### `addISBNElsevier`
+Permet d'ajouter une 452 avec le titre et les 2 (ISBN 10) ou 3 (ISBN 13) premiers éléments de du premier ISBN renseigné.
 
-Ajoute une 010 avec le début de l'ISBN d'Elsevier.
+Passe la notice en mode édition si elle ne l'est pas déjà puis détermine la position du `@` au sein de la `200 $a` et récupère le titre du document via la fonction [`getTitle`](`#gettitle`).
+Si aucun titre n'est renvoyé, le titre sera égal à `@ -----À-COMPLÉTER-MANUELLEMENT-----`.
+Le script récupère ensuite le `$a` ou `$A` de la première `010`, puis supprime les deux derniers éléments de celui-ci en utlisant les `-` comme séparateurs d'éléments.
+S'il n'y a aucun `-` dans l'ISBN ou que la récupération de celui-ci a échoué, l'ISBN inséré sera vide.
+Enfin, insère à la fin de la notice le champ suivant, en plaçant un `@` à l'emplacement détecté plus tôt et en plaçant le curseur à la fin de ce nouveau champ :
 
-_Type de procédure : SUB_
+``` MARC
+452 ##$t{titre}$y{ISBN modifié}
+```
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci :
-* `010 ##$A978-2-294-`
+##### `addISBNElsevier()`
 
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 010 avec les trois premiers éléments d'un ISBN 13 d'Elsevier à la fin de celle-ci :
 
+``` MARC
+010 ##$A978-2-294-
+```
 
-#### `AddSujetRAMEAU`
+##### `addNoteBonISBN()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 310 indiquant que l'ISBN 13 exact provient du service [Nouveautés éditeurs de la Bibliothèque nationale de France](https://nouveautes-editeurs.bnf.fr/) à la fin de celle-ci :
+
+``` MARC
+301 ##$aL'ISBN 13 exact provient du service Nouveautés éditeurs de la Bibliothèque nationale de France
+```
+
+##### `AddSujetRAMEAU()`
 
 Ouvre une boîte de dialogue permettant d'insérer des UB60X à partir du PPN.
-
-_Type de procédure : SUB_
 
 Passe la notice en mode édition si elle ne l'est pas déjà, puis lance une boucle qui s'exécutera jusqu'à 1000 fois. À chaque exécution, ouvre une boite de dialogue permettant de coller directement le PPN et montrant la liste des commandes supplémentaires disponibles :
 * ajouter `UX` devant le PPN (sans espace) permet de choisir la 60X à insérer :
@@ -253,13 +285,9 @@ Une fois le traitement des commandes terminé, il conserve alors en mémoire un 
 
 Lorsque la donnée saisie est égale à `ok`, il insère le champ en mémoire avant d'achever le script.
 
-
-
-#### `addUA400`
+##### `addUA400()`
 
 Rajoute des UA400 pour les noms composés en se basant sur la UA200, sinon rajoute une UA400 copiant la UA200. _Ce script n'est pas universel et ne fonctionne qu'en présence d'un `$a` et d'un `$b`._
-
-_Type de procédure : SUB_
 
 Passe la notice en mode édition si elle ne l'est pas déjà, puis lance le script [`findUA200aUA200b`](#findua200aua200b), pour récupérer la 200, la 200 `$a`, la 200 `$b` et la position du premier dollar (ou de la fin du champ) après le `$b`.
 Il lance ensuite le script [`decompUA200enUA400`](#decompua200enua400) en injectant le `$a` et le `$b` précédemment obtenu pour récupérer les 400 des noms composés.
@@ -268,24 +296,77 @@ Il vérifie ensuite si la longueur du champ renvoyé par `decompUA200enUA400` es
 Il insère ensuite le nouveau champ à la fin de la notice et place le curseur après le huitième caractère de celui-ci (en théorie, au début du contenu du premier dollar).
 * si ce n'est pas le cas, il insère le champ renvoyé à la fin de la notice.
 
-
-
-#### `addUB700S3`
+##### `addUB700S3()`
 
 Remplace la UB700 actuelle de la notice bibliographique par une UB700 contenant le PPN du presse-papier et le $4 de l'ancienne UB700.
 
-_Type de procédure : SUB_
-
 Passe la notice en mode édition si elle ne l'est pas déjà, puis recherche à l'intérieur de celle-ci un retour à la ligne (`chr(10)`) suivi de `700` (supposément, la première 700).
 Le script sélectionne ensuite les trois derniers caractères de ce champ (supposément le code fonction) puis génère :
-* `700 #1$3` + le contenu du presse-papier + `$4` + la sélection en cours.
+
+``` MARC
+700 #1$3{contenu du presse papier}$4{sélection en cours}
+```
 
 Il supprime de ce champ généré les retours à la ligne (`chr(10)`), puis supprime le champ où se trouve le curseur (ancienne 700) et insère à sa place la nouvelle 700 et un retour à la ligne.
 
+##### `addUB7XX()`
 
+Insère une 7XX avec le PPN présent dans le presse-papier en indiquant le code fonction voulu.
+Par défaut, le script est configuré pour insérer un nom de personne, il est toutefois possible d'insérer un nom de collectivité ou un nom de famille, tout comme il est possible de modifier les indicateurs déterminés par défaut.
 
-*Fin du truc qui a pas été edit*
------------------------------------------------------------------------------------------------------------------------------------------------------------
+Valeurs par défaut des indicateurs :
+* Nom de personne : `#1` ;
+* Collectivité : `02` ;
+* Nom de famille : `##`.
+
+Au lancement du script, une boîte de dialogue s'ouvre demandant d'insérer le code de fonction.
+C'est cette même boîte de dialogue qui permet de configurer le type de champ que l'on insère ainsi que les indicateurs voulus :
+* __Si l'on souhaite insérer autre chose qu'un nom de personne__, le premier caractère de la réponse doit être :
+  * `c` pour une collectivité ;
+  * `f` pour un nom de famille ;
+* __Si l'on souhaite insérer des indicateurs différents de ceux par défaut,__ il faut écrire __les deux indicateurs entre deux espaces avant le code de fonction__ (les deux espaces sont nécessaires même si l'on souhaite renseigné un nom de personne).
+
+__Le code de fonction doit toujours correspondre aux trois derniers caractères de la réponse.__
+
+Une fois la réponse validée, le script récupère comme PPN le contenu du presse-papier puis analyse la réponse donnée.
+Dans un premier temps, il détermine la dizaine du numéro de champ à insérer en se basant sur le premier de caractère de la réponse où `c` sera 1 (collectivité), `f` sera 2 (nom de famille) et tout autre caractère sera 0 (nom de personne, la valeur par défaut).
+Dans un deuxième temps, il détermine les indicateurs en divisant la réponse en utilisant les espaces comme séparateur : s'il y a 2 espaces au total, il détermine que les indicateurs sont __exactement__ ceux contenus entre les deux espaces, sinon, il prend la valeur par défaut des indicateurs en fonction de la dizaine du numéro de champ (0 = `#1`, 1 = `02`, 2 = `##`).
+Dans un troisième temps, il prend les trois derniers caractères de la réponse comme étant le code de fonction (aucune vérification).
+Dans un quatrième temps, il détermine l'unité du numéro de champ à partir d'une liste __non exhaustive__, donnant les résultats suivants :
+* Unité de champ 0 :
+  * `070` (auteur) ;
+  * `340` (éditeur scientifique) ;
+  * `651` (directeur de publication) ;
+  * `730` (traducteur) ;
+* Unité de champ 1 :
+  * `555` (membre du jury) ;
+  * `727` (directeur de thèse) ;
+  * `956` (président du jury de soutenance) ;
+  * `958` (rapporteur de la thèse) ;
+* Unité de champ 2 :
+  * `080` (préfacier) ;
+  * `440` (illustrateur) ;
+* Pour tous les autres cas, l'unité de champ sera remplacée par ` -----COMPLÉTER-MANUELLEMENT-----`.
+
+Dans un cinquième temps, si l'unité de de champ est 0, le script vérifie s'il existe déjà une 7X0, si oui, il transforme l'unité de champ en 1.
+Enfin, le script passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de celle-ci suivi d'un retour à la ligne :
+
+``` MARC
+7{dizaine de champ}{unité de champ} {indicateurs}$3{PPN}$4{code fonction}
+```
+
+##### `createItemAvaibleForILL()`
+
+Crée un exemplaire avec la cote voulue et indiquant la disponibilité de celui-ci pour le prêt entre bibliothèque.
+
+Si la notice est une notice bibliographique (déterminé en utilisant la fonction [getNoticeType](#getnoticetype)), ouvre une bopite de dialogue demandant d'écrire la cote du document voulue, sinon, affiche une erreur.
+Une fois la cote validée, désactive les données codées puis crée un nouvel exemplaire via la commande `\INV E*` (qui permet de créer un nouvel exemplaire en affichant tous ceux présents dans l'ILN et sans devoir indiquer le numéro de l'exemplaire à créer).
+Insère ensuite à la fin de l'écran d'édition :
+
+``` MARC
+e* $bx
+930 ##$a{cote}$ju
+```
 
 
 ------------------------------------------------------------
@@ -364,6 +445,8 @@ _[Voir le document dédié](./PEB.md)_
 
 Contient tous les scripts ressources que j'utilise au sein des autres scripts.
 _[Consulter le fichier](/scripts/vbs/alp_ressources.vbs)_
+
+Je recommande fortement de l'installer pour pouvoir utiliser la plupart des scripts en VBS.
 
 ##### `getNoticeType()`
 
