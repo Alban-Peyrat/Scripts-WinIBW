@@ -23,6 +23,11 @@ function AlP_PEBgetNumDemandePostValidation(){
     }   
 }
 
+function AlP_PEBgetPPN(){
+// Returns the PPN of the wanted document on an ILL (must be used on a ILL request)
+	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VTA");
+}
+
 function AlP_PEBgetRCRDemandeur(){
 // Returns the requesting library's RCR of an ILL (must be used on a ILL request)
 	var VF0 = application.activeWindow.getVariable("P3VF0");
@@ -33,7 +38,7 @@ function AlP_PEBgetRCRDemandeur(){
 		var ans = prompter.confirmEx("Quel RCR choisir", "Quel RCR (cliquer sur le bouton)", "Aucun", VF0, VF1, null, null)
 		switch (ans){
 			case 0:
-				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+				application.messageBox("Erreur", "Aucun RCR copiÃ©","alert-icon");
 				break;
 			case 1:
 				application.activeWindow.clipboard = VF0;
@@ -42,7 +47,7 @@ function AlP_PEBgetRCRDemandeur(){
 				application.activeWindow.clipboard = VF1;
 				break;
 			default:
-				application.messageBox("Erreur", "Aucun RCR copié","alert-icon");
+				application.messageBox("Erreur", "Aucun RCR copiÃ©","alert-icon");
 			}
 	}else{
 		application.activeWindow.clipboard = application.activeWindow.getVariable("P3VF0");
@@ -64,11 +69,6 @@ function AlP_PEBgetRCRFournisseurOnHold(){
 	if(proc === false){
 		application.messageBox("Erreur", "Les biblioth\u00E8ques ont r\u00E9pondu.", "alert-icon");
 	}
-}
-
-function AlP_PEBgetPPN(){
-// Returns the PPN of the wanted document on an ILL (must be used on a ILL request)
-	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VTA");
 }
 
 function AlP_PEBgetTitleAuth(){
@@ -152,7 +152,7 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 			theOutputFile.writeLine(PPN+"\u0009"+auteur+"\u0009"+titre+"\u0009"+edition+"\u0009"+editeur+"\u0009"+annee);
 			row = parseInt(record.substring(record.indexOf("\u001BLNR")+4, record.indexOf("\u001BE", record.indexOf("\u001BLNR")+4)).replace(" ", ""));
 		}
-//Empêche la boucle While de tourner à l'infini
+//EmpÃªche la boucle While de tourner Ã  l'infini
 		sec++;
 		if(sec > 9999){
 			break;
@@ -163,7 +163,7 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 }
 
 function AlP_PEBsearchInSuDb(){
-/* Marche pas pour le moment si ça vient d'un lien*/
+/* Marche pas pour le moment si Ã§a vient d'un lien*/
 
 	// Gets the limitations parameters
 	/*application.activeWindow.command("\\too \\adi", false);
@@ -190,7 +190,7 @@ function AlP_PEBsearchInSuDb(){
 
 	// Checks if the search worked
 	if (application.activeWindow.getVariable("P3GSY") != "SU") {
-	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    application.messageBox("Erreur", "La recherche a Ã©chouÃ©. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRÃ©fÃ©rez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
 	    return
 	}
 
@@ -202,25 +202,25 @@ function AlP_PEBaskFromSu(){
 	var ppn = application.activeWindow.getVariable("P3GPP");
 	// Checks if there's a PPN
 	if (ppn == "") {
-	    application.messageBox("Erreur", "Veuillez sélectionner une notice.", "error-icon");
+	    application.messageBox("Erreur", "Veuillez sÃ©lectionner une notice.", "error-icon");
 	    return
 	// Checks if it's a bibliographic record
 	}else if (application.activeWindow.getVariable("P3VMC").charAt(0) == "T") {
-	    application.messageBox("Erreur", "Ceci est une notice d'autorité. Veuillez sélectionner une notice bibliographique.", "error-icon");
+	    application.messageBox("Erreur", "Ceci est une notice d'autoritÃ©. Veuillez sÃ©lectionner une notice bibliographique.", "error-icon");
 	    return
 	}
 
 	application.activeWindow.command("\\sys 2;\\bes 1;\\zoe ppn "+ppn+";\\too i", false);
 	// Checks if the search worked
 	if (application.activeWindow.getVariable("P3GSY") != "SU PEB") {
-	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    application.messageBox("Erreur", "La recherche a Ã©chouÃ©. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRÃ©fÃ©rez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
 	    return
 	}
 
 	application.activeWindow.simulateIBWKey("F9");
 	// Checks if the ILL request started
 	if (application.activeWindow.getVariable("scr") != "AA") {
-	    application.messageBox("Erreur", "La demande de PEB a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    application.messageBox("Erreur", "La demande de PEB a Ã©chouÃ©. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRÃ©fÃ©rez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
 	    return
 	}
 }
