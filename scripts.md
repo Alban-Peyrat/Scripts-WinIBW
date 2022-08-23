@@ -118,7 +118,7 @@ Mes scripts ne vérifient pas (pour le moment en tout cas) s'ils sont exécutés
 
 #### Fichier `winibw.vbs`
 
-Contient uniquement les scrripts utilisés pour paramétrer WinIBW autant pour son interface () que pour récupérer des variables communes à VBS et JS que pour charger les autres scripts en VBS que pour permettre au fichier central de paramétrage de JS d'être chargé.
+Contient uniquement les scripts utilisés pour paramétrer WinIBW autant pour son interface que pour récupérer des variables communes à VBS et JS que pour charger les autres scripts en VBS que pour permettre au fichier central de paramétrage de JS d'être chargé.
 _[Consulter le fichier](/scripts/winibw.vbs)_
 
 ##### Lignes de code hors des fonctions
@@ -495,6 +495,56 @@ _[Consulter le fichier](/scripts/vbs/alp_corwin.vbs)_
 Contient tous les scripts développés en lien avec [DUMAS](https://dumas.ccsd.cnrs.fr/).
 [Le dépôt ub-svs contient plus d'informations à ce sujet](../../../ub-svs).
 _[Consulter le fichier](/scripts/vbs/alp_dumas.vbs)_
+
+
+------------------------------------------------------------
+
+
+#### Fichier `alp_interface.vbs`
+
+Contient tous les scripts développés uniquement pour servir d'interface ou pour générer certaines recherches à partir des informations disponibles dans l'interface ou pour générer des requêtes répétitives.
+_[Consulter le fichier](/scripts/vbs/alp_interface.vbs)_
+
+##### `generalLauncher()`
+
+Ouvre une boîte de dialogue servant à lancer les scripts.
+
+Chaque script se voit attribuer un numéro d'index qui sert à le faire s'exécuter.
+Pour les scripts de type _Function_, le résultat renvoyé dans le presse-papier.
+La mise à jour de la liste autant des actions à effectuer que du texte affiché dans l'interface doit se faire manuellement.
+_Il est probablement possible de rendre le script un peu plus lisible._
+
+Je ne vais pas établir la liste des scripts possibles, vous pouvez vous référer à la boîte de dialogue qui s'ouvre lors de son exécution ou au code.
+
+##### `goToWorkRecord()`
+
+Ouvre la notice d'autorité de l’œuvre associée.
+
+Récupère la notice via la variable `P3CLIP` puis la divise en utilisant un retour à la ligne comme séparateur.
+Pour chaque ligne, regarde si les trois premiers caractères sont `579` : lorsqu'une ligne correspond, active la commande `che ppn {les 9 caractères suivants le $3 sur cette ligne}` puis arrête l'exécution du script.
+Si aucune ligne ne correspond, affiche un message d'erreur.
+
+##### `searchDoublonPossible()`
+
+S'utilise lorsque WinIBW affiche le message `Doublon possible` après la création d'une notice : cherche le PPN indiqué comme doublon potentiel par WinIBW.
+
+Récupère le premier message affiché dans la zone des messages de WinIBW.
+Si celui-ci contient `PPN `, active la commande `che ppn {les 9 caractères suivants le "PPN " dans le message}`.
+Si le message ne contient pas `PPN ` (ou si aucun message n'est affiché), affiche une erreur.
+
+_Il est possible que ce script puisse être utilisé pour rechercher le PPN indiqué par WinIBW dans d'autres messages que celui des doublons possibles si leur forme correspond. _
+
+##### `searchExcelPPNList()`
+
+Recherche la liste de PPN contenue dans le presse-papier.
+
+Transforme la liste de PPN du presse-papier en :
+* supprimant `(PPN)` ;
+* remplaçant `chr(10)` (retour à la ligne) par ` OR ` (avec espace avant et après) ;
+* ajoutant au début `che PPN` suivi d'un espace ;
+* supprimant les quatre derniers caractères (supposément `OR` avec un espace avant et après).
+
+Place ensuite la requête dans le presse-papier et lance la requête.
 
 
 ------------------------------------------------------------
@@ -1024,41 +1074,6 @@ Il isole ensuite la valeur du `$a` puis du `$b` et renvoie la 200, la `$a` isol�
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
 
-#### `generalLauncher`
-
-Ouvre une boîte de dialogue servant à lancer les scripts (majoritairement de type `add` et `get`). 
-
-_Type de procédure : SUB_
-
-
-Ouvre une boîte de dialogue contenant la liste des scripts suivants accompagnés de leur identifiant, la liste étant décomposée en plusieurs parties :
-* notices bibliographiques :
-  * 14 : exécuter [`add18XmonoImp`](#add18xmonoimp) ;
-  * 1 : exécuter [`addCouvPorte`](#addcouvporte) ;
-  * 2 : exécuter [`addBibgFinChap`](#addbibgfinchap) ;
-  * 3 : exécuter [`addEISBN`](#addeisbn) ;
-  * 4 : exécuter [`AddSujetRAMEAU`](#addsujetrameau) ;
-  * 15 : placer dans le presse-papier le renvoi de [`addUB700S3`](#addub700s3) ;
-* Elsevier :
-  * 6 : exécuter [`addISBNElsevier`](#addisbnelsevier) ;
-  * 7 : exécuter [`add214Elsevier`](#add214elsevier) ;
-* récupérer des informations :
-  * 8 : placer dans le presse-papier le renvoi de [`getTitle`](#gettitle) ;
-  * 9 : placer dans le presse-papier le renvoi de [`getCoteEx`](#getcoteex) ;
-* thèses
-  * 10 : exécuter [`getDataUAChantierThese`](#getdatauachantierthese) ;
-  * 5 : exécuter `perso_CTaddUB700S3` ;
-  * 11 : placer dans le presse-papier le renvoi de [`getUB310`](#getub310) ;
-* notices d'autorités
-  * 12 : exécuter [`addUA400`](#addua400) ;
-  * 13 : placer dans le presse-papier le renvoi de [`getUA810b`](#getua810b) ;
-* CorWin :
-  * 77 : lance le lanceur de [CorWin](https://github.com/Alban-Peyrat/CorWin).
-
-
-_Contexte de développement : j'utilise des raccourcis pour la majorité de mes scripts. Or à force de créer de petits scripts, les combinaisons de raccourcis se limitent et m'obligent à retenir beaucoup de raccourcis différents. Le lenceur général permet donc de réduire ce nombre. Aussi, les nombres sont attribués dans l'ordre d'ajout et non pas dans l'ordre où ils sont listés._
-
-
 #### `getDataUAChantierThese`
 
 Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales. Une option permet de réécrire ou d'éditer les champs directement depuis WinIBW.
@@ -1082,33 +1097,6 @@ _Renvoi :_
 _Paramètres :_
 * UB200 : PAS A JOUR
 * isUB541 : PAS A JOUR
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `searchDoublonPossible`
-
-Recherche le PPN qualifié de doublon possible par WinIBW.
-
-_Type de procédure : SUB_
-
-Récupère le premier message affiché, si celui-ci contient `PPN` suivi d'un espace, isole les neuf caractères suivant cette expression et lance la recherche `che ppn` avec le PPN isolé.
-Si l'expression n'est pas trouvée, renvoie un message d'erreur.
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `searchExcelPPNList`
-
-Recherche la liste de PPN contenue dans le presse-papier.
-
-_Type de procédure : SUB_
-
-Transforme la liste de PPN du presse-papier en :
-* supprimant `(PPN)` ;
-* remplançant `chr(10)` par `OR` (avec espace avant et après) ;
-* ajoutant au début `che PPN` suivi d'un espace ;
-* supprimant les quatre derniers caractères (supposément `OR` avec un espace avant et après).
-
-Place ensuite la requête dans le presse-papier et lance la requête.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
