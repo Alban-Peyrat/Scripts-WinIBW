@@ -378,12 +378,82 @@ Contient tous les scripts permettant de récupérer des informations depuis WinI
 _[Consulter le fichier](/scripts/vbs/alp_cat_get.vbs)_
 
 
+##### `getCoteEx()`
+
+_Je l'ai codé il y a un certain temps mais je n'ai jamais eu de problèmes avec (très certainement grâce à la méthode de fonctionnement de l'établissement).
+Par contre il mériterait vraiment d'être réécrit..._
+
+Renvoie la cote associé à l'exemplaire du RCR (ou l'un ou plusieurs des exemplaires, ou tous les exemplaires).
+Le RCR dans le script déposé correspond à une variable globale basée sur la variable environnementale que j'ai définie ([voir les lignes de codes hors des fonctions dans winibw.vbs](#lignes-de-code-hors-des-fonctions)).
+
+Récupère la notice bibliographique à l'aide de la fonction `application.activeWindow.copyTitle` puis la divise en utilisant comme séparateur `$b{RCR}`.
+Ensuite, pour chaque partie exceptée la première, isole le numéro d'exemplaire en recherchant dans la partie précédente la dernière occurrence d'un retour à la ligne suivi de `e`, en conservant 3 caractères (ex : `e02`).
+Le script détecte dans un second temps s'il y a un `$a` entre le début de la partie et la première occurrence de `A98 ` : si c'est le cas, il conserve comme cote tout ce qui se trouve entre le `$a` et le premier prochain `$` si et seulement si ce prochain `$` se situe avant un retour à la ligne, sinon, il conserve comme cote tout ce qui se trouve entre le `$a` et le premier retour à la ligne.
+_(En relisant ce code, il est évident que cette détection peut renvoyer de fausses informations...)_
+Si en revanche aucun `$a` n'est détecté entre le début de la partie et le `A98 `, la cote prend la valeur `[Exemplaire sans cote]`.
+Le script ajoute enfin à une variable le texte suivant : `[Occ. {numéro de la cote pour ce RCR}] {numéro d'exemplaire ILN} : {cote}`
+
+Une fois chaque exemplaire partie de la notice traitée, le script regarde le nombre de cotes détectées pour le RCR : __s'il y a en a une seule, renvoie la cote__, sinon, il ouvre une boîte de dialogue présentant toutes les cotes trouvées (sous la forme du texte à la fin du paragraphe ci-dessus).
+Il est alors possible de sélectionner un, plusieurs ou tous les exemplaires, ainsi que de renseigner un séparateur si l'on souhaite récupérer plusieurs cotes (le séparateur par défaut est un retour à la ligne).
+Ainsi l'on répond :
+* le numéro de __l'occurrence__ que l'on souhaite (si l'on en veut une seule) ;
+* les numéros des occurrences que l'on souhaite séparés par des `_` si l'on en souhaite plusieurs ;
+* `all` si l'on souhaite toutes les cotes ;
+* et l'on renseigne si l'on souhaite un séparateur autre que celui par défaut en ajoutant à notre réponse :
+  * `$$t` pour une tabulation horizontale ;
+  * `$$;` pour un point-virgule ;
+  * `$$#{un séparateur personnalisé}` pour un séparateur personnalisé (par exemple, `$$##` pour utiliser `#` comme séparateur, `$$#!` pour `!` comme séparateur)
+
+Le script renverra ensuite la/les cotes demandées avec le séparateur indiqué.
+_Je ne rentrerai pas plus dans les détails pour cette partie, le code est disponible dans le ficher si jamais il y a un problème, mais cette partie mériterait également d'être retravaillée._
+
+##### `getTitle()`
+
+_Mériterait un affinage voire une réécriture._
+
+Renvoie le titre __supposément__ au format ISBD, mais à utiliser de préférences sur des titres assez simples.
+
+Récupère l'intégralité de la première 200 : s'il n'y en a aucune, renvoie `Aucune 200`.
+Sinon, conserve tout ce qui se trouve entre le premier `$a` et le premier `$f`, ou entre le premier `$a` et la fin du champ si aucun `$f` n'est présent.
+Supprime ensuite __toutes__ les `@` et remplace tous les `$e` par des ` : ` (entre espaces).
+Enfin, regarde si le titre est uniquement en majsucule : si c'est le cas, le passe en minuscule en conservant uniquement la première lettre en majuscule, puis renvoie ce titre modifié.
+_À ce stade, vous pouvez, je pense, comprendre le commentaire introduisant ce script._
+
+##### `getUA810b()`
+
+_Comme tous dans ce fichier, mériterait d'être réécrit, notamment parce qu'il devrait se contenter de récupérer une information sans en écrire et qu'il a beaucoup de problèmes possibles._
+
+Génère une `$b` donnant des informations sur la date de naissance à destination d'une 810, puis :
+* l'écrit à la fin de la 810 s'il n'y en a qu'une seule ;
+* renvoie la `$b` générée si plusieurs 810 se trouve dans la notice.
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis copie l'intégralité de la notice.
+Commence ensuite la construction du `$b` en isolant les 8 derniers caractères de la première 103 (supposément AAAAMMJJ), puis en déterminant le genre à l'aide du dernier caractère de la première 120, avant de générer le `b` suivant :
+
+``` MARC
+$bné{e si féminin} le JJ-MM-AAAA
+```
+
+À l'aide de la copie de notice précédemment effectué, compte le nombre d'occurrences de `810 ##` puis :
+* si une seule occurrence est trouvée, se rend à la fin de se champ et insère le `$b` généré ;
+* dans tous les autres cas, renvoie le `$b` généré.
+
+##### `getUB310()`
+
+_Mérite une refonte, particulièrement parce qu'il était majoritairement utilisé pour récupérer les informations sur les droits d'accès aux thèses, qui n'ont plus leur place en 310._
+
+Renvoie le contenu de la `310 $a`.
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis copie la notice à l'aide de la fonction `application.activeWindow.copyTitle`.
+Renvoie ensuite tout ce qui se trouve entre le premier `310 ##$a` et le premier retour à la ligne suivant ce `310 ##$a`.
+
+
 ------------------------------------------------------------
 
 
 #### Fichier `alp_chantier_theses.vbs`
 
-Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses.
+Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses à l'Université de Bordeaux.
 _[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
 
 
