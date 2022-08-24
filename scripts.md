@@ -468,7 +468,40 @@ _[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
 #### Fichier `alp_corwin.vbs`
 
 Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
-_[Consulter le fichier](/scripts/vbs/alp_corwin.vbs)_
+
+Ce projet n'est supposé être utilisé que dans les très rares cas où je n'ai pas réussi à récupérer les données que je souhaite via les API ou autres.
+Et il est à l'abandon depuis octobre 2021.
+
+Donc outre le fait que je ne l'utilise pas, que je ne suis pas vraiment sûr que ce soit une bonne idée de l'utiliser et que le code est absolument terrible, si jamais cette analyse est nécessaire il faudra probablement revoir le code.
+
+##### `CorWin_CW1()`
+
+Pour chaque PPN présent dans le presse-papier __provenant de CorWin__, exporte les `103 $a` et `103 $b` en utilisant [`Ress_exportVar()`](#ress_exportvar).
+Les données exportées pour chaque PPN sont, séparées par des `;_;` :
+* le PPN ;
+* la `103 $a` ;
+* la `103 $b`.
+
+_Il est à noter que certaines parties de cette explication sont des suppositions parce que évidemment mettre des commentaires dans mon code je me suis probablement dit que cela ne servait à rien :)))._
+
+Le script récupère le contenu du presse-papier et le divise en utilisant le retour à la ligne comme séparateur, et initie la variable `storedPPN` comme étant égal à `X`.
+Il initie ensuite un fichier à l’emplacement prévu par CorWin, emplacement qui se trouve être le premier PPN de la liste, qu'il remplace ensuite par `XXXXXXXXX`.
+Le script commence alors une boucle pour chaque PPN dans la liste.
+Si celui-ci n'est ni vide, ni égal à `XXXXXXXXX`, lance la commande `che ppn {PPN}`.
+Il compare ensuite la valeur de la variable `P3GPP` à celle de `storedPPN`, pour vérifier que la notice est différente de celle traitée à l'itération précédente, dans le cas où la recherche du PPN ait échoué : si les deux PPN sont identiques, termine l'itération en renvoyant comme PPN `Erreur : {le PPN qui a été utilisé dans la commande che PPN}` et `00000000` comme valeur pour les `103 $a` et `103 $b`.
+
+Si la vérification est réussie, copie l'intégralité de la notice via la fonction `application.activeWindow.copyTitle` puis isole la 103.
+Le script isole ensuite le contenu du `$a` et du `$b` s'ils existent, sinon il leur attribue la valeur `00000000`.
+_(Sachant que je ne crois pas voir de vérification de la présence d'une 103 mais ignorons les conséquences qu'aurait cette absence.)_
+`storedPPN` prend alors la valeur du PPN grâce à une magnifique manœuvre récupérant les 9 caractères précédent un retour à la ligne suivi de `008` suivi d'un espace, puis génère les données à exporter en utilisant `storedPPN`.
+Enfin, écrit sur le fichier la réponse générée avant de passer à l'itération suivante.
+
+Une fois tous les PPN traités, ferme le fichier et affiche une infobulle demandant de lancer l'analyse de ce fichier sur CorWin.
+
+##### `CorWin_Launcher()`
+
+Ouvre une boîte de dialogue servant à lancer les scripts de CorWin.
+En l'occurrence, un seul traitement existe, il faut donc appeler le traitement `CW1`.
 
 
 ------------------------------------------------------------
