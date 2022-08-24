@@ -465,27 +465,6 @@ _[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
 ------------------------------------------------------------
 
 
-#### Fichier `alp_concepts.vbs`
-
-Contient tous les concepts de scripts que j'ai pu développer pour contrôler le signalement.
-_[Consulter le fichier](/scripts/vbs/alp_concepts.vbs)_
-
-##### `ctrlUA103eqUA200f()`
-
-___Voir [ConStance CS1](../../../ConStance#cs1--équivalence-champs-103--200f-idref) pour un outil équivalent.___
-
-Exporte et compare le $a de UA103 et le $f de UA200 pour chaque PPN de la liste présente dans le presse-papier.
-
-##### `ctrlUB700S3()`
-
-___Voir [ConStance CS2](../../../ConStance#cs2--présence-dun-lien-en-700) pour un outil équivalent et [ConStance CS3](../../../ConStance#cs3--pr%ésence-dun-lien-en-7xx) pour un outil équivalent utilisable sur toutes les 700.___
-
-Exporte le premier $ de UB700 pour chaque PPN de la liste présente dans le presse-papier.
-
-
-------------------------------------------------------------
-
-
 #### Fichier `alp_corwin.vbs`
 
 Contient tous les scripts permettant le fonctionnement du [projet CorWin permettant de contrôler des données dans WinIBW](../../../CorWin).
