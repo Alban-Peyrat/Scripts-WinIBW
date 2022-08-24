@@ -129,6 +129,11 @@ Changez `resource:/Profiles/apeyrat001/alp_scripts/alp_central_scripts.js` par l
 Changez `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts\vbs` par le chemin d'accès à votre dossier contenant les scripts VBS.
 Vous pouvez charger plusieurs dossiers, ou charger un fichier individuellement à l'aide de [la fonction `sluitVBSin()`](#sluitVBSin).
 * `Set WSHShell = CreateObject("WScript.Shell")` : permet de créer un objet `WScript.Shell` qui vous permettra de récupérer les informations d'une variable environnementale, à l'aide de `WSHShell.ExpandEnvironmentStrings("%MY_RCR%")`, en remplaçant `MY_RCR` part le nom de la variable.
+* Notamment, sont récupérés les noms des chemins spéciaux de WinIBW (`ProfD` par exemple) à savoir :
+  * `WINIBW_dwlfile` : le nom complet du fichier de téléchargement ;
+  * `WINIBW_prnfile` : le nom complet du fichier d'impression ;
+  * `WINIBW_BinDir` : le nom complet du dossier principal de WinIBW ;
+  * `WINIBW_ProfD` : le nom complet du dossier de l'utilisateur.
 
 ##### `sluitMapIn()`
 
@@ -191,7 +196,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 21
 Permet de créer un squelette de notice d'autorité à partir d'une notice bibliographique (pour préremplir la 810).
 
 Ouvre une boîte de dialogue demandant d'entrer le patronyme puis une seconde demandant les éléments rejetés.
-Le script récupère ensuite le titre du document via la fonction [`getTitle`](`#gettitle`) ainsi que l'année en utilisant la `100 $c` ou `100 $a`.
+Le script récupère ensuite le titre du document via la fonction [`getTitle`](#gettitle) ainsi que l'année en utilisant la `100 $c` ou `100 $a`.
 Crée ensuite une notice d'autorité sous la forme suivante :
 
 ``` MARC
@@ -230,7 +235,7 @@ Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 31
 
 Permet d'ajouter une 452 avec le titre et les 2 (ISBN 10) ou 3 (ISBN 13) premiers éléments de du premier ISBN renseigné.
 
-Passe la notice en mode édition si elle ne l'est pas déjà puis détermine la position du `@` au sein de la `200 $a` et récupère le titre du document via la fonction [`getTitle`](`#gettitle`).
+Passe la notice en mode édition si elle ne l'est pas déjà puis détermine la position du `@` au sein de la `200 $a` et récupère le titre du document via la fonction [`getTitle`](#gettitle).
 Si aucun titre n'est renvoyé, le titre sera égal à `@ -----À-COMPLÉTER-MANUELLEMENT-----`.
 Le script récupère ensuite le `$a` ou `$A` de la première `010`, puis supprime les deux derniers éléments de celui-ci en utlisant les `-` comme séparateurs d'éléments.
 S'il n'y a aucun `-` dans l'ISBN ou que la récupération de celui-ci a échoué, l'ISBN inséré sera vide.
@@ -567,6 +572,115 @@ Contient tous les scripts ressources que j'utilise au sein des autres scripts.
 _[Consulter le fichier](/scripts/vbs/alp_ressources.vbs)_
 
 Je recommande fortement de l'installer pour pouvoir utiliser la plupart des scripts en VBS.
+Par ailleurs, certains scripts conservent une ancienne notation en commençant par `Ress_` que j'utilisais lorsque tous mes scripts se trouvaient dans `winibw.vbs`.
+Comme les scripts ressources sont utilisés dans beaucoup d'autres scripts, je n'ai pas supprimé le préfixe.
+Toutefois, ils seront ici classés en ignorant le préfixe.
+
+##### `Ress_appendNote()`
+
+_Dans l'idéal je devrais la réécrire pour qu'elle soit une copie exacte de [`__addTextToVar` en JS](#__addtexttovar), mais comme indiqué au-dessus, il faudrait probablement que je modifie beaucoup de scripts._
+
+Renvoie la variable injectée avec le texte injecté, ajoutant un saut de ligne si la variable n'était pas vide.
+
+_Paramètres :_
+* `var` : variable à laquelle on veut ajouter du texte ;
+* `text` : texte à ajouter à la variable.
+
+Regarde si `var` est vide :
+* si oui, renvoie le `text` ;
+* si non, renvoie `var` + `chr(10)` + `text`.
+
+##### `Ress_CountOccurrences()`
+
+_[Créé par Stephen Millard, publié le 30 jullet 2009 sur ThoughtAsylum.](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/)_
+
+Renvoi le nombre d'occurrences.
+
+_Paramètres :_
+* `p_strStringToCheck` : variable qui sera fouillée ;
+* `p_strSubString` : texte à chercher ;
+* `p_boolCaseSensitive` : __bool__ définit si la recherche sera sensible à la casse.
+
+Renvoie le nombre de fois où `p_strSubString` apparait dans `p_strStringToCheck` en comptant le nombre de parties lorsque l'on divise `p_strStringToCheck` en utilisant `p_strSubString` comme séparateur.
+Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temps les deux autres variables en minuscule.
+
+##### `decompUA200enUA400()`
+
+Renvoie des 400 créés en décomposant les noms composés pour les autorités nom de personne à partir du `$a` et du `$b` renseignés (en suivant _supposément_ [la forme des points d'accès pour les noms de personne françaises disponible sur le site de l'IFLA](https://www.ifla.org/g/cataloguing/names-of-persons/)).
+Par exemple, `$a = Poisson-Truite $b = Jacques` et `$a = La Vallière de La Truite Dorée $b = Louise Françoise` créeront respectivement :
+
+``` MARC
+400 #1$aTruite$bJacques Poisson-
+
+400 #1$aVallière de La Truite Dorée$bLouise Françoise La
+400 #1$aLa Truite Dorée$bLouise Françoise La Vallière de
+400 #1$aTruite Dorée$bLouise Françoise La Vallière de La
+400 #1$aDorée$bLouise Françoise La Vallière de La Truite
+```
+
+_Paramètres :_
+* `UA200a` : `200 $a` de l'autorité nom de personne voulue ;
+* `UA200b` : `200 $b` de l'autorité nom de personne voulue.
+
+Ce script fonctionne en boucle tant qu'un espace ou un `-` est détecté dans le `$a`.
+S'il n'y en a pas, ne renvoie rien.
+Détermine dans un premier temps l'emplacement du séparateur détecté, puis rajoute à la fin du `$b` un espace (sauf si le dernier caractère du `$b` est un `-` ou une `'`) suivi de tout ce qui se trouve entre le début du `$a` et le séparateur (inclus), retirant le séparateur si c'est un espace.
+Supprime ensuite du `$a` ce qui a été transféré dans le `$b`.
+
+Le script performe ensuite une vérification afin de rejeter les prépositions `de` et `d'`.
+Ainsi, si les trois premiers caractères du nouveau `$a` sont `de ` (suivi d'un espace) ou si les deux premiers sont `d'`, les prépositions sont retirés de `$a` et ajoutées à la fin du `$b` selon le même principe qu'au-dessus.
+
+Avant de terminer cette itération de la boucle, rajoute à la variable qui sera renvoyée, via l'utilisation de [`Ress_appendNote()`](#ress_appendnote), le champ suivant :
+
+``` MARC
+400 #1$a{le $a transformé}$b{le $b transformé}
+```
+
+##### `delEspaceB4Tag()`
+
+Supprime les espaces se trouvant avant un numéro de champ.
+
+Tant qu'il existe des champs commençant par un espace à l'aide de la fonction `application.activeWindow.title.findTag`, se rend au début du premier de ces champs puis sélectionne ensuite tous les espaces précédent le premier mot à l'aide de la fonction `application.activeWindow.title.wordRight` et supprime la sélection.
+
+##### `executeVBScriptFromName()`
+
+_[Élaboré grâce à la page dédié à la fonction `Execute` du ss64.com par Simon Sheppard.](https://ss64.com/vb/execute.html)_
+
+
+__En état expérimental, utilisation fortement non recommandée.
+Son but est d'être utilisé depuis un script standart, pas depuis un script utilisateur.__
+
+##### `Ress_exportVar()`
+
+_[Original créé par MrNetTek, publié le 19 novembre 2015 sur Lab Core | The Lab of MrNetTek.](http://eddiejackson.net/wp/?p=8619)_
+
+_Il faudrait le revoir._
+
+Exporte le texte injecté dans `export.txt` qui se trouve dans le profil WinIBW de l'utilisateur (même emplacement que `winibw.vbs`).
+
+_Paramètres :_
+* `var` : le texte à exporter ;
+* `boolAppend` : __bool__ définit si le script doit ajouter à la fin du fichier (`true`) ou réécrire le fichier.
+
+##### `findUA200aUA200b()`
+
+_Mériterait d'être revue voire supprimer [par le nouveau `getTag`](#ress_gettag)._
+
+Renvoie, depuis l'écran de modification d'une notice d'autorité (ne vérifie pas le type de notice), les informations suivantes, séparées par des `;_;` :
+* la 200 complète ;
+* la `200 $a` ;
+* la `200 $b` ;
+* la position du premier caractère suivant la fin du `$b`. 
+
+Récupère la 200 à l'aide de la fonction `application.activeWindow.title.findTag`, puis identifie le premier caractère suivant le `$b` en cherchant s'il existe, dans l'ordre :
+* un `$f` ;
+* un `$c` ;
+* un `$x` ;
+* un `$y` ;
+* un `$z` ;
+* si aucun n'existe, détermine que rien ne suit le `$b`.
+
+Sont ensuite isolés le `$a` comme étant tout ce qui se trouve entre le premier `$a` et le premier `$b`, puis le `$b` comme étant tout ce qui se trouve entre le premier `$b` et le premier caractère suivant le `$b` précédemment identifié, avant de renvoyer les données comme expliqué ci-dessus.
 
 ##### `getNoticeType()`
 
@@ -578,6 +692,139 @@ Renvoie l'entier :
 Pour déterminer cette information, il se base sur la variable `P3VMC` qui correspond au type de document (`008 position 1 et 2`) et, si la première variable n'a pas de valeur, sur la variable `scr` qui correspond au code de l'écran.
 Pour `scr`, son utilisation n'est supposée avoir lieu que si le script est utilisé dans le cadre d'une création de notice _ex-nihilo_ ou sur un écran autre qu'une notice.
 Le script vérifie donc uniquement si `scr` est égal à `II` (création de notice d'autorité) ou `IT` (création de notice bibliographique).
+
+##### `Ress_getTag()`
+
+Renvoie un champ ou un sous-champ __depuis l'écran de modification ou l'écran de présentation__.
+De mémoire, certaines fonctionnalités avancées ne fonctionnent pas à la perfection.
+
+__Ce script est trop complexe et pas assez efficace pour son ambition.
+De fait, je ne l'expliquerai pas car il serait juste plus efficace de le recréer à partir de zéro, tout en le scindant en `getField` et `getSubfield`.
+Dans l'idéal, la nouvelle version s'approcherait de [la version JS développée par la GBV (voir `__getFields`)](#__getfields) et serait développée autant en VBS qu'en JS.
+Toujours dans l'idéal, elle prendrait comme argument une expression régulière, comme celle de la GBV, et renverrait une liste de résultats (contrairement à la GBV), soit de champs au format chaîne de caractère, soit de dictionnaires.
+La fonction pour les sous-champs serait assez similaire, prenant comme argument un champ / dictionnaire correspondant au champ.__
+
+_Paramètres :_
+* `tag` : numéro du champ recherché ;
+* `forceOcc` : la/les occurrence à retourner :
+  * `no` : si plusieurs champs existent, ouvre une boîte de dialogue demandant de choisir l'occurrence voulue ;
+  * `last` : renvoie la dernière occurrence ;
+  * `all` : renvoie toutes les occurrences, séparées par des `;_;_;` ;
+  * un nombre : le numéro de l'occurrence voulue, si le nombre est plus grand que le nombre d'occurrences, renvoie la dernière occurrence ;
+* `subtag` : le sous-champ à renvoyer, __doit prendre la valeur `none` si l'on souhaite récupérer le champ complet__ ;
+* `forceOccSub` : la/les occurrence du sous-champ à retourner :
+  * `no` : si plusieurs champs existent, ouvre une boîte de dialogue demandant de choisir l'occurrence voulue ;
+  * `last` : renvoie la dernière occurrence ;
+  * `all` : renvoie toutes les occurrences, séparées par des `;_;_;` ;
+  * un nombre : le numéro de l'occurrence voulue, si le nombre est plus grand que le nombre d'occurrences, renvoie la dernière occurrence.
+
+##### `Ress_goToTag()`
+
+En mode édition, place le curseur à l'emplacement voulu.
+
+__Ce script est trop complexe et pas assez efficace pour son ambition.
+De fait, je ne l'expliquerai pas car il serait juste plus efficace de le recréer à partir de zéro.__
+
+Voici les informations que j'avais pu écrire dessus par le passé :
+* Attention, `subTag` ne doit pas contenir le $ ET est sensible à la casse.
+* Si plusieurs occurrences sont rencontrées sans que `toFirst` ou `toLast` soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée.
+
+_Paramètres :_
+* `tag` : chaîne de caractères
+* `subTag` : chaîne de caractères, `none` si on ne veut pas
+* `toEndOfField` : booléen
+* `toFirst` : booléen
+* `toLast` : booléen
+
+##### `Ress_goToTagInputBox()`
+
+Interface permettant d'essayer [`Ress_goToTag()`](#ress_gototag) en indiquant les paramètres voulus.
+
+##### `PurifUB200a()`
+
+_Mériterait probablement d'être refait. Je pense qu'il a été créé pour faciliter la conversion de métadonnées depuis DUMAS._
+
+Renvoie un titre originellement au format ISBD au format UNIMARC, pour une 200 ou une 541.
+Voir les exemples ci-dessous, avec en premier le champ original et en second le champ renvoyé, d'abord pour une 200, puis pour une 541 :
+
+``` MARC
+200 #1$aPoisson : vie de truite$fLouise Françoise
+200 #1$a@Poisson$evie de truite$fLouise Françoise
+
+541 ##$aLe grand Jacques : sa vie : 1950-1985$zfre
+541 ##$aLe @grand Jacques$esa vie$e1950-1985$zfre
+```
+
+_Paramètres :_
+* `UB200` : la 200 (ou 541) sous forme de chaîne de caractères ;
+* `isUB541` : `false` si c'est une 200, `true` si c'est une 541.
+
+_Trop compliqué pour ce que c'est je pense, je vais donc survoler certains points._
+
+Isole le contenu du `$a` en utilisant la position du `$f` si c'est une 200 ou du `$z` si c'est une 541.
+Remplace ensuite tous les ` : ` (entre espaces) et `: ` (espace uniquement après) par des `$e`.
+Ajoute enfin l'`@` au début du `$a`, sauf si celui-ci commence par les caractères suivants, auquel cas il ajoute l'`@` après (note : pour tous à l'exception de ceux se terminant par `'`, le script vérifie s'il y a un espace après) :
+* `De la ` ;
+* `De l'` ;
+* `Les ` ;
+* `Des ` ;
+* `Une ` ;
+* `The ` ;
+* `Le ` ;
+* `La ` ;
+* `Un ` ;
+* `An ` ;
+* `De ` ;
+* `Du ` ;
+* `A ` ;
+* `L'` ;
+* `D'`.
+
+Renvoie ensuite le champ original en remplaçant le `$a` original par celui qu'il a généré.
+
+##### `Ress_Sleep()`
+
+_[Créé par Paulie D, publié le 16 octobre 2012 sur Stackoverflow en réponse à la question _How to set delay in vbscript_ de Mark, postée le 13 novembre 2009.](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/)_
+
+Permet de mettre en pause un script. __Évitez l'utilisation.__
+
+_Paramètre :_
+* `time` : temps à attendre (en secondes).
+
+##### `Ress_toEditMode()`
+
+_Mériterait une petite actualisation_
+
+Passe en mode édition (ou présentation).
+
+_Paramètres :_
+* `lgpMode` : `true` pour passer en mode présentation, `false` pour passer en mode édition ;
+* `save` : en cas de passage en mode présentation, `true` pour sauvegarder les modifications, `false` pour ne pas enregistrer.
+
+Script barbare qui pour le moment essaye de savoir s'il est possible de coller une information dans la notice :
+* si l'opération entraîne une erreur (non visible par l'utilisateur), détermine que la notice n'est pas en mode édition ;
+* sinon, détermine que la notice est en mode édition.
+
+Il agit ensuite selon trois scénarios :
+* il doit passer en mode édition et la notice n'est pas en mode édition, il lance la commande `mod` ;
+* il doit passer en mode présentation et sauvegarder la notice, il simule la validation de la notice ;
+* il doit passer en mode présentation et ne pas sauvegarder la notice, il simule alors une annulation puis une validation (= pour le message qui apparait en cas de tentative d'annulation alors que des modifications ont été effectuées).
+
+##### `Ress_uCaseNames()`
+
+_Pourrait être revue._
+
+Renvoie les noms injectés avec une majuscule au début de chacun d'entre eux.
+
+_Paramètre :_
+* `noms` : les noms à formater.
+
+Passe en majuscule le premier caractère de `noms` et en minuscule le reste, avant de lancer une boucle à trois itérations.
+Pour chaque itération, le script détermine un séparateur qu'il va rechercher dans `noms` (espace puis `-` puis `'`).
+Il initie alors une variable `jj` avec la valeur `0` puis lance alors une boucle `While` tant que la recherche du séparateur à l'intérieur de `noms` en commençant à la position `jj + 1` est concluante.
+Si la recherche est concluante, `jj` prend la valeur de la position du séparateur identifié, puis le script conserve tel quel tout ce qui se trouve jusqu'à `jj`, puis passe en majuscule le caractère se trouvant en `jj + 1` et conserve tout ce qui le suit tel quel.
+Une fois la boucle `While` interrompue, il passe ensuite à la prochaine itération de la première boucle.
+Une fois les trois itérations de celle-ci terminée, il remplace `De` (espace avant et après) et `D'` (espace avant) par leur équivalent en minuscule, avant de renvoyer le résultat final.
 
 
 ------------------------------------------------------------
@@ -1036,44 +1283,6 @@ _Type de procédure : SUB_
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
 
-#### `decompUA200enUA400`
-
-Renvoie des UA400 créés à partir de la décomposition du nom composé de l'UA200, à l'aide des `$a` et `$b` injectés.
-
-_Type de procédure : FUNCTION_
-
-_Paramètres :_
-* `UA200a` : contenu de la 200 `$a` ;
-* `UA200b` : contenu de la 200 `$b`.
-
-Le script est une grande boucle `While` qui boucle tant que `UA200a` contient un espace ou un tiret.
-À chaque isntance, il détecte quel est le séparateur (en comparant quelle est la plus petite position, 0 exclu, entre l'espace et le tiret).
-Il construit ensuite la nouvelle forme, en ajoutant à la fin de `UA200b` (avec un espace si le dernier caractère n'est pas `'` ou `-`) le début de `UA200a` jusqu'au séparateur, supprimant ensuite cette partie (séparateur compris) dans `UA200a`.
-Le script analyse ensuite si les caractères au début du nouveau `UA200a` sont les particules rejetées françaises (`de` suivi d'un espace ou `d'`), si c'est le cas, il les retire de `UA200a` et les rajoute à la fin de `UA200b` (sans espace si nécessaire).
-Il rajoute ensuite le champ ci-dessous à la valeur qui sera renvoyée (via [`appendNote`](#appendnote)) avant de passer à la prochaine instance :
-* `400 #1$a` + la valeur actuelle de `UA200a` + `$b` + la valeur actuelle de `UA200b`
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `findUA200aUA200b`
-
-Renvoie la position la UA200, son `$a`, son `$b` et la position du premier dollar suivant le `$b` ou à défaut celle de la fin du champ. __Doit être appelé depuis l'écran de modification pour fonctionner.__
-
-_Type de procédure : SUB_
-
-Récupère le premier champ 200 de la notice puis initie une boucle `While` tant que `UA200fPos` est égal à zéro (sa valeur par défaut), tout en générant un compteur supplémentaire.
-À chaque instance de la boucle, en fonction de la valeur du compteur (augmente de 1 à la fin de chaque instance), la script va attribuer à `UA200fPos` la position d'un dollar (0 par défaut, ce qui veut dire que si le dollar n'est pas présent, la boucle continue) :
-* compteur = 0 : `$f` ;
-* compteur = 1 : `$c` ;
-* compteur = 2 : `$x` ;
-* compteur = 3 : `$y` ;
-* compteur = 4 : `$z` ;
-* si le compteur a une autre valeur, assigne à `UA200fPos` la longueur de la 200 __+ 1__ (sinon [`addUA400`](#addua400) supprimerait parfois la dernière lettre du prénom).
-
-Il isole ensuite la valeur du `$a` puis du `$b` et renvoie la 200, la `$a` isolé, le `$b` isolé et `UA200fPos` __sous forme d'une seule chaîne de caractères en séparant les différentes valeurs par `;_;`__.
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
 #### `getDataUAChantierThese`
 
 Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales. Une option permet de réécrire ou d'éditer les champs directement depuis WinIBW.
@@ -1085,142 +1294,3 @@ _Renvoi :_
 Créé dans le cadre d'un chantier sur les thèses, l'exploitation de ces données se fait dans un tableur Excel particulier.
 
 [Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `PurifUB200a`
-
-Renvoie l'adaptation d'un titre en son écriture en UNIMARC.
-
-_Type de procédure : FUNCTION_
-
-_Renvoi :_
-
-_Paramètres :_
-* UB200 : PAS A JOUR
-* isUB541 : PAS A JOUR
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-### Scripts ressources
-
-Ce fichier contient les scripts facilitant l'exécution des autres, qui sont amenés à être appelés dans de nombreux autres scripts.
-
-#### `appendNote`
-
-Renvoie la variable injectée avec le texte injecté, ajoutant un saut de ligne si la variable n'était pas vide.
-
-_Type de procédure : FUNCTION_
-
-_Paramètres :_
-* `var` : variable à laquelle on veut ajouter du texte ;
-* `text` : texte à ajouter à la variable.
-
-Regarde si `var` est vide :
-* si oui, renvoie le `text` ;
-* si non, renvoie `var` + `chr(10)` + `text`.
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `CountOccurrences`
-
-Renvoi le nombre d'occurrences.
-
-_Type de procédure : FUNCTION_
-
-_Paramètres :_
-* `p_strStringToCheck` : variable qui sera fouillée ;
-* `p_strSubString` : texte à chercher ;
-* `p_boolCaseSensitive` : __bool__ définit si la recherche sera sensible à la casse.
-
-Renvoie le nombre de fois où `p_strSubString` apparait dans `p_strStringToCheck` en comptant le nombre de parties lorsque l'on divise `p_strStringToCheck` en utilisant `p_strSubString` comme séparateur.
-Si `p_boolCaseSensitive` est `false`, alors le script passe dans un premier temps les deux autres variables en minuscule.
-
-[Consulter la source originale](https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `exportVar`
-
-Exporte le texte injecté dans `export.txt` (même emplacement que `winibw.vbs`). __Pour l'utiliser, pensez à changer la destination du document, et le nom si vous le souhaitez.__
-
-_Type de procédure : SUB_
-
-_Paramètres :_
-* `var` : le texte à exporter ;
-* `boolAppend` : __bool__ définit si le script doit ajouter à la fin du fichier (`true`) ou réécrire le fichier.
-
-[Consulter la source originale](http://eddiejackson.net/wp/?p=8619), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `goToTag`
-
-Attention, `subTag` ne doit pas contenir le $ ET est sensible à la casse.
-
-Place le curseur à l'emplacement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que `toFirst` ou `toLast` soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée.
-
-_Type de procédure : SUB_
-
-_Paramètres :_
-* tag : [string] A FAIRE
-* subTag : [string, "none" pour empty] A FAIRE
-* toEndOfField : [bool] A FAIRE
-* toFirst : [bool] A FAIRE
-* toLast : [bool] A FAIRE
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `goToTagInputBox`
-
-Permet d'essayer `goToTag` en indiquant les paramètres voulus.
-
-_Type de procédure : SUB_
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `Sleep`
-
-Permet de mettre en pause un script. __Évitez l'utilisation.__
-
-_Type de procédure : SUB_
-
-_Paramètres :_
-* `time` : __int__ temps à attendre (en secondes).
-
-[Consulter la source originale](https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript#answer-12921137), [consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `toEditMode`
-
-Passe en mode édition (ou présentation).
-
-_Type de procédure : SUB_
-
-_Paramètres :_
-* `lgpMode` : __bool__ définit si l'on souhaite passer en mode présentation (`true`) ;
-* `save` : __bool__ définit si l'on souhaite sauvegarder les modifications si l'on passe en mode présentation.
-
-Script barbare qui pour le moment essaye de savoir s'il est possible de coller une information dans la notice :
-* si l'opération entraîne une erreur (non visible par l'utilisateur), détermine que la notice n'est pas en mode édition ;
-* sinon, détermine que la notice est en mode édition.
-
-Il agit ensuite selon trois scénarios :
-* il doit passer en mode édition et la notice n'est pas en mode édition, il lance la commande `mod` ;
-* il doit passer en mode présentation et sauvegarder la notice, il simule la validation de la notice ;
-* il doit passer en mode présentation et ne pas sauvegarder la notice, il simule alors une annulation puis une validation (= pour le message qui apparait en cas de tentative d'annulation alors que des modifications ont été effectuées).
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
-#### `uCaseNames`
-
-Renvoie les noms injectés avec une majuscule au début de chacun d'entre eux.
-
-_Type de procédure : FUNCTION_
-
-_Paramètres :_
-* `noms` : les noms à formatter.
-
-Passe en majuscule le premier caractère de `noms` et en minuscule le reste, avant de lancer une boucle à trois instances.
-Pour chaque instance, le script détermine un séparateur qu'il va rechercher dans `noms` (espace puis `-` puis `'`).
-Il initie alors une variable `jj` avec la valeur `0` puis lance alors une boucle `While` tant que la recherche du séparateur à l'intérieur de `noms` en commençant à la position `jj + 1` est concluante.
-Si la recherche est concluante, `jj` prend la valeur de la position du séparateur identifié, puis le script conserve tel quel tout ce qui se trouve jusqu'à `jj`, puis passe en majuscule le caractère se trouvant en `jj + 1` et conserve tout ce qui le suit tel quel.
-Une fois la boucle `While` interrompue, il passe ensuite à la prochaine instance de la première boucle.
-Une fois les trois instances de celle-ci terminée, il remplace `De` (espace avant et après) et `D'` (espace avant) par leur équivalent en minuscule, avant de renvoyer le résultat final.
-
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_ressources.vbs)
-
