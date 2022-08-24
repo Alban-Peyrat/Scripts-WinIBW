@@ -10,9 +10,13 @@ application.writeProfileString "ibw.standardScripts","script.AlP","resource:/Pro
 sluitMapIn("C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts\vbs")
 
 ' Récupère des variables d'environnement que j'ai défini dans un autre fichier (JS)
-Dim WSHShell, MY_RCR
+Dim WSHShell, MY_RCR, WINIBW_dwlfile, WINIBW_prnfile, WINIBW_BinDir, WINIBW_ProfD
 Set WSHShell = CreateObject("WScript.Shell")
 MY_RCR = WSHShell.ExpandEnvironmentStrings("%MY_RCR%")
+WINIBW_dwlfile = WSHShell.ExpandEnvironmentStrings("%WINIBW_dwlfile%")
+WINIBW_prnfile = WSHShell.ExpandEnvironmentStrings("%WINIBW_prnfile%")
+WINIBW_BinDir = WSHShell.ExpandEnvironmentStrings("%WINIBW_BinDir%")
+WINIBW_ProfD = WSHShell.ExpandEnvironmentStrings("%WINIBW_ProfD%")
 
 
 Private Sub alp_param()
