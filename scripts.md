@@ -841,6 +841,142 @@ Une fois les trois itérations de celle-ci terminée, il remplace `De` (espace a
 ------------------------------------------------------------
 
 
+#### Fichier `alp_theses2win.vbs`
+
+Contient tous les scripts développés à destination du projet de création de notices UNIMARC dans WinIBW à partir d'une base externe.
+_[Consulter le fichier](/main/scripts/js/alp_theses2win.js)_
+
+_[Voir le document dédié](./imp2Win.md)_
+
+_Dans l'idéal il faudrait scinder le fichier en `alp_imp2win.vbs` et `alp_UBtheses2win.vbs` pour bien distinguer les fonctions ressources et les fonctions propres au projet développé à l'Université de Bordeaux, mais je n'avais pas le temps, donc un jour peut-être._
+
+_Comme présenté dans le document dédié, le projet a été théorisé et les tests techniques ont été effectués.
+Le code est comme je l'ai laissé par manque de temps, de fait il manque par exemple une fonction qui permet d'analyser l'URL donnée par l'utilisateur pour décider de lancer le script pour DUMAS ou OSKAR Bordeaux, la fonction pour DUMAS ne prend pas de paramètre alors qu'elle devrait prendre une URL comme paramètre, cette même fonction n'a pas le bon procédé technique, etc._
+
+##### Les procédés employés
+
+Deux méthodes différentes sont employées dans ce projet :
+* l'XML en utilisant l'objet `XMLDOM` ([ressource utilisée : Manipuler des fichiers XML en VBScript avec XPath par Baptiste Wicht, publié originnellement le 19 décembre 2007](https://baptiste-wicht.developpez.com/tutoriels/microsoft/vbscript/xml/xpath/)) ;
+* l'HTML en utilisant l'objet [`Internet Explorer`](https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752084(v=vs.85)) ([en utilisant le code de l'Abes pour le script utilisateur IdRef](https://github.com/abes-esr/winibw-scripts/blob/3f374e37151ab686fd1423cc21195b997d7df4b9/user-scripts/idref/IdRef.vbs))
+
+Puisque nous utilisons des objets `InternetExplorer`, on ne peut pas utiliser de JSON car Internet Explorer ne peut pas afficher du JSON, il lance un téléchargement.
+Il devrait être possible d'utiliser de tout de même utiliser des JSON en téléchargeant le document, par exemple avec [`httpdownload.vbs`](#fichier-httpdownload.vbs), mais cette possibilité n'a pas été explorée pour le moment.
+Il y a peut-être d'autre solutions pour utiliser du JSON, j'ai pas forcément eu le temps d'explorer tout ce qui était possible.
+
+##### Notes et ressources
+
+Voici quelques notes que je me suis marqué pour interagir avec ces objets :
+* utiliser `set` pour les objets ;
+* pour l'HTML, utiliser :
+  * `getElementsByTagName`,
+  * `getElementsByClassName`,
+  * `getElementsById`,
+  * `getAttribute`,
+  * `.innertext` ;
+* pour le XML, utiliser :
+  * `selectSingleNode`,
+  * `selectNodes`,
+  * `getAttribute`,
+  * `.text`.
+
+Enfin, voici quelques ressources que je me suis également marquées :
+* pour les dictionnaires : [Dictionnary sur le site Dot Net Perls, par Sam Allen](https://www.dotnetperls.com/dictionary-vbnet) ;
+* pour les éléments : [Element par MDN (developer.mozilla.org)](https://developer.mozilla.org/en-US/docs/Web/API/Element)
+* pour les expressions régulières :
+  * [la méthode `Replace` de l'objet `RegExp` en VBScript par O'Reilly](https://www.oreilly.com/library/view/vbscript-in-a/1565927206/re155.html) ;
+  * [la page consacrée au VBScript de Regular-Expressions.info](https://www.regular-expressions.info/vbscript.html).
+
+##### `dumasXMLDOM()`
+
+Une fonction de test de récupération d'information via l'objet `XMLDOM`.
+
+Dans l'idéal, je pense qu'elle devait devenir l'équivalent de [`getIEObjectDocument()`](#getieobjectdocument) mais pour les objets `XMLDOM`.
+
+Dans son état actuel, affiche tous les titres de l'XML-TEI (`/TEI/text/body/listBibl/biblFull/titleStmt/title`) de la thèse avec l'identifiant HAL `dumas-01911186` dans une infobulle différente pour chaque titre.
+
+##### `thesesDumas2winibw()`
+
+La fonction principale pour la conversion de DUMAS vers WinIBW.
+
+Supposément, prend comme paramètre :
+* `url` : l'URL DUMAS du document.
+
+Elle fonctionne encore avec un objet `InternetExplorer.Document`, probablement parce que j'ai découvert comment gérer les objets `XMLDOM` après.
+
+Dans son état actuel, récupère l'objet `InternetExplorer.Document` de la thèse avec l'identifiant HAL `dumas-01911186` puis crée une notice bibliographique avec la commande `cre e` si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
+
+Récupère ensuite le premier tag HTML `licence` via [`getIEDocTag()`](#getiedoctag) et affiche dans une infobulle :
+* son `.textContent` ;
+* son `.innerText` ;
+* le résultat de [`getXmlTextContent()`](#getxmltextcontent).
+
+##### `getIEObjectDocument()`
+
+_[Original créé par l'Abes dans le script utilisateur IdRef](https://github.com/abes-esr/winibw-scripts/blob/3f374e37151ab686fd1423cc21195b997d7df4b9/user-scripts/idref/IdRef.vbs)_
+
+Renvoie [un objet `InternetExplorer.Document`](https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752052(v=vs.85)).
+
+_Ce qui est un problème parce que je sais pas ce que devient le IE qui ne se ferme probablement jamais...
+À étudier_
+
+_Paramètre :_
+* `url` : l'url de la page.
+
+##### `getIEDocTag()`
+
+Renvoie une liste d'éléments HTML obtenus via [`getElementsByTagName`](https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName).
+
+_Paramètres :_
+* `IEDoc` : l'objet `InternetExplorer.Document` (voir [`getIEObjectDocument()`](#getieobjectdocument)) ;
+* `tag` : la balise HTML voulue.
+
+##### `getElemAttr()`
+
+Renvoie la valeur de l'attribut voulu via [`getAttribute`](https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute)
+
+_Paramètres :_
+* `elem` : l'élément (voir [`getIEDocTag()`](#getiedoctag)) ;
+* `attr` : l'attribut voulu.
+
+##### `getXmlTextContent()`
+
+_[Expression régulière originale créée par jcomeau_ictx, originellement publiée le 19 juillet 2011 sur StackOverflow en réponse à la question How to get the pure text without HTML element using JavaScript? posée par John le 19 juillet 2011.](https://stackoverflow.com/questions/6743912/how-to-get-the-pure-text-without-html-element-using-javascript#6744068')_
+
+Renvoie l'`innerText` d'un tag XML sans son tag, si l'XML a été chargé comme un objet `InternetExplorer.Document` _(je pense)_.
+
+_Paramètre :_
+* `elem` : l'élément (voir [`getIEDocTag()`](#getiedoctag)).
+
+Utilise l'expression régulière `<[^>]*>` en mode global pour supprimer les tags HTML obtenu par le `.textContent` d'`elem`. 
+
+##### `oskar2winibw()`
+
+La fonction principale pour la conversion d'OSKAR Bordeaux vers WinIBW.
+
+_Paramètre :_
+* `url` : l'URL OSKAR Bordeaux du document.
+
+Dans son état actuel, récupère l'objet `InternetExplorer.Document` d'une thèse (il faut afficher les métadonnées complètes en avance je pense) puis crée une notice bibliographique avec la commande `cre e` si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
+
+Initie ensuite un dictionnaire, puis récupère la table contenant toutes les métadonnées.
+Pour chaque ligne dans la table, récupère la première et seconde colonne (respectivement le nom de la métadonnée et la valeur de celle-ci), puis analyse quelle est la métadonnée afin de déterminer l'affichage final : si elle est considéré comme utile, son nom français s'affichera proprement, sinon c'est la flèche suivante qui s'affichera  `---------->` (`dc.contributor.author`, `dc.contributor.advisor`, `dc.date` sont les seules considérées comme utiles).
+Enfin, insère dans la notice bibliographique la ligne suivi d'un retour à la ligne  :
+`{le nom français / la flèche} {nom de la métadonnée} : {valeur de la métadonnée}`
+
+Dans la partie commentée au bas du code, il y a une utilisation plus pratique du code.
+Dans les grandes lignes, basée sur le document à l'URI `https://oskar-bordeaux.fr/handle/20.500.12278/23589`, récupère dans le dictionnaire le prénom et le nom de famille du directeur de thèse et de l'auteur, en passant en minuscule les noms de famille, ainsi que le titre de la thèse et l'année de soutenance.
+Pour le titre de la thèse, il est divisé en titre / sous-titre à l'emplacement du `?`.
+Génère ensuite une 200 et une 214 avant d'afficher dans une infobulle 6 informations (toutes sauf le titre propre apparemment) :
+
+``` MARC
+200 1#$a@{titre}$e{sous-titre}$f{prénom auteur} {nom auteur}$gsous la direction de {prénom directeur de thèse} {nom directeur de thèse}
+214 #1$a{année}
+```
+
+
+------------------------------------------------------------
+
+
 ### Scripts standarts (JS)
 
 #### Fichier `alp_central_scripts.js`
