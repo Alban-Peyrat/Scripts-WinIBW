@@ -844,6 +844,47 @@ Une fois les trois itérations de celle-ci terminée, il remplace `De` (espace a
 
 ### Scripts standarts (JS)
 
+#### Fichier `alp_central_scripts.js`
+
+Contient des paramètres qui seront définis à l'initialisation de WinIBW (ou lors de l'actualisation des scripts standards).
+Ces paramètres sont soit des variables pour les scripts standards uniquement, soit des variables environnementales pour permettre leur utilisation en VBS, soit des fonctions permettant de charger les autres scripts standards.
+
+_[Consulter le fichier](/scripts/alp_central_scripts.js)_
+
+#####  Lignes de code hors des fonctions
+
+* Initialisation des constantes `thePrefs` et `theEnv` pour les scripts standards. J'ai un doute sur `thePrefs`, `theEnv` permet notamment d’interagir avec des variables environnementales.
+Les deux ont été récupérés des scripts de la [GBV (plus d'informations à ce sujet dans la partie consacrée à leurs scripts)](#fichier-gbvjs).
+* Initialisation des variables environnementales des noms des chemins spéciaux de WinIBW (`ProfD` par exemple) pour les rendre accessibles en VBS, à savoir :
+  * `WINIBW_dwlfile` : le nom complet du fichier de téléchargement ;
+  * `WINIBW_prnfile` : le nom complet du fichier d'impression ;
+  * `WINIBW_BinDir` : le nom complet du dossier principal de WinIBW ;
+  * `WINIBW_ProfD` : le nom complet du dossier de l'utilisateur.
+* __Initialisation de la variable `alpScripts`.__
+C'est dans cette variable qu'il faut indiquer le chemin d'accès à vos scripts standards __se trouvant dans votre profil utilisateur.__
+Indiquer le chemin d'accès, en utilisant des `/`, pas des `\`.
+Par exemple, mon fichier contenant mes scripts principaux se trouve dans le sous-dossier `alp_scripts` puis `js`, ce qui donne `"alp_scripts/js/peyrat_main.js"`.
+Immédiatement après l'initialisation de cette constante, une boucle va ajouter aux préférences utilisateurs de votre profil les scripts indiqués dans `alpScripts`, en leur attribuant le nom `AlP` suivi de leur index (commençant à 0).
+__L'ordre dans lequel vous classez les scripts dans `alpScripts` correspond à leur ordre de chargement__ (je crois).
+Enfin, si vous décidez de supprimer un script sans en rajouter (=vous chargiez 4 fichiers, vous n'en chargez plus que 3), ce qui réduirait le nombre total de scripts, __pensez à vous rendre dans le `user_pref.js` dans votre profil utilisateur pour supprimer le `ibw.standardScripts.script.AlP` avec l'index le plus grand__ qui ne sera pas automatiquement supprimé.
+Ci-dessous, l'exemple de ma variable `alpScripts` :
+
+``` Javascript
+const  alpScripts  = ["alp_scripts/js/NE_PAS_DIFFUSER.js",
+"alp_scripts/js/peyrat_ressources.js",
+"alp_scripts/js/GBV.js",
+"alp_scripts/js/peyrat_main.js",
+"alp_scripts/js/SCOOP.js",
+"alp_scripts/js/peyrat_peb.js",
+"alp_scripts/python-winibw/pythWinIBW.js",
+"alp_scripts/python/python.js",
+"alp_xul/xul_test.js"];
+```
+
+ 
+ ------------------------------------------------------------
+
+
 #### Fichier `GBV.js`
 
 _[Consulter le fichier](/main/scripts/js/GBV.js)_
