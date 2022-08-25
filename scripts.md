@@ -508,9 +508,19 @@ En l'occurrence, un seul traitement existe, il faut donc appeler le traitement `
 
 #### Fichier `alp_dumas.vbs`
 
-Contient tous les scripts développés en lien avec [DUMAS](https://dumas.ccsd.cnrs.fr/).
+Contient le script utilisé pour l'ancienne version du générateur de notice UNIMARC à partir d'un dépôt [DUMAS](https://dumas.ccsd.cnrs.fr/).
 [Le dépôt ub-svs contient plus d'informations à ce sujet](../../../ub-svs).
 _[Consulter le fichier](/scripts/vbs/alp_dumas.vbs)_
+
+Sachant que ce script doit être très très très largement repris de [celui de l'Abes pour le script utilisateur IdRef](https://github.com/abes-esr/winibw-scripts/blob/3f374e37151ab686fd1423cc21195b997d7df4b9/user-scripts/idref/IdRef.vbs).
+
+##### `these_catDumas()`
+
+Ce script se connecte à l'URL de mon site qui génère la notice UNIMARC du dépôt DUMAS dont l'URL est contenue dans le presse-papier, puis récupère cette notice pour la coller dans WinIBW.
+
+Le début du script isole le `docid` du document pour pouvoir exécuter la fonction principale de la page de mon générateur avec, une fois que WinIBW a réussi à se connecter au site.
+Une fois la fonction lancée, WinIBW "sommeille" pendant 1 seconde (via [`ress_sleep()`](#ress_sleep) pour laisser à mon site le temps d'interroger DUMAS et de créer la notice, puis récupère l'élément contenant la notice.
+Il exécute enfin la commande `cre` puis insère le texte contenu dans l'élément récupérer précédemment.
 
 
 ------------------------------------------------------------
@@ -903,7 +913,7 @@ Supposément, prend comme paramètre :
 
 Elle fonctionne encore avec un objet `InternetExplorer.Document`, probablement parce que j'ai découvert comment gérer les objets `XMLDOM` après.
 
-Dans son état actuel, récupère l'objet `InternetExplorer.Document` de la thèse avec l'identifiant HAL `dumas-01911186` puis crée une notice bibliographique avec la commande `cre e` si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
+Dans son état actuel, récupère l'objet `InternetExplorer.Document` de la thèse avec l'identifiant HAL `dumas-01911186` puis crée une notice ~~bibliographique~~ d'autorité avec la commande `cre e` (_magnifique erreur_) si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
 
 Récupère ensuite le premier tag HTML `licence` via [`getIEDocTag()`](#getiedoctag) et affiche dans une infobulle :
 * son `.textContent` ;
@@ -956,7 +966,7 @@ La fonction principale pour la conversion d'OSKAR Bordeaux vers WinIBW.
 _Paramètre :_
 * `url` : l'URL OSKAR Bordeaux du document.
 
-Dans son état actuel, récupère l'objet `InternetExplorer.Document` d'une thèse (il faut afficher les métadonnées complètes en avance je pense) puis crée une notice bibliographique avec la commande `cre e` si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
+Dans son état actuel, récupère l'objet `InternetExplorer.Document` d'une thèse (il faut afficher les métadonnées complètes en avance je pense) puis crée une notice ~~bibliographique~~ d'autorité avec la commande `cre e` (_magnifique erreur_) si l'objet a bien été retourné par `getIEObjectDocument()`, sinon affiche une erreur et arrête l'exécution du programme.
 
 Initie ensuite un dictionnaire, puis récupère la table contenant toutes les métadonnées.
 Pour chaque ligne dans la table, récupère la première et seconde colonne (respectivement le nom de la métadonnée et la valeur de celle-ci), puis analyse quelle est la métadonnée afin de déterminer l'affichage final : si elle est considéré comme utile, son nom français s'affichera proprement, sinon c'est la flèche suivante qui s'affichera  `---------->` (`dc.contributor.author`, `dc.contributor.advisor`, `dc.date` sont les seules considérées comme utiles).
