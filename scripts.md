@@ -52,11 +52,10 @@ Procédure d'installation :
 * [Téléchargez ce dépôt](https://github.com/Alban-Peyrat/WinIBW/archive/refs/heads/main.zip).
 * Au sein de celui-ci, vous trouverez dans le dossier `scripts` un sous-dossier appelé `js` ainsi qu'un fichier `alp_central_scripts.js`.
 C'est au sein du sous-dossier `js` que se trouvent les fichiers contenant les scripts.
-Vous pouvez placer ces scripts où vous le souhaitez (dans votre profil WinIBW semble être une bonne idée.
-Par exemple, les miens se trouvent sous `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts`).
+Vous pouvez placer ces scripts où vous le souhaitez, mais __`alp_central_scripts.js` est configuré pour charger des fichiers se trouvant dans votre profil utilisateur WinIBW__ (par exemple, les miens se trouvent sous `C:\oclcpica\WinIBW30\Profiles\apeyrat001\alp_scripts`).
 * Au sein de `alp_central_scripts.js`, vous devrez éditer la liste des fichiers que vous voulez charger.
-Pour ce faire, ouvrez le fichier dans un éditeur de texte et rendez-vous à la ligne 28 du fichier (qui commence par `const alpScripts =`).
-Remplacer les noms complets (chemin d'accès au fichier + nom du fichier + extension du fichier) des fichiers par défaut par ceux que vous voulez charger (si les fichiers se trouvent au sein de WinIBW, vous pouvez remplacer le début par `resource:/`).
+Pour ce faire, ouvrez le fichier dans un éditeur de texte et rendez-vous à la ligne 63 du fichier (qui commence par `const alpScripts =`).
+Remplacer les noms semi-complets (chemin d'accès au fichier en utilisant comme base votre profil utilisateur WinIBW + nom du fichier + extension du fichier) des fichiers par défaut par ceux que vous voulez charger.
 Veillez à respecter la mise en forme déjà présente : à la fin, votre liste doit ressembler à :
 
 ``` Javascript
