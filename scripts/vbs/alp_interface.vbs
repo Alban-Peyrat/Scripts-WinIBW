@@ -1,44 +1,60 @@
-'Scripts qui intéragissent avec l'interface
+'Scripts qui intÃ©ragissent avec l'interface
+
+Sub collerPPN()
+'Recherche le PPN contenu dans le presse papier
+'Raccourci : Ctrl+Shift+V
+     
+With Application.activeWindow
+
+    If Left(.Clipboard,3) = "PPN" Then
+        .Command "che ppn " & Right(.Clipboard,9)
+    Else
+         .Command "che ppn " & .Clipboard
+    End If
+    
+End With
+
+End Sub
 
 Sub generalLauncher()
 'Ouvre un input box pour lancer les scripts
 Dim num
 
-num = Inputbox("Écrire le numéro du script à exécuter"_
-	& chr(10) & chr(10) & chr(09) & "Général :"_
+num = Inputbox("Ã‰crire le numÃ©ro du script Ã  exÃ©cuter"_
+	& chr(10) & chr(10) & chr(09) & "GÃ©nÃ©ral :"_
 	& chr(10) & "[18] Rechercher le doublon possible"_
 	& chr(10) & chr(10) & chr(09) & "Notices bibg :"_
-	& chr(10) & "[14] Ajouter 18X mongraphie imprimée"_
-	& chr(10) & "[19] Ajouter 18X mongraphie imprimée illustrée"_
+	& chr(10) & "[14] Ajouter 18X mongraphie imprimÃ©e"_
+	& chr(10) & "[19] Ajouter 18X mongraphie imprimÃ©e illustrÃ©e"_
 	& chr(10) & "[25] Ajouter note de provenance du bon ISBN"_
 	& chr(10) & "[1] Ajouter couverture porte"_
 	& chr(10) & "[2] Ajouter bibg en fin de chapitre"_
 	& chr(10) & "[3] Ajouter e-ISBN"_
 	& chr(10) & "[4] Ajouter sujet RAMEAU"_
 	& chr(10) & "[15] Ajouter 700 $3"_
-	& chr(10) & "[17] Ajouter une autorité auteur"_
+	& chr(10) & "[17] Ajouter une autoritÃ© auteur"_
 	& chr(10)& chr(10) & chr(09) & "Elsevier"_
 	& chr(10) & "[6] Ajouter ISBN Elsevier"_
 	& chr(10) & "[7] Ajouter 214 Elsevier"_
-	& chr(10)& chr(10) & chr(09) & "Récupérer informations"_
-	& chr(10) & "[8] Récupérer le titre"_
-	& chr(10) & "[9] Récupérer la cote"_
-	& chr(10)& chr(10) & chr(09) & "Thèses"_
-	& chr(10) & "[10] Récupérer les données chantier autorités"_
-	& chr(10) & "[5] Ajouter 700 $3 & vérif. ex."_
-	& chr(10) & "[11] Récupérer la note disponibilité (310)"_
-	& chr(10) & "[20] (jury) Récupérer les données"_
-	& chr(10) & "[21] (jury) Rajouter informations à la notice"_
-	& chr(10) & "[22] (jury) Créer autorité"_
-	& chr(10) & "[23] (jury) Ajouter une 314 pour un directeur président de jury"_
-	& chr(10) & "[24] (jury) Ajouter 200$g pour président de jury"_
-	& chr(10) & chr(10) & chr(09) & "Notices autorité :"_
-	& chr(10) & "[16] Créer une notice d'autorité auteur pour cette notice"_
+	& chr(10)& chr(10) & chr(09) & "RÃ©cupÃ©rer informations"_
+	& chr(10) & "[8] RÃ©cupÃ©rer le titre"_
+	& chr(10) & "[9] RÃ©cupÃ©rer la cote"_
+	& chr(10)& chr(10) & chr(09) & "ThÃ¨ses"_
+	& chr(10) & "[10] RÃ©cupÃ©rer les donnÃ©es chantier autoritÃ©s"_
+	& chr(10) & "[5] Ajouter 700 $3 & vÃ©rif. ex."_
+	& chr(10) & "[11] RÃ©cupÃ©rer la note disponibilitÃ© (310)"_
+	& chr(10) & "[20] (jury) RÃ©cupÃ©rer les donnÃ©es"_
+	& chr(10) & "[21] (jury) Rajouter informations Ã  la notice"_
+	& chr(10) & "[22] (jury) CrÃ©er autoritÃ©"_
+	& chr(10) & "[23] (jury) Ajouter une 314 pour un directeur prÃ©sident de jury"_
+	& chr(10) & "[24] (jury) Ajouter 200$g pour prÃ©sident de jury"_
+	& chr(10) & chr(10) & chr(09) & "Notices autoritÃ© :"_
+	& chr(10) & "[16] CrÃ©er une notice d'autoritÃ© auteur pour cette notice"_
 	& chr(10) & "[12] Ajouter 400"_
-	& chr(10) & "[13] Récupérer 810 $b date de naissance"_
+	& chr(10) & "[13] RÃ©cupÃ©rer 810 $b date de naissance"_
 	& chr(10) & chr(10) & chr(09) & "[77] Lanceur de CorWin"_
 	& chr(10) & chr(10) & chr(09) & "[88] Lanceur PEB"_
-	, "Exécuter un script :", 99)
+	, "ExÃ©cuter un script :", 99)
 Select Case num
 	case 1
 		addCouvPorte
@@ -101,7 +117,7 @@ End Select
 End Sub
 
 Sub goToWorkRecord()
-'Ouvre la page de l'oeuvre associée document. S'il n'y a pas de 579, affiche un message
+'Ouvre la page de l'oeuvre associÃ©e document. S'il n'y a pas de 579, affiche un message
 
 	Dim field, fields, ii
 	field = application.activeWindow.variable("P3CLIP")
@@ -113,11 +129,18 @@ Sub goToWorkRecord()
 			Exit Sub
 		End If
 	Next
-	MsgBox "Pas de notice d'oeuvre liée à cette notice bibliographique (absence de 579)."
+	MsgBox "Pas de notice d'oeuvre liÃ©e Ã  cette notice bibliographique (absence de 579)."
+End Sub
+
+Sub lastCHE()
+'Raccourci : Ctrl+Shift+Ret.Arriere
+
+    Application.ActiveWindow.Command "HIS"
+
 End Sub
 
 Sub searchDoublonPossible()
-'Recherche le PPN indiqué dans le message "Doublon possible" après création d'une notice
+'Recherche le PPN indiquÃ© dans le message "Doublon possible" aprÃ¨s crÃ©ation d'une notice
 	 dim msg
 	 msg = ""
 	 On Error Resume Next
@@ -126,7 +149,7 @@ Sub searchDoublonPossible()
 	 	msg = Mid(msg, InStr(msg, "PPN ") + 4, 9)
 	 	application.activeWindow.command "che ppn " & msg
 	 Else
-	 	msgbox "Le message de doublon possible n'est pas affiché."
+	 	msgbox "Le message de doublon possible n'est pas affichÃ©."
 	End If
 End Sub
 
