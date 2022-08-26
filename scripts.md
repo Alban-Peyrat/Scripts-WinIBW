@@ -95,17 +95,7 @@ Pour que les accents soient pris en compte dans vos fichiers, vous devez les enc
 
 ### Validation des notices par script
 
-Il est tout à fait possible de valider via un script les modifications apportées à une notice à l'aide de la commande `Application.ActiveWindow.SimulateIBWKey` avec comme paramètre `"FR"`, mes scripts ne le font pas par choix :
-
-``` Javascript
-// Validation des notices en Javascript
-application.activeWindow.simulateIBWKey("FR");
-```
-
-```VBScript
-' Validation des notices en VBScript
-Application.ActiveWindow.SimulateIBWKey "FR"
-```
+Mes scripts ne valident pas les modifications automatiquement, je ne le recommande pas et je suis à peu près sûr que l'Abes ne veut pas de cela non plus.
 
 ### Vérification du type de notice
 
@@ -457,8 +447,229 @@ Renvoie ensuite tout ce qui se trouve entre le premier `310 ##$a` et le premier 
 
 #### Fichier `alp_chantier_theses.vbs`
 
-Contient tous les scripts que j'ai spécialement développé dans le cadre de chantiers sur les thèses à l'Université de Bordeaux.
+Contient tous les scripts que j'ai spécialement développés dans le cadre de chantiers sur les thèses à l'Université de Bordeaux, ou sur le traitement des thèses d'exercice courantes.
+Un certain nombre de ces scripts mériteraient définitivement d'être rajeunis.
 _[Consulter le fichier](/scripts/vbs/alp_chantier_theses.vbs)_
+
+##### `perso_CTaddUB700S3()`
+
+Version personnalisée de [`addUB700S3()`](#addub700s3) permettant d'exécuter [`changeExAnom()`](#changeexanom) pour corriger de petites anomalies ou détecter de plus grosses anomalies.
+
+##### `changeExAnom()`
+
+Remplace le `$btm` de la zone `eXX` associée au RCR de la variable environnementale par `$bx` ou signale la présence de plusieurs eXX associées à ce RCR ou non. __Le mode d'affichage de la notice doit être `UNM` pour fonctionner correctement.__
+
+Doit être lancé depuis le mode édition, le script compte le nombre d'exemplaires présents sur la notice via [`CountOccurrences`](#countoccurences) sur des retours à la ligne suivis de `e` :
+* si une occurrence est détectée, exécute [`Ress_goToTag()`](#ress_gototag) pour se rendre sur le champ 930, puis recule d'1 caractère (bascule sur le champ précédent) et sélectionne les deux prochains caractères sur la gauche (= les deux derniers caractères du champ).
+Il compare ensuite si ces deux caractères en minuscule sont égaux à `tm`, auquel cas, ils les remplacent par `x`, récupère le numéro de champ et affiche une infobulle (numéro de champ + `: tm remplacé par x`) ; 
+* si plus d'une occurrence est détectée, réexécute `countOccurrences` en comptant cette fois-ci le nombre  `$b` suivi du RCR :
+  * si plus d'une occurrence est trouvée, recherche `$btm` suivi d'un retour à la ligne et de `930 ` et récupère le numéro du champ.
+Si ce numéro commence par `e`, affiche une infobulle (numéro du champ + `à supprimer`, avec comme titre de fenêtre `Exemplaire fictif`), sinon affiche une autre infobulle (`Plusieurs exemplaires réels sur ce RCR. Vérification recommandée.`) ;
+  * sinon, affiche une infobulle (`Plusieurs exemplaires réels. Vérification recommandée.`).
+
+##### `chantierThese_addCodedData()`
+
+_Le script n'est pas entièrement achevé._
+
+Ajoute les données codées sur une thèse papier si elles sont absentes et corrige d'autres anomalies possibles.
+Les champs concernés sont la `106`, la `105`, la `104` et les `702` des directeurs de thèses.
+La `100` était prévue mais non codée, la `200 $g` pour les directeurs de thèses était également prévue mais inachevée.
+
+Passe la notice en mode édition si elle ne l'est pas déjà, puis traite les champs un par un.
+Toutes les recherches de champs de ce script sont effectuées avec la fonction `application.activeWindow.title.findTag` sauf contre-indication.
+
+Pour la `106`, si aucune `106` n'est présente, ajoute à la fin du champ actuel un retour à la ligne puis le champ ci-dessous.
+Si une `106` est présente, affiche une alerte indiquant que ce cas de figure n'est pas encore codé.
+
+``` MARC
+106 ##$ar
+```
+
+Pour la `105`, recherche la première `215` (une vérification de __toutes__ les `215` était prévue) et récupère son contenu s'il la trouve.
+Divise alors son contenu en utilisant `$` comme séparateur puis recherche si l'une des parties commence par `c` et contient `ill` (= est-ce qu'il existe au sein de cette `215` un `$c` signalant une illustration) : si oui, ajoutera au 105 un `$aa`.
+Recherche ensuite si une `105` est présente : si aucune n'est présente, ajoute à la fin du champ actuel un retour à la ligne puis le champ ci-dessous.
+Si une `105` est présente, affiche une alerte indiquant que ce cas de figure n'est pas encore codé.
+
+``` MARC
+105 ##{$aa si 215 $cill}$bm$c0$d0$fy
+```
+
+Pour la `104`, si aucune `104` n'est présente, ajoute à la fin du champ actuel un retour à la ligne puis le champ ci-dessous.
+Si une `104` est présente, affiche une alerte indiquant que ce cas de figure n'est pas encore codé.
+
+``` MARC
+104 ##$by$cba
+```
+
+Pour la `100`, bien que non-codé, il était prévu de récupérer la valeurs de la `100 $a`, `214 $d` et `328 $d` pour les comparer : en cas de différence, défini la valeur du `100 $a` comme étant égal à la `328 $d`.
+
+Pour les `702`, boucle à travers l'intégralité des `702` de la notice et recherche à l'intérieur de celles-ci `$4727`.
+Si cette chaîne de caractère est trouvée, retourne au début du champ, recherche le premier `702` en son sein avec `application.activeWindow.title.find`, le sélectionne puis insère `701` à sa place.
+
+Enfin, pour la `200 $g`, la divise en utilisant comme séparateur `$`, puis recherche si une partie commence par `g` (= recherche s'il y a un `$g`) : si oui, ignore la `200`.
+Si non, boucle à travers l'intégralité des `701` de la notice et recherche à l'intérieur de celles-ci `$4727` ainsi que `$3` (=les directeurs de thèses avec une autorité rattachée).
+Si la condition est vérifiée, récupère le PPN et exécute [`chantierThese_getDirNames`](#chantierthese_getdirnames) pour récupérer le nom et prénom du directeur de thèse.
+Le script s'achève malheureusement ici.
+
+##### `chantierThese_addDirEstPsdt()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère une 314 pour indiquer que le directeur de thèse est également le président du jury à la fin de celle-ci suivi d'un retour à la ligne :
+
+``` MARC
+314 ##$aX est également président de jury
+```
+
+##### `chantierThese_addJuryAut()`
+
+__Documentation incomplète__
+
+Crée le squelette d'une notice d'autorité auteur pour un membre du jury de soutenance d'une thèse, à partir des informations provenant d'un fichier Excel spécifique.
+
+##### `chantierThese_addJuryFromExcel()`
+
+__Documentation incomplète__
+
+Applique les modifications voulues liées aux membres du jury de soutenance sur une notice bibliographique d'une thèse d'exercice.
+Les champs concernés sont la `200`, la `314` et les `700`.
+
+##### `chantierThese_auteurGlobalGet()`
+
+Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales, d'une notice bibliographique d'une thèse papier.
+Une option permet de réécrire ou d'éditer les champs directement depuis WinIBW.
+L'exploitation de ces données se fait ensuite dans un tableur Excel particulier qui génèrera une notice d'autorité UNIMARC pour l'auteur.
+
+_Le script étant assez long et compliqué, je ne rentrerai pas trop dans les détails._
+
+Vérifie dans un premier temps si une `700` avec une `$3` existe déjà : si c'est le cas, affiche une alerte indiquant que la thèse est déjà traitée, copie dans le presse-papier ce message et cesse l'exécution du script.
+
+Récupère ensuite le PPN via `P3GPP` et la `328`, isolant les 4 premiers caractères du `$d` comme l'année de soutenance, puis utilisant [`chantierThese_getDiscipline()`](#chantierthese_getdiscipline) pour récupérer le code Excel de la discipline : si le code d'erreur est renvoyé, indique dans la note finale que la discipline doit être manuellement sélectionnée.
+
+Récupère ensuite le nom de famille de l'auteur, en le basculant en minuscule via [`Ress_uCaseNames()`](#ress_ucasenames) s'il est intégralement en majuscule, en profitant pour indiquer pour le rendu final que la notice est intégralement en majuscule.
+
+Récupère ensuite le prénom et la date de naissance si celle-ci est indiquée.
+Ce procédé est un peu particulier donc je vais le détailler un peu.
+Le prénom est récupéré en prenant le contenu de la `700` entre le `$b` et le `$4`, sauf que le `$f` peut être présent dans cette sélection.
+Aussi, le script itère à travers chaque caractère de ce qui a été identifié comme prénom, puis regarde si celui-ci est un nombre : si oui, il l'ajoute à une variable.
+Ainsi, cette variable ne sera composée que de chiffres, donc supposément uniquement l'année.
+Ensuite, vérifie s'il y a un `$f` au sein du prénom, le supprime si c'est le cas, puis bascule le prénom en minuscule via [`Ress_uCaseNames()`](#ress_ucasenames) s'il est intégralement en majuscule, tout en réécrivant la variable qui indique que la notice est en majuscule.
+
+Sont ensuite récupéres le titre et la cote grâce à [`getTitle()`](#gettitle) et [`getCoteEx()`](#getcoteex).
+
+Arrive ensuite la partie de gestion de la note finale, qui permet d'indiquer un certain nombre d'informations :
+* si la `101 $a` est différent de `fre`, l'indique dans la note ;
+* si la `102 $a` est différent de `FR`, l'indique dans la note ;
+* si le `200 $f` contient `ép.`, `épouse`, ` fille`, ` naissance` ou ` née`, indique en note `Possiblement un nom d'épouse` ;
+* si le `200 $f` contient ` et `, indique en note `Possiblement deux auteurs`.
+
+Ouvre ensuite une boîte de dialogue montrant l'intégralité des données récupérées ainsi que la note.
+La boîte de dialogue a pour but premier d'indiquer le genre de l'auteur, mais il est également possible de modifier n'importe laquelle des informations soit en la réécrivant manuellement avec le code de modification, soit en modifiant l'information existante en ouvrant une nouvelle boîte de dialogue (concerne uniquement le nom et prénom de l'auteur ainsi que le titre de la thèse).
+
+Une fois toutes les boîtes de dialogue traitées, copie dans le presse-papier les informations récupérées et la note, séparés par des tabulations horizontales.
+
+##### `chantierThese_getDirNames()`
+
+Renvoie nom et le prénom du directeur de thèse, séparés par un séparateur de groupe (ASCII 29).
+_J'imagine qu'il fonctionne avec tous les auteurs._
+
+_Paramètre :_
+* `PPN` : le PPN de du directeur de thèse.
+
+Récupère l'identifiant de la fenêtre actuelle puis crée une nouvelle fenêtre.
+Dans celle-ci, recherche le PPN avec la commande `che ppn ` puis récupère le contenu de la notice avec la variable `P3CLIP`.
+Isole ensuite la `200` puis la divise en utilisant `$` comme séparateur.
+Récupère ensuite comme nom le contenu de la partie commençant par `a` et comme prénom le contenu de la partie commençant par `$b`.
+Active ensuite la première fenêtre.
+_Mais ne ferme pas celle créée apparement, j'imagine que j'avais des problèmes pour la fermer tout en récupérant les données ?_
+
+##### `chantierThese_getDiscipline()`
+
+Renvoie le code Excel de la discipline de la thèse (voir [`chantierThese_auteurGlobalGet()` pour plus d'informations](#chantierthese_auteurglobalget).
+
+_Paramètre :_
+* `temp` : la `328` à analyser.
+
+Isole le contenu situé entre le `$c` et le `$e` de la `328` puis analyse une liste fermée de forme pour renvoyer le code Excel associé.
+Si elle ne correspond à aucun, renvoie le code d'erreur suivi de ce qui a été isolé comme étant la discipline.
+
+##### `chantierThese_getJuryForExcel()`
+
+Similaire à [`chantierThese_auteurGlobalGet`](#chantierthese_auteurglobalget), cette fois-ci récupère les données pour le chantier d'ajout des autorités du jury.
+Récupère le PPN, l'année de soutenance, la discipline, le nom et prénom de l'auteur, le titre de la thèse et la cote, séparés par des tabulations horizontales.
+
+Recherche le PPN contenu dans le presse-papier à l'aide de `Perso_collerPPN` (qui n'existe pas, c'était probablement [`collerPPN`](#collerppn)), puis récupère le PPN via la variable `P3GPP`.
+Récupère l'année comme étant les 4 premiers caractères du premier `$d` de la première `328` grâce à [`ress_getTag`](#ress_gettag), puis la discipline à l'aide de la même fonction, sur le `$c` cette fois-ci, en la transformant en minuscule uniquement.
+Sont ensuite récupéres le titre et la cote grâce à [`getTitle()`](#gettitle) et [`getCoteEx()`](#getcoteex).
+
+Enfin, récupère les données sur l'auteur, toujours avec [`ress_getTag`](#ress_gettag), le premier `$a` de la première `700`.
+Si aucun `$a` n'est détecté, récupère le `$3` de la première `700`, lance la recherche de ce PPN avec `che ppn `, récupère sur le résultat la `200 $a` et `200 $b` comme, respectivement, le nom et le prénom, toujours en utilisant [`ress_getTag`](#ress_gettag), puis retourne sur la notice de la thèse avec `che ppn ` et le PPN récupéré au début du script.
+Si toutefois un `$a` est détecté dans la notice de la thèse, récupère le `$b` via la même fonction, puis regarde si le nom de famille de l'auteur est entièrement en majuscule : si c'est le cas, utilise [`Ress_uCaseNames()`](#ress_ucasenames) sur le nom et le prénom, et ajoute à la note finale que la notice est uniquement en majuscule.
+
+Prépare ensuite les données pour l'export vers Excel, les place dans le presse-papier et lance les deux mêmes vérifications que [`chantierThese_auteurGlobalGet()`](#chantierthese_auteurglobalget) sur la `200 $f`, à savoir détecter s'il y a potentiellement un nom d'épouse ou deux auteurs.
+Si les vérifications sont vraies, les ajoute à la note finale.
+Enfin, si la note finale n'est pas vide, affiche une infobulle avec tous les messages contenus dessus.
+
+##### `chantierThese_noDirAddPsdt200f()`
+
+Passe la notice en mode édition si elle ne l'est pas déjà puis insère à la fin de la `200` une `$g` pour le président du jury :
+
+``` MARC
+$gprésident du jury de soutenance 
+```
+
+##### `ChantierThese_AddUB183()`
+
+Ajoute une `183` en fonction de la `215`.
+
+Copie la notice, puis passe en mode édition si elle ne l'est pas déjà.
+Récupère la première `215`, la divise en utilisant `$` comme séparateur puis récupère le contenu de la dernière partie commençant par `a` (= la `215 $a`).
+Si à l'intérieur de ce contenu se trouve `vol`, ne conserve que ce qui se trouve derrière après cette chaîne de caractères.
+Ensuite, pour chaque caractère restant, regarde si celui-ci est un nombre : si oui, l'ajoute à une variable stockant le nombre de pages.
+Enfin, le script observe si cette variable est strictement inférieure à `49` : si c'est le cas, détermine que le `$a` prendra la valeur `ngb`, sinon il prendra la valeur `nga`.
+Pour finir, insère le champ suivant juste avant la 200 puis se rend à l'emplacement de la 215 :
+
+``` MARC
+183 ##$P01$a{nga ou ngb}
+```
+
+_Il y a dans le code des traces de ma volonté de prendre en compte le nombre de `$P`, qui n'a jamais été codé._
+
+##### `ChantierThese_LoopAddUB183()`
+
+Exécute [`ChantierThese_AddUB183()`](#chantierthese_addub183), sauf si l'utilisateur refuse l'ajout, sur la liste de PPN présente dans le presse-papier et exporte un rapport des modifications ou non effectuées.
+
+Pour chaque PPN dans la liste contenue dans le presse-papier (en utilisant un retour à la ligne comme séparateur), le recherche via la commande `che ppn `.
+Si le premier message affiché dans WinIBW après la recherche est `PPN erroné`, affiche une erreur, et définit le statut de ce PPN comme `PPN erroné`.
+Si ce problème n'a pas lieu, exécute [`ChantierThese_AddUB183()`](#chantierthese_addub183) puis ouvre une boîte de dialogue qui affiche la `215` ainsi que la liste des commandes possibles :
+* `ok` (valeur par défaut);
+* `pb` pour `Problème` ;
+* `no p` pour `Pas de pagination` ;
+* `d f` pour `Déjà fait` ;
+* `$$stop` pour `Arrêt forcé` ;
+* tout autre réponse sera considérée comme `Statut invalide`.
+
+Si et seulement si la commande entrée est `ok`, valide la notice, sinon, l'annule (respectivement `application.activeWindow.simulateIBWKey "FR"` ou `application.activeWindow.simulateIBWKey "FE"` suivi de `application.activeWindow.simulateIBWKey "FR"`).
+
+Enfin, ajoute à la variable de sortie le PPN (utilisé pour lancer la recherche) et le statut sélectionné avec la commande, suivi d'un retour à la ligne.
+Regarde ensuite si 10 notices ont été traitées : si oui, utilise [`Ress_exportVar()`](#ress_exportvar) pour exporter la variable de sortie qu'il remet ensuite à 0.
+Si le statut est `Arrêt forcé`, quitte la boucle, sinon, passe à la prochaine itération.
+
+Une fois la boucle achevée, exporte ce qui reste dans la variable de sortie.
+
+##### `excelImpAutAuteur()`
+
+Crée une notice d'autorité auteur à partir de la copie de la cellule du fichier Excel évoqué dans [`chantierThese_auteurGlobalGet()`](#chantierthese_auteurglobalget).
+
+Récupère le contenu du presse-papier en corrigeant les défauts d'import (je ne sais plus lesquels), puis l'insére dans une nouvelle notice créée avec la commande `cre e`.
+Génère ensuite les `400` nécessaires si au moins un espace ou `-` est présent dans la `200 $a` (en utilisant [`findUA200aUA200b()`](#findua200aua200b) pour la récupérer et [`addUA400()`](#addua400) pour les générer).
+
+##### `Perso_excelImpBibg()`
+
+Crée une notice bibliographique de thèse d'exercice électronique à partir des informations contenues dans un fichier Excel spécifique.
+__Au vu d'une des lignes de code, doit avoir les données codées activées.__
+
+Récupère le contenu du presse-papier, crée un notice bibliographique avec la commande `cre`, simule le bouton de validation (`application.activeWindow.simulateIBWKey "FR"`) puis remplace le contenu par le presse-papier.
+Endort le script 1 seconde à l'aide de [`Ress_Sleep()`](#ress_sleep), puis corrige les défauts d'import depuis Excel.
+Perfectionne ensuite la `200` et la `541` si elle existe à l'aide de [`purifUB200a()`](#purifub200a), avant de retirer l'intégralité des doubles sauts de ligne puis finir en plaçant le curseur en haut de la notice.
 
 
 ------------------------------------------------------------
@@ -531,6 +742,10 @@ Il exécute enfin la commande `cre` puis insère le texte contenu dans l'éléme
 Contient tous les scripts développés uniquement pour servir d'interface ou pour générer certaines recherches à partir des informations disponibles dans l'interface ou pour générer des requêtes répétitives.
 _[Consulter le fichier](/scripts/vbs/alp_interface.vbs)_
 
+##### `collerPPN()`
+
+Recherche le PPN présent dans le presse-papier.
+
 ##### `generalLauncher()`
 
 Ouvre une boîte de dialogue servant à lancer les scripts.
@@ -550,6 +765,10 @@ Récupère la notice via la variable `P3CLIP` puis la divise en utilisant un ret
 Pour chaque ligne, regarde si les trois premiers caractères sont `579` : lorsqu'une ligne correspond, active la commande `che ppn {les 9 caractères suivants le $3 sur cette ligne}` puis arrête l'exécution du script.
 Si aucune ligne ne correspond, affiche un message d'erreur.
 
+##### `lastCHE`
+
+Affiche l'historique de recherche via la commande `HIS`.
+
 ##### `searchDoublonPossible()`
 
 S'utilise lorsque WinIBW affiche le message `Doublon possible` après la création d'une notice : cherche le PPN indiqué comme doublon potentiel par WinIBW.
@@ -558,7 +777,7 @@ Récupère le premier message affiché dans la zone des messages de WinIBW.
 Si celui-ci contient `PPN `, active la commande `che ppn {les 9 caractères suivants le "PPN " dans le message}`.
 Si le message ne contient pas `PPN ` (ou si aucun message n'est affiché), affiche une erreur.
 
-_Il est possible que ce script puisse être utilisé pour rechercher le PPN indiqué par WinIBW dans d'autres messages que celui des doublons possibles si leur forme correspond. _
+_Il est possible que ce script puisse être utilisé pour rechercher le PPN indiqué par WinIBW dans d'autres messages que celui des doublons possibles si leur forme correspond._
 
 ##### `searchExcelPPNList()`
 
@@ -1425,70 +1644,3 @@ _Paramètres :_
 * `end` : un objet Javascript `date` correspondant à la fin d'un intervalle.
 
 Renvoie la différence entre `start` et `end` sous forme d'une chaîne de caractères au format `X minute(s) X seconde(s)`.
-
-
-------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Ancienne doc
-
-#### `changeExAnom`
-
-Remplace le `$btm` de la zone eXX associée au RCR par `$bx` ou signale la présence de plusieurs eXX associées à ce RCR ou non. __Le mode d'affichage de la notice doit (probablement) être `UNM` pour fonctionner correctement.__ _Ce script vise un objectif assez précis, voir le contexte de développement à la fin de sa documentation._
-
-_Type de procédure : SUB_
-
-Passe la notice en mode édition si elle ne l'est pas déjà, puis copie l'intégralité de la notice.
-Le script exécute ensuite [`CountOccurrences`](#countoccurences) pour compter le nombre de `chr(10)` suivi de `e` en tenant compte de la casse (= compte le nombre de notices d'exemplaires dans l'ILN) :
-* si une occurrence est détectée, exécute [`goToTag`](#gototag) pour se rendre sur le champ 930, puis recule de 1 caractère (bascule sur le champ précédent) et sélectionne les deux prochains caractères sur la gauche (= les deux derniers caractères du champ).
-Il compare ensuite si ces deux caractères en minuscule sont égaux à `tm`, auquel cas, ils les remplacent par `x`, récupère le numéro de champ et affiche une infobulle (numéro de champ + `: tm remplacé par x`) ;
-* si plus d'une occurrence est détectée, il réexécute `countOccurrences` en comptant cette fois-ci le nombre  `$b` suivi du RCR __(pour utiliser le script sur votre RCR, changez `330632101` en votre RCR)__ :
-  * si plus d'une occurrence est trouvée, recherche `$btm` suivi d'un `chr(10)` suivi de `930 ` et récupère le numéro du champ. Si ce numéro commence par `e`, affiche une infobulle (numéro du champ + `à supprimer`, avec comme titre de fenêtre `Exemplaire fictif`), sinon affiche une autre infobulle (`Plusieurs exemplaires réels sur ce RCR. Vérification recommandée.`) ;
-  * sinon, affiche une infobulle (`Plusieurs exemplaires réels. Vérification recommandée.`).
-
-_Contexte de développement : dans le cadre d'un chantier sur les thèses, des exemplaires pouvaient avoir en `$b` des `eXX` la mention `TM` (ou `M` supposément, dans la pratique je n'en ai pas vus / je les ai ratés) liée à l'ancien signalement dans téléthèses.
-Ainsi, certains exemplaires téléthèses ont été réutilisés sans changer la valeur du `$b`, d'autres sont seulement des exemplaires fictifs en complément de l'exemplaire réel.
-Par ailleurs, nous sommes généralement la seule biblitohèque de l'ILN possédant les thèses de ce chantier, ce qui explique les demandes de vérification du script si plusieurs exemplaires sont détectés dans l'ILN._
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `ChantierTheseAddUB183`
-
-Ajoute une UB183 en fonction de la UB215 (notamment des chiffres détectés dans le $a).
-
-_Type de procédure : SUB_
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `chantierTheseLoopAddUB183`
-
-Exécute `ChantierTheseAddUB183`, sauf si l'utilisateur refuse l'ajout, sur la liste de PPN présente dans le presse-papier et exporte un rapport des modifications ou non effectuées.
-
-_Type de procédure : SUB_
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
-
-#### `getDataUAChantierThese`
-
-Copie dans le presse-papier le PPN, l'année de soutenance, la discipline, le patronyme, le prénom, l'année de naissance, le sexe, le titre et la cote du document, séparés par des tabulations horizontales. Une option permet de réécrire ou d'éditer les champs directement depuis WinIBW.
-
-_Type de procédure : SUB_
-
-_Renvoi :_
-
-Créé dans le cadre d'un chantier sur les thèses, l'exploitation de ces données se fait dans un tableur Excel particulier.
-
-[Consulter le script](https://github.com/Alban-Peyrat/Scripts-WinIBW/blob/main/scripts/scripts_principaux.vbs)
