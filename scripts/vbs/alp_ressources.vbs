@@ -1,4 +1,6 @@
-Function Ress_appendNote(var, text)
+' Scripts ressources'
+
+Private Function Ress_appendNote(var, text)
 'Importer de ConStance [01/09/2021]
     If var = "" Then
         var = text
@@ -8,7 +10,7 @@ Function Ress_appendNote(var, text)
     Ress_appendNote = var
 End Function
 
-Function Ress_CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)
+Private Function Ress_CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSensitive)
 'Renvoie le nombre d'occurrences
 'Source : https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
 'Requis : RIEN
@@ -28,8 +30,80 @@ Function Ress_CountOccurrences(p_strStringToCheck, p_strSubString, p_boolCaseSen
     Ress_CountOccurrences = UBound(arrstrTemp)
 End Function
 
-Sub Ress_exportVar(var, boolAppend)
-'Exporte dans export.txt (mÃªme emplacement que winibw.vbs)
+Private Function decompUA200enUA400(UA200a, UA200b)
+'Renvoi les champs 400 créés à partir de la décomposition du nom composé du champ 200 importé
+'Requis : RIEN
+
+	dim separateur
+	
+	While (InStr(UA200a, " ") <> 0) OR (InStr(UA200a, "-") <> 0)
+'Détermine le séparateur
+		If (InStr(UA200a, " ") > 0) AND (InStr(UA200a, "-") = 0 OR (InStr(UA200a, " ") < InStr(UA200a, "-"))) Then
+			separateur = InStr(UA200a, " ")
+		ElseIf (InStr(UA200a, "-") > 0) AND (InStr(UA200a, "0") = 0 OR (InStr(UA200a, " ") > InStr(UA200a, "-"))) Then
+			separateur = InStr(UA200a, "-")
+		End If
+	
+'Construit la nouvelle forme
+		If (Right(UA200b, 1) = "-") OR (Right(UA200b, 1) = "'") Then
+			UA200b = RTrim(UA200b & Left(UA200a, separateur))
+		Else
+			UA200b = RTrim(UA200b & " " & Left(UA200a, separateur))
+		End If
+		UA200a = Right(UA200a, Abs(separateur-Len(UA200a)))
+				
+'Rejet du "de"
+		If LCase(Left(UA200a, 3)) = "de " Then
+			UA200a = Mid(UA200a, 4, Len(UA200a))
+			If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
+				UA200b = UA200b & "de"
+			Else
+				UA200b = UA200b & " de"
+			End If
+		End If
+'Rejet du "d'"
+		If LCase(Left(UA200a, 2)) = "d'" Then
+			UA200a = Mid(UA200a, 3, Len(UA200a))
+			If Right(UA200b, 1) = "-" OR Right(UA200b, 1) = "'" Then
+				UA200b = UA200b & "d'"
+			Else
+				UA200b = UA200b & " d'"
+			End If
+		End If
+		
+'Ajout à la notice
+		decompUA200enUA400 = Ress_appendNote(decompUA200enUA400, "400 #1$a" & UA200a & "$b" & UA200b)
+	Wend
+
+End Function
+
+Private Sub delEspaceB4Tag()
+	While application.activeWindow.title.findTag(" ", 0, true, true, false) <> ""
+		application.activeWindow.title.startOfField
+		'Supprime les espaces
+		application.activeWindow.title.wordRight 1, true
+		application.activeWindow.title.deleteSelection
+	Wend
+End Sub
+
+Sub executeVBScriptFromName
+	' This was created to executed user scripts from standart scripts
+	' The shortcut needs to be Shift + Ctrl + Alt + L
+	' https://ss64.com/vb/execute.html
+	Dim fctName
+	fctName = InputBox("Exécuter une fonction VBS", "Écrire le nom de la procédure ou fonction (argument inclus) :")
+
+	If fctName = "" Then
+		MsgBox "Aucun script renseigné"
+	Else
+		application.activeWindow.appendMessage "alp_VBS_from_JS_will_execute", 3
+		Execute fctName
+		application.activeWindow.appendMessage "alp_VBS_from_JS_OK", 3
+	End If
+End Sub
+
+Private Sub Ress_exportVar(var, boolAppend)
+'Exporte dans export.txt (même emplacement que winibw.vbs)
 'Source : eddiejackson.net/wp/?p=8619
 'Notes
 'OpenTextFile parameters:
@@ -39,7 +113,7 @@ Sub Ress_exportVar(var, boolAppend)
 '8=Append
 'Create (true,false)
 'Format (-2=System Default,-1=Unicode,0=ASCII)
-'J'ai rajoutÃ© la var mode pour sÃ©lectionner entre append et write
+'J'ai rajouté la var mode pour sélectionner entre append et write
 'Requis : RIEN
 
 	dim mode
@@ -50,15 +124,72 @@ Sub Ress_exportVar(var, boolAppend)
 		mode = 2
 	End If
 
-	Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile("C:\/oclcpica/WinIBW30/Profiles/apeyrat001/export.txt",mode,true)
+	Set objFileToWrite = CreateObject("Scripting.FileSystemObject").OpenTextFile(WINIBW_ProfD & "/export.txt",mode,true)
 	objFileToWrite.WriteLine(var)
 	objFileToWrite.Close
 	Set objFileToWrite = Nothing
 
 End Sub
 
+Private Function findUA200aUA200b()
+'Identifie la position du $a et du $b dans la 200UA. Doit être appelé depuis écran de modification
+	Dim UA200, UA200fPos, UA200a, UA200b, ii
+
+	UA200 = Application.activeWindow.Title.FindTag ("200")
+	UA200fPos = 0
+	ii = 0
+	While UA200fPos = 0
+		Select Case ii
+			case 0
+				UA200fPos = inStr(UA200, "$f")
+			case 1
+				UA200fPos = inStr(UA200, "$c")
+
+			case 2
+				UA200fPos = inStr(UA200, "$x")
+			case 3
+				UA200fPos = inStr(UA200, "$y")
+			case 4
+				UA200fPos = inStr(UA200, "$z")
+			case Else
+				UA200fPos = Len(UA200) + 1
+		End Select
+		ii = ii +1
+	Wend
+
+	UA200a = Mid(UA200, InStr(UA200, "$a")+2, InStr(UA200, "$b") - InStr(UA200, "$a")-2)
+	UA200b = Mid(UA200, InStr(UA200, "$b")+2, UA200fPos - InStr(UA200, "$b")-2)
+
+	findUA200aUA200b = UA200 & ";_;" & UA200a & ";_;" & UA200b & ";_;" & UA200fPos
+End Function
+
+Private Function getNoticeType()
+	' Returns 0 if it's an authority record, 1 a bibliographic record, 2 not a record
+	Dim isAut, scrCode
+
+	isAut = application.activeWindow.variable("P3VMC")
+
+	If isAut = "" Then
+	   scrCode = application.activeWindow.variable("scr")
+	   If scrCode = "II" Then ' Invoer Ingang
+	   	' Creating an Authority record
+	   	getNoticeType = 0
+	   ElseIf scrCode = "IT" Then ' Invoer Titel
+	   	' Creating a bibliographic record
+	   	getNoticeType =  1
+	   Else
+	   	' Supposedly, every other option is covered
+	   	getNoticeType =  2
+		End If
+	ElseIf Left(isAut, 1) = "T" Then
+	   getNoticeType =  0
+	Else
+	   getNoticeType =  1
+	End If
+End Function
+
 Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
-'RÃ©cupÃ¨re l'information
+'Récupère l'information
 'forceOcc = "no"-> non ; "last" -> dernier ; "all" -> toutes ; tout le reste un string de nb
 ' subtag = "none" pour le champ entier
 'forceOccSub idem que forceOcc
@@ -70,8 +201,8 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 
 	application.activeWindow.codedData = false
 
-'DÃ©tecte si on est en edit mode
-'Ã€ changer Ã  terme
+'Détecte si on est en edit mode
+'À changer à terme
 	On Error Resume Next
 	temp = application.activeWindow.Title.canPaste
 	if Err then
@@ -83,9 +214,11 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 	
 
 	If editMode = false Then
-		temp2 = application.activeWindow.clipboard
-		notice = Application.activeWindow.copyTitle
-		application.activeWindow.clipboard = temp2
+		'temp2 = application.activeWindow.clipboard
+		'notice = Application.activeWindow.copyTitle
+		'application.activeWindow.clipboard = temp2
+		'l'utilisation du clipboard entraîne des pb
+		notice = application.activeWindow.variable("P3CLIP")
 	Else
 		With application.activeWindow.title
 			'temp = .startOfField(true)
@@ -109,7 +242,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 	While InStr(notice, chr(10) & chr(10)) > 0
 		notice = replace(notice, chr(10) & chr(10), chr(10))
 	Wend
-'RÃ©cupÃ¨re le tag
+'Récupère le tag
 	occList = Split(notice, chr(10) & tag)
 
 	If UBound(occList) = 0 Then
@@ -142,7 +275,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 			End If
 
 		Next
-		temp = Inputbox(allOcc, "Choisir le numÃ©ro de l'occurrence", 1)
+		temp = Inputbox(allOcc, "Choisir le numéro de l'occurrence", 1)
 		If CInt(temp) > UBound(occList) OR CInt(temp) < 1 Then
 			MsgBox "Cette occurrence n'existe pas"
 			Exit function
@@ -176,9 +309,14 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 				chosenOcc = occList(1)
 				nbDollar = 1
 			ElseIf forceOccSub = "last" Then
+'C'est impossible que ce code fasse ce qu'il est supposé faire
+'Je suis sûr que j'ai copy paste celui d'au-dessus et que j'ai zappé de le modifier
 				chosenOcc = occList(UBound(occList))
-
+'Si ya un problème ça vient sûrement de là hihihihihihi'
+				nbDollar = -49
 			ElseIf forceOccSub = "all" Then
+'Si ya un problème ça vient sûrement de là hihihihihihi'
+				nbDollar = -49
 				for ii = 1 to UBound(occList)
 					If Left(occList(ii), 1) = subTag Then
 						'If InStr(occList(ii), chr(10)) > 0 Then
@@ -211,7 +349,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 					End If
 				Next
 				If InStr(allOcc, chr(10)) > 0 Then
-					temp = Inputbox(allOcc, "Choisir le numÃ©ro de l'occurrence", 1)
+					temp = Inputbox(allOcc, "Choisir le numéro de l'occurrence", 1)
 					If CInt(temp) > nbDollar OR CInt(temp) < 1 Then
 						MsgBox "Cette occurrence n'existe pas"
 						Exit function
@@ -237,7 +375,7 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 			End If
 
 'Gestion output'
-			If UBound(occList) = 0 OR (InStr(chosenSubtag, ";_#_;") > 0 AND forceOccSub = "all") Then
+			If UBound(occList) = 0 OR (InStr(chosenSubtag, ";_#_;") > 0 AND forceOccSub = "all") OR nbDollar = -49 Then
 				'skip la suite de l'instruction
 			ElseIf nbDollar = 0 Then
 				chosenSubTag = "Aucun $" & subtag & " dans cette " & tag
@@ -256,14 +394,14 @@ Function Ress_getTag(tag, forceOcc, subTag, forceOccSub)
 	
 End Function
 
-Sub Ress_goToTag(tag, subTag, toEndOfField, toFirst, toLast)
-'Place le curseur Ã  l'empalcement indiquÃ© par les paramÃ¨tres. Si plusieurs occurrences sont rencontrÃ©es sans que toFirst ou toLast soit true, une boÃ®te de dialogue s'ouvre pour sÃ©lectionner l'occurrence souhaitÃ©e
-'La fonction countOccurences est nÃ©cesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
+Private Sub Ress_goToTag(tag, subTag, toEndOfField, toFirst, toLast)
+'Place le curseur à l'empalcement indiqué par les paramètres. Si plusieurs occurrences sont rencontrées sans que toFirst ou toLast soit true, une boîte de dialogue s'ouvre pour sélectionner l'occurrence souhaitée
+'La fonction countOccurences est nécesssaire ( https://www.thoughtasylum.com/2009/07/30/VB-Script-Count-occurrences-in-a-text-string/ [cons. le 26/04/2021]
 'Tag = [str] champ
 'subtag = [str] [case sensitive] sous-champ. Ne pasz mettre le $. Si vide, mettre "none"
-'toEndOfField = [bool] place le curseur Ã  la fin du champ OU du sous-champ
-'toFirst = [bool] si plusieurs occurences du CHAMP, sÃ©lectionne le premier prioritaire sur toLast
-'toLast = [bool] si plusieurs occurences du CHAMP, sÃ©lectionne le dernier
+'toEndOfField = [bool] place le curseur à la fin du champ OU du sous-champ
+'toFirst = [bool] si plusieurs occurences du CHAMP, sélectionne le premier prioritaire sur toLast
+'toLast = [bool] si plusieurs occurences du CHAMP, sélectionne le dernier
 'Requis : Ress_CountOccurrences
 '_A_MOD_
 
@@ -294,7 +432,7 @@ End With
 			choseOcc = true
 		End If
 	ElseIf nbOcc = 0 Then
-			MsgBox "Le champ " & tag & " n'a pas Ã©tÃ© trouvÃ© dans la notice"
+			MsgBox "Le champ " & tag & " n'a pas été trouvé dans la notice"
 		Exit Sub
 	End If
 	
@@ -312,7 +450,7 @@ End With
 	Next
 	
 	If choseOcc = true Then
-		count = inputBox(occurrences, "Choisir le numÃ©ro de l'occurence")
+		count = inputBox(occurrences, "Choisir le numéro de l'occurence")
 		If isNumeric(count) = false Then
 			MsgBox "Erreur. Choisir un NOMBRE. Relancer le script."
 			Exit Sub
@@ -346,7 +484,7 @@ With Application.activeWindow.Title
 	      count = 0
 	    	nbOcc = Ress_CountOccurrences(selectedTag, "$" & subTag, true)
 	    	If nbOcc = 0 Then
-	    		MsgBox "Erreur. Pas de $" & subTag & " dans l'occurrence sÃ©lectionnÃ©e."
+	    		MsgBox "Erreur. Pas de $" & subTag & " dans l'occurrence sélectionnée."
 		      If toEndOfField = true Then
 		      	.EndOfField
 		      Else
@@ -374,9 +512,9 @@ With Application.activeWindow.Title
 		        End If
 		        count = count + 1
 		    Next
-		    count = inputBox(occurrences, "Choisir le numÃ©ro de l'occurence")
+		    count = inputBox(occurrences, "Choisir le numéro de l'occurence")
 		    If isNumeric(count) = false Then
-			MsgBox "Erreur. Choisir un NOMBRE. PremiÃ¨re occurrence sÃ©lectionnÃ©e."
+			MsgBox "Erreur. Choisir un NOMBRE. Première occurrence sélectionnée."
 		  	.Find "$" & subTag, true, true
 		  	.charRight(1)
 		  	.charLeft(1)
@@ -395,10 +533,10 @@ End With
 	    
     Application.activeWindow.clipboard = clipboardSave
     
-	    End Sub
+End Sub
 
 Sub Ress_goToTagInputBox()
-'Permet d'essayer Ress_goToTag en indiquant les paramÃ¨tres voulus.
+'Permet d'essayer Ress_goToTag en indiquant les paramètres voulus.
 'Requis : Ress_goToTag
 
 	dim z, y, x, w, v
@@ -414,7 +552,50 @@ Sub Ress_goToTagInputBox()
 	'Ress_goToTag "606", "", true, "", ""
 End Sub
 
-Sub Ress_Sleep(time)
+Private Function PurifUB200a(UB200, isUB541)
+'Requis : none
+'_A_MOD_ -> mieux handle la provenance
+
+	dim UB200a, UB200aPos, UB200fPos
+	UB200aPos = InStr(UB200, "$a")+2
+	If isUB541 = false Then
+		UB200fPos = InStr(UB200, "$f")
+	Else
+		UB200fPos = InStr(UB200, "$z")
+	End If
+	UB200a = Mid(UB200, UB200aPos, UB200fPos - UB200aPos)
+	UB200 = Replace(UB200, UB200a, "")
+	UB200a = replace(UB200a, " : ", "$e")
+	UB200a = replace(UB200a, ": ", "$e")
+	'Ajoute le @
+	If Left(UB200a, 6)="De la " Then
+		UB200a = Left(UB200a, 6) & "@" & Mid(UB200a, 7, Len(UB200a))
+	ElseIf Left(UB200a, 5)="De l'" Then
+		UB200a = Left(UB200a, 5) & "@" & Mid(UB200a, 6, Len(UB200a))
+	ElseIf Left(UB200a, 4)="Les "_
+	OR Left(UB200a, 4)="Des "_
+	OR Left(UB200a, 4)="Une "_
+	OR Left(UB200a, 4)="The " Then
+		UB200a = Left(UB200a, 4) & "@" & Mid(UB200a, 5, Len(UB200a))
+	ElseIf Left(UB200a, 3)="Le "_
+	OR Left(UB200a, 3)="La "_
+	OR Left(UB200a, 3)="Un "_
+	OR Left(UB200a, 3)="An "_
+	OR Left(UB200a, 3)="De "_
+	OR Left(UB200a, 3)="Du " Then
+		UB200a = Left(UB200a, 3) & "@" & Mid(UB200a, 4, Len(UB200a))
+	ElseIf Left(UB200a, 2)="A "_
+	OR Left(UB200a, 2)="L'"_
+	OR Left(UB200a, 2)="D'"  Then
+		UB200a = Left(UB200a, 2) & "@" & Mid(UB200a, 3, Len(UB200a))
+	Else
+		UB200a = "@" & UB200a
+	End If
+	PurifUB200a = Left(UB200, UB200aPos-1) & UB200a & Mid(UB200, UB200aPos, Len(UB200))
+	
+End Function
+
+Private Sub Ress_Sleep(time)
 'Source : Original Paulie D comment : https://stackoverflow.com/questions/1729075/how-to-set-delay-in-vbscript
 'EVITER L'UTILISATION
 	Dim dteWait
@@ -424,9 +605,9 @@ Sub Ress_Sleep(time)
 	Loop
 End Sub
 
-Sub Ress_toEditMode(lgPMode, save)
-'Passe en mode Ã©dition (ou prÃ©sentation)
-'lgPMode [bool] : true = passer en mode prÃ©sentation
+Private Sub Ress_toEditMode(lgPMode, save)
+'Passe en mode édition (ou présentation)
+'lgPMode [bool] : true = passer en mode présentation
 'save [bool] : si lgPMode =true, alors sauvegarder les changements ou non
 'Requis : RIEN
 
@@ -460,7 +641,7 @@ With Application.activeWindow
 End With
 End Sub
 
-Function Ress_uCaseNames(noms)
+Private Function Ress_uCaseNames(noms)
 
 Dim kk, jj, sepCheck
 

@@ -1,9 +1,14 @@
+// Scripts pour le module PEB
+// Scripts for ILL module
+
 function AlP_PEBgetNumDemande(){
+// Returns the ILL request Number (must be used on a ILL request)
 	application.activeWindow.clipboard = application.activeWindow.getVariable("P3GA*")
 }
 
-
 function AlP_PEBgetNumDemandePostValidation(){
+// Returns the ILL request Number that was jsut created
+// Gets it from the messages, probably only works for french catalog
     var msg;
     try{
 		msg = application.activeWindow.messages.item(0).text;
@@ -19,16 +24,17 @@ function AlP_PEBgetNumDemandePostValidation(){
 }
 
 function AlP_PEBgetPPN(){
+// Returns the PPN of the wanted document on an ILL (must be used on a ILL request)
 	application.activeWindow.clipboard = application.activeWindow.getVariable("P3VTA");
 }
 
 function AlP_PEBgetRCRDemandeur(){
+// Returns the requesting library's RCR of an ILL (must be used on a ILL request)
 	var VF0 = application.activeWindow.getVariable("P3VF0");
 	var VF1 = application.activeWindow.getVariable("P3VF1");
 	
 	if(VF1 != VF0){
-		var prompter = Components.classes["@oclcpica.nl/scriptpromptutility;1"]
-				.createInstance(Components.interfaces.IPromptUtilities);
+		var prompter = utility.newPrompter();
 		var ans = prompter.confirmEx("Quel RCR choisir", "Quel RCR (cliquer sur le bouton)", "Aucun", VF0, VF1, null, null)
 		switch (ans){
 			case 0:
@@ -66,6 +72,8 @@ function AlP_PEBgetRCRFournisseurOnHold(){
 }
 
 function AlP_PEBgetTitleAuth(){
+// Returns the document title, document author, article title and article author
+// Separated by carriage return. If one of them doesn't exists, returns an empty stirng instead (must be used on a ILL request)
     var titre = application.activeWindow.getVariable("P3VTC");
     var auteur = application.activeWindow.getVariable("P3VTD");
     var article = application.activeWindow.getVariable("P3VAB");
@@ -74,13 +82,7 @@ function AlP_PEBgetTitleAuth(){
 }
 
 function AlP_PEBLauncher(){
-	const utility = {
-		newPrompter: function() {
-			return Components.classes["@oclcpica.nl/scriptpromptutility;1"]
-			.createInstance(Components.interfaces.IPromptUtilities);
-		}
-	};
-	
+// Opens a launcher for all the scripts in this file
 	var thePrompter = utility.newPrompter();
 	var ans = thePrompter.select("Ex\u00E9cuter un script du PEB :", "Choisir le script \u00E0 ex\u00E9cuter",
 		"Get no demande PEB" +
@@ -118,12 +120,8 @@ function AlP_PEBLauncher(){
 }
 
 function AlP_PEBtriRecherche(){
-const utility = {
-	newFileOutput: function() {
-		return Components.classes["@oclcpica.nl/scriptoutputfile;1"]
-		.createInstance(Components.interfaces.IOutputTextFile);
-	}
-};
+// Extract and open an excel file with all entries in a short presentation
+// list of records (must be used on a short presentation list)
 var theOutputFile = utility.newFileOutput();
 theOutputFile.createSpecial("ProfD", "triPEB.xls");
 theOutputFile.setTruncate(true);
@@ -144,15 +142,15 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 		for(var jj = 0; jj < records.length-1;jj++){
 			var record = records[jj];
 			record = record.replace(/\"/g, "");
-			record = AlP_js_removeAccents(record);
-			var PPN = record.substring(record.indexOf("\u001BH\u001BLPP")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLPP")+6));
-			var auteur = record.substring(record.indexOf("\u001BE\u001BLV0")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV0")+6));
-			var titre = record.substring(record.indexOf("\u001BE\u001BLV1")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV1")+6));
-			var edition = record.substring(record.indexOf("\u001BE\u001BLV2")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV2")+6));
-			var editeur = record.substring(record.indexOf("\u001BE\u001BLV3")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV3")+6));
-			var annee = record.substring(record.indexOf("\u001BE\u001BLV4")+6, record.indexOf("\u001BE", record.indexOf("\u001BE\u001BLV4")+6));
+			record = __removeAccents(record);
+			var PPN = record.substring(record.indexOf("\u001BLPP")+4, record.indexOf("\u001BE", record.indexOf("\u001BLPP")+4));
+			var auteur = record.substring(record.indexOf("\u001BLV0")+4, record.indexOf("\u001BE", record.indexOf("\u001BLV0")+4));
+			var titre = record.substring(record.indexOf("\u001BLV1")+4, record.indexOf("\u001BE", record.indexOf("\u001BLV1")+4));
+			var edition = record.substring(record.indexOf("\u001BLV2")+4, record.indexOf("\u001BE", record.indexOf("\u001BLV2")+4));
+			var editeur = record.substring(record.indexOf("\u001BLV3")+4, record.indexOf("\u001BE", record.indexOf("\u001BLV3")+4));
+			var annee = record.substring(record.indexOf("\u001BLV4")+4, record.indexOf("\u001BE", record.indexOf("\u001BLV4")+4));
 			theOutputFile.writeLine(PPN+"\u0009"+auteur+"\u0009"+titre+"\u0009"+edition+"\u0009"+editeur+"\u0009"+annee);
-			row = parseInt(record.substring(record.indexOf("\u001BD\u001BLNR")+6, record.indexOf("\u001BE", record.indexOf("\u001BD\u001BLNR")+6)).replace(" ", ""));
+			row = parseInt(record.substring(record.indexOf("\u001BLNR")+4, record.indexOf("\u001BE", record.indexOf("\u001BLNR")+4)).replace(" ", ""));
 		}
 //Empêche la boucle While de tourner à l'infini
 		sec++;
@@ -162,4 +160,67 @@ theOutputFile.writeLine("PPN\u0009Auteur\u0009Titre\u0009Edition\u0009Editeur\u0
 	}
 	theOutputFile.close();
 	application.shellExecute(path, 9, "edit", "");
+}
+
+function AlP_PEBsearchInSuDb(){
+/* Marche pas pour le moment si ça vient d'un lien*/
+
+	// Gets the limitations parameters
+	/*application.activeWindow.command("\\too \\adi", false);
+	var lim = application.activeWindow.messages.item(0).text;*/
+	var lim = application.activeWindow.getVariable("P3GAD");
+
+	// Gets the query
+	/* var query = application.activeWindow.getVariable("P3VCO"); */
+	var query = application.activeWindow.getVariable("P3LCO");
+	var lastQuery = application.activeWindow.getVariable("P3VCO");
+//La je fais des trucs pour les modifiers
+
+
+	if (query.substring(0, 11).indexOf("recherche") > -1){
+	    query = query.replace("recherche", "\\zoe");
+	// Exits if the query is not initiated with "che"
+	}else {
+	    application.messageBox("Erreur", "Ce type de recherche n'est pas pris en compte.", "error-icon");
+	    return
+	}
+
+	// Connects to Sudoc catalog, launches the search and sets the display to ISBD
+	application.activeWindow.command("\\sys 1;\\bes 1;"+lim+query+";\\too i", false);
+
+	// Checks if the search worked
+	if (application.activeWindow.getVariable("P3GSY") != "SU") {
+	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
+
+	// Without this, WinIBW won't display the list
+	application.activeWindow.command("\\too k 1", false);
+}
+
+function AlP_PEBaskFromSu(){
+	var ppn = application.activeWindow.getVariable("P3GPP");
+	// Checks if there's a PPN
+	if (ppn == "") {
+	    application.messageBox("Erreur", "Veuillez sélectionner une notice.", "error-icon");
+	    return
+	// Checks if it's a bibliographic record
+	}else if (application.activeWindow.getVariable("P3VMC").charAt(0) == "T") {
+	    application.messageBox("Erreur", "Ceci est une notice d'autorité. Veuillez sélectionner une notice bibliographique.", "error-icon");
+	    return
+	}
+
+	application.activeWindow.command("\\sys 2;\\bes 1;\\zoe ppn "+ppn+";\\too i", false);
+	// Checks if the search worked
+	if (application.activeWindow.getVariable("P3GSY") != "SU PEB") {
+	    application.messageBox("Erreur", "La recherche a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
+
+	application.activeWindow.simulateIBWKey("F9");
+	// Checks if the ILL request started
+	if (application.activeWindow.getVariable("scr") != "AA") {
+	    application.messageBox("Erreur", "La demande de PEB a échoué. Vous vous trouvez actuellement dans la base " + application.activeWindow.getVariable("P3GSY") + ".\nRéférez-vous aux messages de WinIBW pour plus d'informations.", "error-icon");
+	    return
+	}
 }

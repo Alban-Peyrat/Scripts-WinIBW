@@ -1,6 +1,6 @@
 {
-"python_path":"D:\\python.exe",
-"pyth_to_js_file":"C:\\oclcpica\\WinIBW30\\SCOOP\\temp_pyth_to_js.txt",
-"js_to_pyth_file":"C:\\oclcpica\\WinIBW30\\SCOOP\\temp_js_to_pyth.txt",
-"clean_pyth_files":"C:\\oclcpica\\WinIBW30\\SCOOP\\scripts\\python-winibw\\clean_pyth_files.py"
+"python_path":"D:\\EduPython\\App\\python.exe",
+"pyth_to_js_file":"C:\\oclcpica\\WinIBW30\\Profiles\\apeyrat001\\alp_SCOOP\\temp_pyth_to_js.txt",
+"js_to_pyth_file":"C:\\oclcpica\\WinIBW30\\Profiles\\apeyrat001\\alp_SCOOP\\temp_js_to_pyth.txt",
+"clean_pyth_files":"C:\\oclcpica\\WinIBW30\\Profiles\\apeyrat001\\alp_scripts\\python-winibw\\clean_pyth_files.py"
 }

@@ -1,6 +1,3 @@
-//In WinIBW's folder, defaults/pref/setup.js, add at the top of the file (uncommented) :
-//pref("ibw.standardScripts.script.pythWinIBW", "resource:/SCOOP/scripts/python-winibw/pythWinIBW.js");
-
 // To define parameters for both python scripts and WinIBW scripts, edit the python_parameters file.
 // It is build as a JSON file but it doesn't support tables / lists or object / dictionaries inside the main one.
 // A such, every key / value pair should be in the same object.
@@ -14,7 +11,7 @@ function __get_python_parameters(){
 	// Stringifies the file (in UTF-8)
 	var pythParameters = Components.classes["@oclcpica.nl/scriptinputfile;1"]
 		.createInstance(Components.interfaces.IInputTextFile);
-	pythParameters.openSpecial("BinDir", "\\SCOOP\\scripts\\python-winibw\\python_parameters");
+	pythParameters.openSpecial("ProfD", "\\alp_scripts\\python-winibw\\python_parameters");
 	var doc = ""
 	while (pythParameters.isEOF() === false){
 		doc += pythParameters.readLine();
@@ -86,7 +83,7 @@ if(missingParams.length > 0){
 }
 
 // How to use:
-// [First time] Open SCOOP\scripts\python_parameters inside the WinIBW files and edit the files path (and add optionnal parameters if you wish to).
+// [First time] Openpython_parameters inside the WinIBW files and edit the files path (and add optionnal parameters if you wish to).
 // [First time] Verify in get_python_parameters.py if the absolute path to python_parameters is correct.
 // First, execute a JS WinIBW script.
 // If you need to transfer data to the python script, write it in the temp_js_to_pyth file using WinIBW's FileOutput object.

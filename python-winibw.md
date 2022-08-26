@@ -6,25 +6,13 @@ Also, your computer must be able to run Python scripts.
 
 ## Installing Python-WinIBW
 
-_Note: this installation will only apply to the computer you are using, but it should be possible to install it for your WinIBW profile.
-If you do, please thoroughly check every link in the files and don't forget that you can replace `BinDir` by `ProfD` in WinIBW's utilities special methods._
+This procedure installs Python-WinIBW in your WinIBW's profile.
+You can install it locally instead, but please thoroughly check every link in the files and don't forget that you can replace `ProfD` by `BinDir` in WinIBW's utilities special methods._
 
-__Do not run WinIBW (or be running it) during the installation.__
-
-### Using `install_python-winibw.py`
-
-* Download the `python-winibw` folder [from my WinIBW repository](https://github.com/Alban-Peyrat/WinIBW/tree/main/scripts/python-winibw);
-* If the path to your WinIBW's root folder is not `C:\oclcpica\WinIBW30`, edit `install_python-winibw.py` and change the value of `WINIBW_ROOT_FOLDER` accordingly;
-* Execute the script.
-
-### Manually
-
-* Download the `python-winibw` folder [from my WinIBW repository](https://github.com/Alban-Peyrat/WinIBW/tree/main/scripts/python-winibw);
-* Go to your WinIBW's root folder and create the subfolders `SCOOP/scripts`;
-* Inside `SCOOP/scripts`, place the `python-winibw` folder;
-* Go back to your WinIBW's root folder, and edit `defaults/pref/setup.js` (make a copy of the file first just to be safe);
-* At the top of the document, add `pref("ibw.standardScripts.script.pythWinIBW", "resource:/SCOOP/scripts/python-winibw/pythWinIBW.js");`;
-* Save and quit the document.
+[See how to install javascript scripts in WinIBW (only in french for the time being)](.scripts.md#en-javascript-js).
+You need to place the whole `python-winibw` subrepository (`WinIBW/scripts/python-winibw`) inside your WinIBW's profile.
+You will then need to [edit `get_python_parameters.py` to point to `python_parameter` absolute path](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/python-winibw/get_python_parameters.py#L7).
+You will also need to [edit in `pythWinIBW.js` the function `__get_python_parameters()` for the same reason](https://github.com/Alban-Peyrat/WinIBW/blob/main/scripts/python-winibw/pythWinIBW.js#L14).
 
 ## Setting up Python-WinIBW parameters
 
