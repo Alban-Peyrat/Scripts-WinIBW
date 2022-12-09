@@ -42,6 +42,27 @@ Private Sub sluitMapIn(map)
       msgbox "Le dossier """ + map + """ n'existe pas ?"
    End If
 End Sub
+
+'Import a signle VBS file'
+'Seuls les textes des messages sont traduits
+'From https://cbs-nl.oclc.org/htdocs/winibw/scripts/WinIBW3.installatie.scriptbeheer.html'
+Private Sub sluitVBSin(VBSbestand)
+   Dim f, s, oFSO
+   Set oFSO = CreateObject("Scripting.FileSystemObject")
+   On Error Resume Next
+   If oFSO.FileExists(VBSbestand) Then
+      Set f = oFSO.OpenTextFile(VBSbestand)
+      s = f.ReadAll
+      f.Close
+      ExecuteGlobal s
+   else
+      msgbox "Le fichier """ + VBSbestand + """ à intégrer n'existe pas ?"
+      exit sub
+   End If
+   On Error Goto 0
+   Set f = Nothing
+   Set oFSO = Nothing
+End Sub
 ```
 
 ### En Javascript (JS)
